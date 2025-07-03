@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 """
 split-for-ai.py --repo . --max-lines 800 --min-lines 50 --db .chroma
@@ -123,12 +122,10 @@ def main():
         db_path = pathlib.Path(args.db)
         try:
             migrate_or_clear_db(db_path)
-            # 为 chromadb==0.4.10 调整 Settings，移除 proxies
+            # 为 chromadb==0.4.10 创建简单的 Settings，只传入支持的参数
             settings = Settings(
                 anonymized_telemetry=False,
-                persist_directory=args.db,
-                # 0.4.10 不支持 proxies，显式过滤
-                **{k: v for k, v in os.environ.items() if k.lower() not in ['http_proxy', 'https_proxy', 'no_proxy', 'all_proxy', 'openai_proxy', 'requests_ca_bundle']}
+                persist_directory=args.db
             )
             chroma_client = chromadb.Client(settings=settings)  # 0.4.10 使用 Client 而非 PersistentClient
             if not os.getenv("OPENAI_API_KEY"):

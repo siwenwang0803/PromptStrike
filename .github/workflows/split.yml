@@ -57,24 +57,29 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANONYMIZED_TELEMETRY: "False"
+          # 清除所有代理相关环境变量
           HTTP_PROXY: ""
           HTTPS_PROXY: ""
           NO_PROXY: "*"
           ALL_PROXY: ""
-          # 禁用OpenAI SDK可能的代理设置
           OPENAI_PROXY: ""
           REQUESTS_CA_BUNDLE: ""
         run: |
           # 清除可能的环境变量
-          unset http_proxy https_proxy no_proxy all_proxy
+          unset http_proxy https_proxy no_proxy all_proxy HTTP_PROXY HTTPS_PROXY NO_PROXY ALL_PROXY
+          
           echo "🔍 Running split-for-ai script..."
-          if ! python utils/split-for-ai.py --repo . --max-lines 800 --min-lines 50 --db .chroma --collection promptstrike 2>&1 | tee script_output.log; then
+          
+          # 运行脚本并捕获输出
+          if python utils/split-for-ai.py --repo . --max-lines 800 --min-lines 50 --db .chroma --collection promptstrike 2>&1 | tee script_output.log; then
+            echo "✅ Script execution completed successfully"
+            echo "script_success=true" >> $GITHUB_OUTPUT
+          else
             echo "❌ Script failed with exit code $?"
+            echo "script_success=false" >> $GITHUB_OUTPUT
             cat script_output.log
             exit 1
           fi
-          echo "✅ Script execution completed with exit code $?"
-          echo "script_output=$(cat script_output.log)" >> $GITHUB_OUTPUT
 
       - name: Check for changes
         id: check_changes
@@ -93,10 +98,8 @@ jobs:
             echo "changes=false" >> $GITHUB_OUTPUT
             echo "⚠️ No ai-chunks files generated"
             if [ -f script_output.log ]; then
-              echo "❌ Script output log:"
+              echo "📋 Script output log:"
               cat script_output.log
-            else
-              echo "❌ No script output log found"
             fi
           fi
           
@@ -130,13 +133,27 @@ jobs:
         run: |
           echo "## 🤖 Split for AI Automation Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.run_script.outputs.script_success }}" == "true" ]; then
+            echo "✅ **Script Status**: Completed successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Script Status**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
           if [ "${{ steps.check_changes.outputs.changes }}" == "true" ]; then
-            echo "✅ **Status**: AI chunks updated successfully" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **Changes**: AI chunks updated" >> $GITHUB_STEP_SUMMARY
             echo "📊 **Files processed**: $(find ai-chunks -name '*.md' -type f 2>/dev/null | wc -l || echo 'Unknown')" >> $GITHUB_STEP_SUMMARY
           else
-            echo "ℹ️ **Status**: No changes detected" >> $GITHUB_STEP_SUMMARY
-            if [ -f script_output.log ]; then
-              echo "❌ **Script Output**: " >> $GITHUB_STEP_SUMMARY
-              cat script_output.log >> $GITHUB_STEP_SUMMARY
-            fi
+            echo "ℹ️ **Changes**: No changes detected" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ -f script_output.log ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "<details>" >> $GITHUB_STEP_SUMMARY
+            echo "<summary>📋 Script Output Log</summary>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 50 script_output.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "</details>" >> $GITHUB_STEP_SUMMARY
           fi

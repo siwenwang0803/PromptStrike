@@ -43,7 +43,16 @@ jobs:
             echo "❌ Error: OPENAI_API_KEY secret is not set"
             exit 1
           fi
-          echo "✅ OPENAI_API_KEY is set"
+          # 检查 key 的基本格式（不暴露完整 key）
+          KEY_PREFIX=$(echo "${{ secrets.OPENAI_API_KEY }}" | cut -c1-7)
+          KEY_LENGTH=${#OPENAI_API_KEY}
+          echo "✅ OPENAI_API_KEY is set (prefix: ${KEY_PREFIX}..., length: ${KEY_LENGTH})"
+          
+          if [ "${{ secrets.OPENAI_API_KEY }}" = "***" ]; then
+            echo "❌ Error: OPENAI_API_KEY appears to be masked placeholder"
+            echo "Please set the actual API key in GitHub Secrets"
+            exit 1
+          fi
           
       - name: Clear old ChromaDB (migration)
         run: |

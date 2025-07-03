@@ -128,13 +128,20 @@ def main():
                 persist_directory=args.db
             )
             chroma_client = chromadb.Client(settings=settings)
-            if not os.getenv("OPENAI_API_KEY"):
+            api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
                 logger.error("Error: OPENAI_API_KEY environment variable not set")
+                return 1
+            
+            # 检查 API key 格式
+            if api_key == "***" or len(api_key) < 10 or not api_key.startswith("sk-"):
+                logger.error(f"Error: OPENAI_API_KEY appears to be invalid. Got: {api_key[:10]}...")
+                logger.error("Please ensure OPENAI_API_KEY is properly set in GitHub Secrets")
                 return 1
             
             # 使用兼容的 embedding function
             embed_fn = embedding_functions.OpenAIEmbeddingFunction(
-                api_key=os.getenv("OPENAI_API_KEY"),
+                api_key=api_key,
                 model_name="text-embedding-ada-002"  # 使用兼容的模型名称
             )
             

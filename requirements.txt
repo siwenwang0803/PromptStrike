@@ -1,0 +1,4 @@
+chromadb==0.4.15
+openai==1.6.0
+tqdm>=4.66.0
+pydantic>=2.5.0

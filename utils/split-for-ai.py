@@ -117,7 +117,7 @@ def main():
         db_path = pathlib.Path(args.db)
         try:
             migrate_or_clear_db(db_path)
-            # 使用新的PersistentClient构造方式
+            # 使用新的PersistentClient构造方式，避免 proxies 参数
             settings = Settings(anonymized_telemetry=False, persist_directory=args.db)
             chroma_client = chromadb.PersistentClient(settings=settings)
             if not os.getenv("OPENAI_API_KEY"):

@@ -11,6 +11,10 @@ on:
       - '.github/**'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   split-for-ai:
     runs-on: ubuntu-latest

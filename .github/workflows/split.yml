@@ -64,9 +64,9 @@ jobs:
           # 禁用OpenAI SDK可能的代理设置
           OPENAI_PROXY: ""
           REQUESTS_CA_BUNDLE: ""
+        run: |
           # 清除可能的环境变量
           unset http_proxy https_proxy no_proxy all_proxy
-        run: |
           echo "🔍 Running split-for-ai script..."
           if ! python utils/split-for-ai.py --repo . --max-lines 800 --min-lines 50 --db .chroma --collection promptstrike 2>&1 | tee script_output.log; then
             echo "❌ Script failed with exit code $?"

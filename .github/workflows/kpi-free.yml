@@ -13,7 +13,8 @@ on:
 
 permissions:
   contents: write
-  issues: read
+  issues: write
+  pull-requests: read
 
 jobs:
   kpi-tracking:
@@ -116,48 +117,50 @@ jobs:
             jq -r '.status.issues' downloads.json >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: Create tracking issue (first run only)
+      - name: Create tracking issue (manual trigger only)
         if: github.event_name == 'workflow_dispatch'
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // Check if tracking issue already exists
-            const issues = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: ['kpi-tracking'],
-              state: 'open'
-            });
-            
-            if (issues.data.length === 0) {
-              // Create new tracking issue
-              const body = "## Sprint S-1 KPI Tracking\n\n" +
-                "This issue tracks our progress toward Sprint S-1 gate review metrics.\n\n" +
-                "### 🎯 Targets\n" +
-                "- **500 Downloads**: PyPI + Docker Hub + GitHub releases\n" +
-                "- **5 GitHub Issues**: Community engagement and feedback\n\n" +
-                "### 📊 Live Metrics\n" +
-                "Metrics are updated every 6 hours via GitHub Actions.\n\n" +
-                "View current metrics:\n" +
-                "- [downloads.json](../blob/main/downloads.json) - Full metrics history\n" +
-                "- [badges.json](../blob/main/badges.json) - Current badge values\n\n" +
-                "### 📈 Progress Visualization\n" +
-                "```\n" +
-                "Downloads: [===========----------] 55% (275/500)\n" +
-                "Issues:    [================-----] 80% (4/5)\n" +
-                "```\n\n" +
-                "### 🔄 Updates\n" +
-                "Automated updates appear in comments below every 6 hours.\n\n" +
-                "***\n" +
-                "*This is an automated tracking issue created by the KPI monitoring workflow.*";
-
-              await github.rest.issues.create({
+            try {
+              // Check if tracking issue already exists
+              const issues = await github.rest.issues.listForRepo({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                title: '📊 Sprint S-1 KPI Tracking Dashboard',
-                body: body,
-                labels: ['kpi-tracking', 'sprint-s1']
+                labels: ['kpi-tracking'],
+                state: 'open'
               });
+              
+              if (issues.data.length === 0) {
+                // Create new tracking issue
+                const response = await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: 'Sprint S-1 KPI Tracking Dashboard',
+                  body: `## Sprint S-1 KPI Tracking
+
+This issue tracks our progress toward Sprint S-1 gate review metrics.
+
+### Targets
+- **500 Downloads**: PyPI + Docker Hub + GitHub releases  
+- **5 GitHub Issues**: Community engagement and feedback
+
+### Live Metrics
+Metrics are updated every 6 hours via GitHub Actions.
+
+View current metrics in [downloads.json](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/downloads.json)
+
+### Updates
+Automated updates appear below every 6 hours.`,
+                  labels: ['kpi-tracking', 'sprint-s1']
+                });
+                console.log('Created tracking issue:', response.data.html_url);
+              } else {
+                console.log('Tracking issue already exists');
+              }
+            } catch (error) {
+              console.log('Error creating issue (this is optional):', error.message);
             }
 
   add-shields-badges:

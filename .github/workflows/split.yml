@@ -128,14 +128,16 @@ jobs:
           git config --local user.name 'github-actions[bot]'
           git config --local user.email '41898282+github-actions[bot]@users.noreply.github.com'
           
-          # Stash any existing changes to avoid conflicts
-          echo "🗂️ Stashing local changes to avoid conflicts..."
+          # Clean up any existing ai-chunks files that might conflict
+          echo "🗂️ Cleaning up potential conflicts..."
+          rm -rf ai-chunks/ || true
           git stash push -m "temp stash for ai-chunks sync" || true
           
           if git ls-remote --exit-code --heads origin ai-chunks-sync >/dev/null 2>&1; then
             echo "📝 Updating existing ai-chunks-sync branch"
             git fetch origin ai-chunks-sync
-            # Force checkout to avoid conflicts
+            # Force checkout to avoid conflicts, removing any local files first
+            git clean -fd || true
             git checkout -B ai-chunks-sync origin/ai-chunks-sync
           else
             echo "🆕 Creating new ai-chunks-sync branch"

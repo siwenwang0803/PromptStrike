@@ -27,12 +27,15 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
-          
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install chromadb>=0.5.0 openai==1.6.0 tqdm  # 显式安装 tqdm
-          pip list  # 验证安装的包
+          # 显式安装所需包，确保安装成功
+          pip install chromadb>=0.5.0 openai==1.6.0 tqdm --no-cache-dir
+          # 验证安装
+          python -c "import tqdm; print('✅ tqdm installed:', tqdm.__version__)"
+          pip list
 
       - name: Check OPENAI_API_KEY
         run: |
@@ -62,6 +65,7 @@ jobs:
           echo "🔍 Running split-for-ai script..."
           if ! python utils/split-for-ai.py --repo . --max-lines 800 --min-lines 50 --db .chroma --collection promptstrike 2>&1 | tee script_output.log; then
             echo "❌ Script failed with exit code $?"
+            cat script_output.log
             exit 1
           fi
           echo "✅ Script execution completed with exit code $?"

@@ -134,27 +134,22 @@ jobs:
               
               if (issues.data.length === 0) {
                 // Create new tracking issue
-                const response = await github.rest.issues.create({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  title: 'Sprint S-1 KPI Tracking Dashboard',
-                  body: `## Sprint S-1 KPI Tracking
-
-This issue tracks our progress toward Sprint S-1 gate review metrics.
-
-### Targets
-- **500 Downloads**: PyPI + Docker Hub + GitHub releases  
-- **5 GitHub Issues**: Community engagement and feedback
-
-### Live Metrics
-Metrics are updated every 6 hours via GitHub Actions.
-
-View current metrics in [downloads.json](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/downloads.json)
-
-### Updates
-Automated updates appear below every 6 hours.`,
-                  labels: ['kpi-tracking', 'sprint-s1']
-                });
+                                 const response = await github.rest.issues.create({
+                   owner: context.repo.owner,
+                   repo: context.repo.repo,
+                   title: 'Sprint S-1 KPI Tracking Dashboard',
+                   body: "## Sprint S-1 KPI Tracking\n\n" +
+                     "This issue tracks our progress toward Sprint S-1 gate review metrics.\n\n" +
+                     "### Targets\n" +
+                     "- **500 Downloads**: PyPI + Docker Hub + GitHub releases\n" +
+                     "- **5 GitHub Issues**: Community engagement and feedback\n\n" +
+                     "### Live Metrics\n" +
+                     "Metrics are updated every 6 hours via GitHub Actions.\n\n" +
+                     "View current metrics in [downloads.json](https://github.com/" + context.repo.owner + "/" + context.repo.repo + "/blob/main/downloads.json)\n\n" +
+                     "### Updates\n" +
+                     "Automated updates appear below every 6 hours.",
+                   labels: ['kpi-tracking', 'sprint-s1']
+                 });
                 console.log('Created tracking issue:', response.data.html_url);
               } else {
                 console.log('Tracking issue already exists');

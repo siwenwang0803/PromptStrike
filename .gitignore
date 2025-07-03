@@ -1,7 +1,5 @@
 .DS_Store
 **/.DS_Store
-.chroma/
-ai-chunks/
 .venv/
 __pycache__/
 

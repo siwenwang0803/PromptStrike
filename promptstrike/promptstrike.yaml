@@ -1,0 +1,27 @@
+attack_packs:
+  default: owasp-llm-top10
+  enabled:
+  - owasp-llm-top10
+compliance:
+  eu_ai_act_enabled: true
+  nist_rmf_enabled: true
+  soc2_enabled: false
+integrations:
+  jira_project: null
+  slack_webhook: null
+  splunk_hec: null
+output:
+  directory: ./reports
+  formats:
+  - json
+  - html
+  retention_days: 30
+scan:
+  max_requests: 100
+  parallel_workers: 1
+  rate_limit_rps: 5.0
+  timeout_seconds: 30
+target:
+  api_key_env: OPENAI_API_KEY
+  endpoint: https://api.openai.com/v1/chat/completions
+  model: gpt-3.5-turbo

@@ -6,6 +6,7 @@ import argparse
 import os
 os.environ["ANONYMIZED_TELEMETRY"] = "False"  # 禁用ChromaDB遥测
 os.environ["CHROMA_DB_IMPL"] = "duckdb+parquet"
+os.environ["CHROMA_API_IMPL"] = "chromadb.api.segment.SegmentAPI"
 import argparse
 import pathlib
 from typing import List, Set

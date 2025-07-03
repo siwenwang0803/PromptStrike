@@ -95,7 +95,8 @@ jobs:
         run: |
           mkdir -p ai-chunks .chroma
           if [ -d "ai-chunks" ] && [ "$(find ai-chunks -name '*.md' 2>/dev/null | wc -l)" -gt 0 ]; then
-            git add ai-chunks/ .chroma/
+            # 使用 -f 强制添加被 gitignore 的文件
+            git add -f ai-chunks/ .chroma/
             if git diff --staged --quiet; then
               echo "changes=false" >> $GITHUB_OUTPUT
               echo "ℹ️ No changes detected"
@@ -128,7 +129,7 @@ jobs:
           fi
           
           git checkout main -- ai-chunks/ .chroma/ 2>/dev/null || true
-          git add ai-chunks/ .chroma/
+          git add -f ai-chunks/ .chroma/
           
           git commit -m "chore: update AI chunks from $(git rev-parse --short HEAD)
 
@@ -165,4 +166,3 @@ jobs:
             tail -n 50 script_output.log >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             echo "</details>" >> $GITHUB_STEP_SUMMARY
-          fi

@@ -1,8 +1,9 @@
 # Optional dependencies for PromptStrike CLI
 # Install with: pip install -r requirements-extras.txt
 
-# AI chunks generation (requires C++11 compiler)
-chromadb==0.4.10
+# AI chunks generation
+# Note: Use newer version that has pre-built wheels for macOS
+chromadb>=0.4.18
 
 # Development dependencies (optional)
 pytest>=7.4.3

@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 """
 split-for-ai.py --repo . --max-lines 800 --min-lines 50 --db .chroma
@@ -17,8 +18,11 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# 设置ChromaDB新架构环境变量
+# 显式禁用代理相关环境变量
 os.environ["ANONYMIZED_TELEMETRY"] = "False"
+os.environ["HTTP_PROXY"] = ""
+os.environ["HTTPS_PROXY"] = ""
+os.environ["NO_PROXY"] = "*"
 
 EMB_SIZE = 1536  # openai ada-002
 
@@ -86,7 +90,7 @@ def main():
     ap.add_argument("--min-lines", type=int, default=50, help="Minimum lines per chunk")
     ap.add_argument("--db", default=".chroma", help="ChromaDB path")
     ap.add_argument("--collection", default="promptstrike", help="Collection name")
-    ap.add_argument("--dry-run", action="store_true", help="Show what would be processed without doing it")
+    ap.add_argument("--dry_run", action="store_true", help="Show what would be processed without doing it")  # 修正参数名
     args = ap.parse_args()
 
     if args.min_lines >= args.max_lines:
@@ -110,14 +114,13 @@ def main():
                  "target", "build", "dist", "out", ".idea", ".vscode", ".vs",
                  "vendor", "third_party"}
 
-    if args.dry_run:
+    if args.dry_run:  # 修正为 args.dry_run
         logger.info("🔍 Dry run mode - showing what would be processed...")
 
     if not args.dry_run:
         db_path = pathlib.Path(args.db)
         try:
             migrate_or_clear_db(db_path)
-            # 使用新的PersistentClient构造方式，避免 proxies 参数
             settings = Settings(anonymized_telemetry=False, persist_directory=args.db)
             chroma_client = chromadb.PersistentClient(settings=settings)
             if not os.getenv("OPENAI_API_KEY"):
@@ -219,4 +222,5 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
+
 

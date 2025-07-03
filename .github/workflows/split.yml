@@ -51,10 +51,10 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANONYMIZED_TELEMETRY: "False"
-          # 移除可能干扰的代理相关环境变量
-          NO_PROXY: "*"
           HTTP_PROXY: ""
           HTTPS_PROXY: ""
+          NO_PROXY: "*"
+          ALL_PROXY: ""
         run: |
           echo "🔍 Running split-for-ai script..."
           python utils/split-for-ai.py \
@@ -62,7 +62,9 @@ jobs:
             --max-lines 800 \
             --min-lines 50 \
             --db .chroma \
-            --collection promptstrike
+            --collection promptstrike \
+            --dry_run  # 修正为 --dry_run
+            # 注意：如果不需要干运行，移除此参数，或改为条件触发
             
       - name: Check for changes
         id: check_changes

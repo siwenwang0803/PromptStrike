@@ -23,6 +23,8 @@ os.environ["ANONYMIZED_TELEMETRY"] = "False"
 os.environ["HTTP_PROXY"] = ""
 os.environ["HTTPS_PROXY"] = ""
 os.environ["NO_PROXY"] = "*"
+os.environ["OPENAI_PROXY"] = ""
+os.environ["REQUESTS_CA_BUNDLE"] = ""
 
 EMB_SIZE = 1536  # openai ada-002
 
@@ -90,7 +92,7 @@ def main():
     ap.add_argument("--min-lines", type=int, default=50, help="Minimum lines per chunk")
     ap.add_argument("--db", default=".chroma", help="ChromaDB path")
     ap.add_argument("--collection", default="promptstrike", help="Collection name")
-    ap.add_argument("--dry_run", action="store_true", help="Show what would be processed without doing it")  # 修正参数名
+    ap.add_argument("--dry_run", action="store_true", help="Show what would be processed without doing it")
     args = ap.parse_args()
 
     if args.min_lines >= args.max_lines:
@@ -114,15 +116,21 @@ def main():
                  "target", "build", "dist", "out", ".idea", ".vscode", ".vs",
                  "vendor", "third_party"}
 
-    if args.dry_run:  # 修正为 args.dry_run
+    if args.dry_run:
         logger.info("🔍 Dry run mode - showing what would be processed...")
 
     if not args.dry_run:
         db_path = pathlib.Path(args.db)
         try:
             migrate_or_clear_db(db_path)
-            settings = Settings(anonymized_telemetry=False, persist_directory=args.db)
-            chroma_client = chromadb.PersistentClient(settings=settings)
+            # 为 chromadb==0.4.10 调整 Settings，移除 proxies
+            settings = Settings(
+                anonymized_telemetry=False,
+                persist_directory=args.db,
+                # 0.4.10 不支持 proxies，显式过滤
+                **{k: v for k, v in os.environ.items() if k.lower() not in ['http_proxy', 'https_proxy', 'no_proxy', 'all_proxy', 'openai_proxy', 'requests_ca_bundle']}
+            )
+            chroma_client = chromadb.Client(settings=settings)  # 0.4.10 使用 Client 而非 PersistentClient
             if not os.getenv("OPENAI_API_KEY"):
                 logger.error("Error: OPENAI_API_KEY environment variable not set")
                 return 1
@@ -222,5 +230,6 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
+
 
 

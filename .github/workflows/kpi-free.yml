@@ -121,11 +121,7 @@ jobs:
             
             if (issues.data.length === 0) {
               // Create new tracking issue
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: '📊 Sprint S-1 KPI Tracking Dashboard',
-                body: `## Sprint S-1 KPI Tracking
+              const body = `## Sprint S-1 KPI Tracking
                 
 This issue tracks our progress toward Sprint S-1 gate review metrics.
 
@@ -150,7 +146,13 @@ Issues:    [================-----] 80% (4/5)
 Automated updates appear in comments below every 6 hours.
 
 ---
-*This is an automated tracking issue created by the KPI monitoring workflow.*`,
+*This is an automated tracking issue created by the KPI monitoring workflow.*`;
+
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: '📊 Sprint S-1 KPI Tracking Dashboard',
+                body: body,
                 labels: ['kpi-tracking', 'sprint-s1']
               });
             }

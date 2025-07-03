@@ -134,14 +134,26 @@ def main():
         db_path = pathlib.Path(args.db)
         try:
             migrate_or_clear_db(db_path)
-            # 为 chromadb==0.4.10 创建简单的 Settings，只传入支持的参数
-            # 彻底禁用遥测以避免 CI 错误
-            settings = Settings(
-                anonymized_telemetry=False,
-                allow_reset=True,
-                persist_directory=args.db
-            )
-            chroma_client = chromadb.Client(settings=settings)
+            # Create ChromaDB client with version-compatible settings
+            # For ChromaDB 0.4.18+ and 1.0+
+            try:
+                # Try newer ChromaDB API (1.0+)
+                import chromadb.config
+                settings = chromadb.config.Settings(
+                    anonymized_telemetry=False,
+                    allow_reset=True,
+                    persist_directory=args.db,
+                    is_persistent=True
+                )
+                chroma_client = chromadb.PersistentClient(path=args.db, settings=settings)
+            except (AttributeError, ImportError):
+                # Fallback for ChromaDB 0.4.x
+                settings = Settings(
+                    anonymized_telemetry=False,
+                    allow_reset=True,
+                    persist_directory=args.db
+                )
+                chroma_client = chromadb.Client(settings=settings)
             api_key = os.getenv("OPENAI_API_KEY")
             if not api_key:
                 logger.error("Error: OPENAI_API_KEY environment variable not set")

@@ -196,6 +196,7 @@ def main():
             if chunks:
                 logger.info(f"📄 Would process: {rel} ({len(text)} lines → {len(chunks)} chunks)")
                 total_chunks += len(chunks)
+                processed_files += 1
             continue
 
         for idx, chunk in enumerate(chunks):

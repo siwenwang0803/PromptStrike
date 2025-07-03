@@ -123,18 +123,27 @@ jobs:
           git config --local user.name 'github-actions[bot]'
           git config --local user.email '41898282+github-actions[bot]@users.noreply.github.com'
           
+          # Stash any existing changes to avoid conflicts
+          echo "🗂️ Stashing local changes to avoid conflicts..."
+          git stash push -m "temp stash for ai-chunks sync" || true
+          
           if git ls-remote --exit-code --heads origin ai-chunks-sync >/dev/null 2>&1; then
             echo "📝 Updating existing ai-chunks-sync branch"
             git fetch origin ai-chunks-sync
+            # Force checkout to avoid conflicts
             git checkout -B ai-chunks-sync origin/ai-chunks-sync
           else
             echo "🆕 Creating new ai-chunks-sync branch"
             git checkout -b ai-chunks-sync
           fi
           
-          # 只从 main 分支获取 ai-chunks
+          # Copy ai-chunks from main branch, overwriting any existing content
+          echo "📋 Copying ai-chunks from main branch..."
           git checkout main -- ai-chunks/ 2>/dev/null || true
-          git add -f ai-chunks/* || true
+          
+          # Ensure ai-chunks directory exists and add all files
+          mkdir -p ai-chunks
+          git add -f ai-chunks/ || true
           
           git commit -m "chore: update AI chunks from $(git rev-parse --short HEAD)
 

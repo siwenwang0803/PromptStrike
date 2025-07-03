@@ -1,23 +1,26 @@
-# PromptStrike – 12‑Month Roadmap  <!-- cid‑roadmap‑v1 -->
+# PromptStrike – 18‑Month Roadmap (v2)   <!-- cid‑roadmap‑v2 -->
 
-## Gantt (ASCII view)
-Jul‑25 |—MVP CLI—>|  Aug‑25 |—Guardrail α—>|  Sep |—Pilot $—>| Oct |—SaaS α—>| Dec |—NIST β—>| Feb‑26 |—SDK+SOC2—>| Apr |—FinOps γ—>| Jun‑26
-        ↑T0        ↑S2                       ↑S3                ↑S5                     ↑S7                      ↑S9
+## Gantt (high‑level)
 
-## Milestone Table
+Jul‑25 |—CLI OSS—>| Pilot‑0 |—>| Oct‑25 |—Guardrail β—>| Jan‑26 |—NIST+FinTrials—>| Apr‑26 |—SDK+SOC2—>| Aug‑26 |—Enterprise GA—>| Dec‑26
 
-| Sprint (2 wks) | Window | Deliverable | Owner | Exit Criteria |
-|----------------|--------|-------------|-------|---------------|
-| **S‑1** | Jul 08–Jul 21 | Dockerised CLI + PDF/JSON report + OSS Lite attack‑pack | Sonnet + o3 | 500 downloads / 5 GH issues closed |
-| **S‑2** | Jul 22–Aug 04 | **Guardrail Side‑car α** (k8s, Python SDK) | GPT‑4.5 | Live in 1 design‑partner staging env |
-| **S‑3** | Aug 05–Aug 18 | Pilot template, Stripe checkout, $15 k revenue | o3 + Perplexity | ≥3 paid pilots signed |
-| **S‑4** | Aug 19–Sep 01 | SaaS Dashboard α (Next.js+Supabase) | GPT‑4.5 + Sonnet | 5 tenants scanning weekly |
-| **S‑5** | Sep 02–Sep 15 | **NIST AI‑RMF & EU AI‑Act mapping β** | o3‑pro + gork | Report accepted by 1 auditor |
-| **S‑6** | Sep 16–Sep 29 | Attack‑Pack Automation (cron + leaderboard) | gork + Sonnet | Weekly auto‑PR merged |
-| **S‑7** | Sep 30–Oct 13 | Node SDK + SOC 2 Gap‑analysis | GPT‑4.5 + o3‑pro | Gap list ≤12 items |
-| **S‑8** | Oct 14–Oct 27 | Enterprise MSA + Pricing page | o3‑pro | First annual license LOI |
-| **S‑9** | Oct 28–Nov 10 | **FinOps Cost‑Storm Detector γ** | gork + Sonnet | Detect ≥1 cost anomaly in pilot |
-| **S‑10‑12** | Nov‑25 – Jan‑26 | Growth loops, attack‑pack marketplace, YC deck | all | ARR >$20 k & MoM > 20 % |
+## Milestones & KPI
 
-> **KPIs to track:** downloads, paid pilots, active tenants, ARR, attack coverage %, auditor acceptance.
+| Phase | Sprint Window | Deliverable | Owner | Exit KPI |
+|-------|---------------|-------------|-------|----------|
+| **S‑1** | **Jul 08 – Jul 21** | CLI v0.1 (Docker, JSON/PDF) + Lite attack‑pack (10 %) + Release KPI tracker | Sonnet (+o3) | 1 k downloads OR 150 ★ |
+| **Pilot‑0** | Aug 01 – Sep 15 | *1 FinTech* 深度 Pentest (Python stack) | Sonnet + o3‑pro | 收入 ≥ $3 k；交付 PDF |
+| **S‑2** | Oct 01 – Oct 31 | Guardrail Side‑car **β** (Python SDK + k8s) | Sonnet | 1 客 staging 运行 |
+| **S‑3** | Nov 01 – Jan 15 | Continuous scan, 2 Starter 客户 | GPT‑4.5 + Sonnet | MRR ≥ $2 k |
+| **S‑4** | Feb 01 – Mar 31 | NIST AI‑RMF / EU AI Act 映射 **β** | o3‑pro + gork | 1 Auditor 接受 |
+| **S‑5** | Apr 01 – May 31 | Node SDK + SOC 2 Type‑I | GPT‑4.5 + o3‑pro | ARR ≥ $15 k |
+| **S‑6** | Jun 01 – Jul 31 | Monthly Attack‑Pack 自动化 | gork | 验证周期 ≤72 h |
+| **S‑7** | Aug 01 – Sep 30 | Enterprise GA (Air‑gapped + RBAC) | Sonnet + Opus | 首个 5 位数合同 |
+| **S‑8** | Oct 01 – Dec 31 | Java SDK + FinOps Cost‑Storm γ | gork + Sonnet | MRR ≥ $40 k |
+
+### Gatekeeper Check (26 周)
+
+> 若到 **2026‑01‑15** 付费客户 < 10 或 ARR < $8 k，则评估“开源核心 + 咨询”方案。
+
+
 

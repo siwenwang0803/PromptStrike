@@ -49,6 +49,8 @@ jobs:
       - name: Run split-for-ai script
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANONYMIZED_TELEMETRY: "False"
+          CHROMA_DB_IMPL: "duckdb+parquet"
         run: |
           echo "🔍 Running split-for-ai script..."
           python utils/split-for-ai.py \
@@ -61,14 +63,25 @@ jobs:
       - name: Check for changes
         id: check_changes
         run: |
-          git add ai-chunks/ .chroma/
-          if git diff --staged --quiet; then
-            echo "changes=false" >> $GITHUB_OUTPUT
-            echo "ℹ️ No changes detected in ai-chunks"
-          else
-            echo "changes=true" >> $GITHUB_OUTPUT
-            echo "✅ Changes detected in ai-chunks"
-          fi
+          mkdir -p ai-chunks .chroma
+
+          if [ -d "ai-chunks" ] && [ "$(find ai-chunks -name '*.md' | wc -l)" -gt 0 ]; then
+             git add ai-chunks/ .chroma/
+             if git diff --staged --quiet; then
+             echo "changes=false" >> $GITHUB_OUTPUT
+             echo "ℹ️ No changes detected"
+             else
+              echo "changes=true" >> $GITHUB_OUTPUT
+             echo "✅ Changes detected in ai-chunks"
+              fi
+             else
+             echo "changes=false" >> $GITHUB_OUTPUT
+             echo "⚠️ No ai-chunks files generated"
+             fi
+
+          
+
+         
           
       - name: Create/update ai-chunks-sync branch
         if: steps.check_changes.outputs.changes == 'true'

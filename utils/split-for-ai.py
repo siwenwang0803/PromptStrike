@@ -4,6 +4,9 @@ split-for-ai.py --repo . --max-lines 800 --min-lines 50 --db .chroma
 """
 import argparse
 import os
+os.environ["ANONYMIZED_TELEMETRY"] = "False"  # 禁用ChromaDB遥测
+os.environ["CHROMA_DB_IMPL"] = "duckdb+parquet"
+import argparse
 import pathlib
 from typing import List, Set
 from tqdm import tqdm
@@ -22,7 +25,7 @@ def chunk_lines(lines: List[str], max_lines: int = 800, min_lines: int = 50):
 def should_skip_file(path: pathlib.Path, skip_dirs: Set[str], skip_suffixes: Set[str]) -> bool:
     """Check if file should be skipped based on path or extension."""
     # Skip based on directory parts
-    if any(part in skip_dirs for part in path.parts):
+    if any(part in skip_dirs for part in path.parts) or '.venv' in str(path):
         return True
     
     # Skip based on file extension
@@ -214,7 +217,7 @@ def main():
                 )
             except Exception as e:
                 print(f"⚠️ ChromaDB add failed {doc_id}: {e}")
-                continue
+                
 
             # Save to file for inspection
             out_dir = repo / "ai-chunks" / rel.parent

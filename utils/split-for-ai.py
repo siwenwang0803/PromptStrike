@@ -127,16 +127,23 @@ def main():
                 anonymized_telemetry=False,
                 persist_directory=args.db
             )
-            chroma_client = chromadb.Client(settings=settings)  # 0.4.10 使用 Client 而非 PersistentClient
+            chroma_client = chromadb.Client(settings=settings)
             if not os.getenv("OPENAI_API_KEY"):
                 logger.error("Error: OPENAI_API_KEY environment variable not set")
                 return 1
+            
+            # 使用兼容的 embedding function
             embed_fn = embedding_functions.OpenAIEmbeddingFunction(
                 api_key=os.getenv("OPENAI_API_KEY"),
-                model_name="text-embedding-3-small",
+                model_name="text-embedding-ada-002"  # 使用兼容的模型名称
             )
+            
             try:
-                coll = chroma_client.get_collection(name=args.collection)
+                # 获取现有 collection，注意要传入 embedding_function
+                coll = chroma_client.get_collection(
+                    name=args.collection,
+                    embedding_function=embed_fn
+                )
                 logger.info(f"✅ Using existing collection: {args.collection}")
             except Exception:
                 coll = chroma_client.create_collection(
@@ -146,6 +153,8 @@ def main():
                 logger.info(f"✅ Created new collection: {args.collection}")
         except Exception as e:
             logger.error(f"Error setting up ChromaDB: {e}")
+            import traceback
+            traceback.print_exc()
             return 1
 
     processed_files = 0

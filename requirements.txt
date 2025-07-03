@@ -1,5 +1,6 @@
 chromadb==0.4.10
-openai==1.6.0
+openai==0.28.1
 tqdm>=4.66.0
 pydantic<2.0,>=1.9
 pathlib-mate
+requests>=2.20

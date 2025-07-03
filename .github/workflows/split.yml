@@ -95,9 +95,8 @@ jobs:
         run: |
           mkdir -p ai-chunks .chroma
           if [ -d "ai-chunks" ] && [ "$(find ai-chunks -name '*.md' 2>/dev/null | wc -l)" -gt 0 ]; then
-            # 使用 -f 强制添加被 gitignore 的文件，并忽略警告
-            git config advice.addIgnoredFile false
-            git add -f ai-chunks/ .chroma/ || true
+            # 只添加 ai-chunks 中的文件，跳过 .chroma
+            git add -f ai-chunks/* || true
             if git diff --staged --quiet; then
               echo "changes=false" >> $GITHUB_OUTPUT
               echo "ℹ️ No changes detected"
@@ -129,9 +128,9 @@ jobs:
             git checkout -b ai-chunks-sync
           fi
           
-          git config advice.addIgnoredFile false
-          git checkout main -- ai-chunks/ .chroma/ 2>/dev/null || true
-          git add -f ai-chunks/ .chroma/ || true
+          # 只从 main 分支获取 ai-chunks
+          git checkout main -- ai-chunks/ 2>/dev/null || true
+          git add -f ai-chunks/* || true
           
           git commit -m "chore: update AI chunks from $(git rev-parse --short HEAD)
 

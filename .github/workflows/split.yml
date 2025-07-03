@@ -69,7 +69,12 @@ jobs:
         id: run_script
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Disable all telemetry to avoid CI errors
           ANONYMIZED_TELEMETRY: "False"
+          CHROMA_TELEMETRY: "False"
+          POSTHOG_DISABLED: "True"
+          DO_NOT_TRACK: "1"
+          DISABLE_TELEMETRY: "1"
           # 清除所有代理相关环境变量
           HTTP_PROXY: ""
           HTTPS_PROXY: ""

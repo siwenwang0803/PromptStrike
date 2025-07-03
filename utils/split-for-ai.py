@@ -8,14 +8,26 @@ import shutil
 import pathlib
 from typing import List, Set
 from tqdm import tqdm
+
+# Disable telemetry before importing ChromaDB to avoid CI errors
+os.environ["ANONYMIZED_TELEMETRY"] = "False"
+os.environ["CHROMA_TELEMETRY"] = "False" 
+os.environ["POSTHOG_DISABLED"] = "True"
+os.environ["DO_NOT_TRACK"] = "1"
+os.environ["DISABLE_TELEMETRY"] = "1"
+
 import chromadb
 from chromadb.config import Settings
 from chromadb.utils import embedding_functions
 import logging
 
-# 配置日志
+# 配置日志，但抑制 telemetry 相关的错误
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+# 抑制 ChromaDB 和 PostHog 的 telemetry 错误日志
+logging.getLogger("chromadb.telemetry").setLevel(logging.CRITICAL)
+logging.getLogger("posthog").setLevel(logging.CRITICAL)
 
 # 显式禁用代理相关环境变量
 os.environ["ANONYMIZED_TELEMETRY"] = "False"
@@ -123,8 +135,10 @@ def main():
         try:
             migrate_or_clear_db(db_path)
             # 为 chromadb==0.4.10 创建简单的 Settings，只传入支持的参数
+            # 彻底禁用遥测以避免 CI 错误
             settings = Settings(
                 anonymized_telemetry=False,
+                allow_reset=True,
                 persist_directory=args.db
             )
             chroma_client = chromadb.Client(settings=settings)

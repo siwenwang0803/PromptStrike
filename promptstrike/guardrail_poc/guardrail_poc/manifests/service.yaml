@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: promptstrike-guardrail-demo
+  namespace: promptstrike-guardrail
+  labels:
+    app.kubernetes.io/name: promptstrike-guardrail-demo
+    app.kubernetes.io/component: demo-application
+    app.kubernetes.io/part-of: promptstrike
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  - port: 8001
+    targetPort: 8001
+    protocol: TCP
+    name: guardrail
+  selector:
+    app.kubernetes.io/name: promptstrike-guardrail-demo
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: promptstrike-guardrail-demo-nodeport
+  namespace: promptstrike-guardrail
+  labels:
+    app.kubernetes.io/name: promptstrike-guardrail-demo
+    app.kubernetes.io/component: demo-application
+    app.kubernetes.io/part-of: promptstrike
+spec:
+  type: NodePort
+  ports:
+  - port: 8000
+    targetPort: 8000
+    nodePort: 30000
+    protocol: TCP
+    name: http
+  - port: 8001
+    targetPort: 8001
+    nodePort: 30001
+    protocol: TCP
+    name: guardrail
+  selector:
+    app.kubernetes.io/name: promptstrike-guardrail-demo

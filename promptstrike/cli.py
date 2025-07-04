@@ -87,6 +87,14 @@ app = typer.Typer(
     add_completion=False,
 )
 
+# Add community feedback management commands
+try:
+    from .community.cli_integration import community_app
+    app.add_typer(community_app, name="community")
+except ImportError:
+    # Community module not available - continue without it
+    pass
+
 console = Console()
 
 @app.command()
@@ -481,6 +489,254 @@ def list_attacks(
         
         stats = " | ".join([f"{severity.title()}: {count}" for severity, count in by_severity.items()])
         rprint(f"   [dim]Statistics: {stats}[/dim]")
+
+
+@app.command()
+def report(
+    scan_result_path: str = typer.Argument(..., help="Path to scan result JSON file"),
+    format: str = typer.Option("comprehensive", "--format", "-f", help="Report format/template to use"),
+    framework: str = typer.Option("multi", "--framework", help="Compliance framework (nist_ai_rmf, eu_ai_act, iso_27001, soc2, gdpr, ccpa, pci_dss, hipaa, ffiec, nydfs_500, or 'multi' for all)"),
+    output: str = typer.Option("", "--output", "-o", help="Output file path (optional)"),
+    export_format: str = typer.Option("json", "--export", "-e", help="Export format (json, yaml, csv)")
+) -> None:
+    """🔍 Generate compliance reports from scan results"""
+    
+    try:
+        from .compliance import ComplianceReportGenerator
+        from .models.scan_result import ScanResult
+        import json
+        from pathlib import Path
+        
+        # Load scan result
+        try:
+            with open(scan_result_path, 'r') as f:
+                scan_data = json.load(f)
+            scan_result = ScanResult(**scan_data)
+        except Exception as e:
+            rprint(f"[red]❌ Error loading scan result: {e}[/red]")
+            raise typer.Exit(1)
+        
+        # Create report generator
+        generator = ComplianceReportGenerator(scan_result)
+        
+        rprint(f"[blue]📊 Generating compliance report...[/blue]")
+        rprint(f"   Framework: {framework}")
+        rprint(f"   Format: {format}")
+        
+        # Generate report based on framework selection
+        if framework == "multi":
+            report = generator.generate_multi_framework_report(template=format)
+            rprint(f"[green]✅ Multi-framework compliance report generated[/green]")
+        else:
+            try:
+                report = generator.generate_framework_report(framework, template=format)
+                rprint(f"[green]✅ {framework.upper()} compliance report generated[/green]")
+            except ValueError as e:
+                rprint(f"[red]❌ Error: {e}[/red]")
+                rprint("[yellow]Available frameworks: nist_ai_rmf, eu_ai_act, iso_27001, soc2, gdpr, ccpa, pci_dss, hipaa, ffiec, nydfs_500[/yellow]")
+                raise typer.Exit(1)
+        
+        # Display summary
+        if framework == "multi":
+            total_frameworks = len(report.get("framework_reports", {}))
+            avg_score = report.get("cross_framework_analysis", {}).get("average_compliance_score", 0.0)
+            rprint(f"   Frameworks assessed: {total_frameworks}")
+            rprint(f"   Average compliance score: {avg_score:.2%}")
+        else:
+            compliance_score = report.get("compliance_score", 0.0)
+            vulnerabilities = report.get("vulnerabilities_found", 0)
+            rprint(f"   Compliance score: {compliance_score:.2%}")
+            rprint(f"   Vulnerabilities found: {vulnerabilities}")
+        
+        # Export to file if specified
+        if output:
+            output_path = Path(output)
+            generator.export_to_file(report, output_path, export_format)
+            rprint(f"[green]💾 Report exported to: {output_path}[/green]")
+        else:
+            # Display key findings
+            rprint("\\n[bold]Key Findings:[/bold]")
+            if framework == "multi":
+                for fw, fw_report in report.get("framework_reports", {}).items():
+                    score = fw_report.get("compliance_score", 0.0)
+                    color = "green" if score >= 0.8 else "yellow" if score >= 0.6 else "red"
+                    rprint(f"   {fw.upper()}: [{color}]{score:.1%}[/{color}]")
+            else:
+                recommendations = report.get("recommendations", [])[:3]  # Show top 3
+                for i, rec in enumerate(recommendations, 1):
+                    priority = rec.get("priority", "MEDIUM")
+                    action = rec.get("action", "No action specified")
+                    color = "red" if priority == "HIGH" else "yellow"
+                    rprint(f"   {i}. [{color}]{priority}[/{color}]: {action[:60]}...")
+        
+    except ImportError:
+        rprint("[red]❌ Compliance module not available[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def pci_dss(
+    scan_result_path: str = typer.Argument(..., help="Path to scan result JSON file"),
+    merchant_level: str = typer.Option("level_1", "--level", "-l", help="Merchant level (level_1, level_2, level_3, level_4, service_provider)"),
+    version: str = typer.Option("4.0", "--version", "-v", help="PCI DSS version (3.2.1, 4.0)"),
+    output: str = typer.Option("", "--output", "-o", help="Output file path for detailed report"),
+    executive_summary: bool = typer.Option(False, "--summary", "-s", help="Generate executive summary"),
+    export_format: str = typer.Option("json", "--export", "-e", help="Export format (json, yaml, pdf)")
+) -> None:
+    """💳 Generate PCI DSS compliance report for payment card industry"""
+    
+    try:
+        from .compliance.report_generator import ComplianceReportGenerator
+        from .compliance.pci_dss_framework import PCIDSSLevel, PCIDSSVersion
+        from .models.scan_result import ScanResult
+        import json
+        from pathlib import Path
+        
+        # Map CLI options to enums
+        level_mapping = {
+            "level_1": PCIDSSLevel.LEVEL_1,
+            "level_2": PCIDSSLevel.LEVEL_2,
+            "level_3": PCIDSSLevel.LEVEL_3,
+            "level_4": PCIDSSLevel.LEVEL_4,
+            "service_provider": PCIDSSLevel.SERVICE_PROVIDER
+        }
+        
+        version_mapping = {
+            "3.2.1": PCIDSSVersion.V3_2_1,
+            "4.0": PCIDSSVersion.V4_0
+        }
+        
+        # Validate inputs
+        if merchant_level not in level_mapping:
+            rprint(f"[red]❌ Invalid merchant level: {merchant_level}[/red]")
+            rprint("[yellow]Available levels: level_1, level_2, level_3, level_4, service_provider[/yellow]")
+            raise typer.Exit(1)
+        
+        if version not in version_mapping:
+            rprint(f"[red]❌ Invalid PCI DSS version: {version}[/red]")
+            rprint("[yellow]Available versions: 3.2.1, 4.0[/yellow]")
+            raise typer.Exit(1)
+        
+        # Load scan result
+        try:
+            with open(scan_result_path, 'r') as f:
+                scan_data = json.load(f)
+            scan_result = ScanResult(**scan_data)
+        except Exception as e:
+            rprint(f"[red]❌ Error loading scan result: {e}[/red]")
+            raise typer.Exit(1)
+        
+        # Create report generator
+        generator = ComplianceReportGenerator(scan_result)
+        
+        rprint(f"[blue]💳 Generating PCI DSS compliance report...[/blue]")
+        rprint(f"   Merchant Level: {merchant_level.replace('_', ' ').title()}")
+        rprint(f"   PCI DSS Version: {version}")
+        rprint(f"   Target System: {scan_result.target}")
+        
+        # Generate PCI DSS report
+        pci_report = generator.generate_pci_dss_report(
+            merchant_level=level_mapping[merchant_level],
+            version=version_mapping[version],
+            include_detailed_findings=True
+        )
+        
+        # Display compliance summary
+        compliance_pct = pci_report.get("compliance_percentage", 0)
+        overall_status = pci_report.get("overall_compliance_status", "UNKNOWN")
+        tested_controls = pci_report.get("tested_controls", 0)
+        compliant_controls = pci_report.get("compliant_controls", 0)
+        
+        # Color code compliance status
+        if overall_status == "COMPLIANT":
+            status_color = "green"
+        elif overall_status == "MOSTLY_COMPLIANT":
+            status_color = "yellow"
+        else:
+            status_color = "red"
+        
+        rprint(f"\\n[bold]PCI DSS Compliance Assessment Results:[/bold]")
+        rprint(f"   Overall Status: [{status_color}]{overall_status}[/{status_color}]")
+        rprint(f"   Compliance Score: [{status_color}]{compliance_pct:.1f}%[/{status_color}]")
+        rprint(f"   Controls Tested: {tested_controls}")
+        rprint(f"   Compliant Controls: {compliant_controls}")
+        rprint(f"   Non-Compliant Controls: {tested_controls - compliant_controls}")
+        
+        # Show key findings
+        detailed_findings = pci_report.get("detailed_findings", [])
+        critical_findings = [f for f in detailed_findings if f.get("remediation_priority") == "IMMEDIATE"]
+        high_findings = [f for f in detailed_findings if f.get("remediation_priority") == "HIGH"]
+        
+        if critical_findings:
+            rprint(f"\\n[bold red]🚨 Critical Findings ({len(critical_findings)}):[/bold red]")
+            for finding in critical_findings[:3]:  # Show top 3
+                rprint(f"   • {finding.get('description', 'No description')[:60]}...")
+        
+        if high_findings:
+            rprint(f"\\n[bold yellow]⚠️  High Priority Findings ({len(high_findings)}):[/bold yellow]")
+            for finding in high_findings[:3]:  # Show top 3
+                rprint(f"   • {finding.get('description', 'No description')[:60]}...")
+        
+        # Show business impact
+        if executive_summary:
+            exec_summary = generator.generate_pci_dss_executive_summary(pci_report)
+            business_impact = exec_summary.get("business_impact", {})
+            
+            rprint(f"\\n[bold]Business Impact Assessment:[/bold]")
+            rprint(f"   Compliance Risk: {business_impact.get('compliance_risk', 'UNKNOWN')}")
+            rprint(f"   Operational Impact: {business_impact.get('operational_impact', 'Unknown')}")
+            rprint(f"   Financial Implications: {business_impact.get('financial_implications', 'Unknown')}")
+        
+        # Show top recommendations
+        recommendations = pci_report.get("recommendations", [])
+        if recommendations:
+            rprint(f"\\n[bold]Top Recommendations:[/bold]")
+            for i, rec in enumerate(recommendations[:3], 1):
+                rprint(f"   {i}. {rec[:70]}...")
+        
+        # Show remediation timeline
+        roadmap = pci_report.get("remediation_roadmap", {})
+        if roadmap:
+            timeframe = roadmap.get("overall_timeframe", "Unknown")
+            rprint(f"\\n[bold]Remediation Timeline:[/bold] {timeframe}")
+            
+            phases = roadmap.get("phases", {})
+            for phase_name, phase_info in phases.items():
+                phase_title = phase_name.replace("_", " ").title()
+                duration = phase_info.get("duration", "Unknown")
+                focus = phase_info.get("focus", "No focus defined")
+                rprint(f"   • {phase_title} ({duration}): {focus}")
+        
+        # Export detailed report if requested
+        if output:
+            output_path = Path(output)
+            if executive_summary:
+                # Export executive summary
+                exec_summary = generator.generate_pci_dss_executive_summary(pci_report)
+                generator.export_to_file(exec_summary, output_path, export_format)
+                rprint(f"[green]💾 Executive summary exported to: {output_path}[/green]")
+            else:
+                # Export full report
+                generator.export_to_file(pci_report, output_path, export_format)
+                rprint(f"[green]💾 Detailed PCI DSS report exported to: {output_path}[/green]")
+        
+        # Show compliance status exit code
+        if overall_status == "NON_COMPLIANT":
+            rprint(f"\\n[red]❌ PCI DSS compliance issues detected[/red]")
+            raise typer.Exit(3)  # Compliance failure exit code
+        elif overall_status == "MOSTLY_COMPLIANT":
+            rprint(f"\\n[yellow]⚠️  PCI DSS compliance improvements needed[/yellow]")
+            raise typer.Exit(2)  # Partial compliance exit code
+        else:
+            rprint(f"\\n[green]✅ PCI DSS compliance requirements met[/green]")
+            raise typer.Exit(0)  # Success exit code
+        
+    except ImportError as e:
+        rprint(f"[red]❌ PCI DSS compliance module not available: {e}[/red]")
+        raise typer.Exit(1)
+    except Exception as e:
+        rprint(f"[red]❌ Error generating PCI DSS report: {e}[/red]")
+        raise typer.Exit(1)
 
 
 @app.command()

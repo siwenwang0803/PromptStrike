@@ -1,0 +1,28 @@
+{{- if .Values.namespace.create }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace.name }}
+  labels:
+    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "promptstrike-sidecar.securityLabels" . | nindent 4 }}
+    {{- with .Values.namespace.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.opa.enabled }}
+    # OPA Gatekeeper namespace annotations
+    admission.gatekeeper.sh/ignore: "false"
+    gatekeeper.sh/mutation: "enabled"
+    gatekeeper.sh/validation: "enabled"
+    {{- end }}
+    
+    # Pod Security Standards
+    pod-security.kubernetes.io/enforce: "restricted"
+    pod-security.kubernetes.io/audit: "restricted"
+    pod-security.kubernetes.io/warn: "restricted"
+    
+    {{- with .Values.namespace.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{- end }}

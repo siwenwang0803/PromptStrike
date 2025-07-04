@@ -1,0 +1,18 @@
+{{- if .Values.limitRange.enabled }}
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: {{ include "promptstrike-sidecar.fullname" . }}-limits
+  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  labels:
+    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    app.kubernetes.io/component: resource-management
+  annotations:
+    description: "Default resource limits and requests for PromptStrike guardrail sidecar"
+    {{- with .Values.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  limits:
+    {{- toYaml .Values.limitRange.limits | nindent 4 }}
+{{- end }}

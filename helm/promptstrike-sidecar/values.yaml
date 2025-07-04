@@ -1,0 +1,626 @@
+# Default values for promptstrike-sidecar
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Global configuration
+global:
+  # Environment: development, staging, production
+  environment: production
+  # Image registry
+  imageRegistry: "docker.io"
+  # Image pull policy
+  imagePullPolicy: IfNotPresent
+  # Security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
+  # Resource scaling per environment
+  resourceScaling:
+    development:
+      sidecar:
+        requests:
+          cpu: 20m
+          memory: 32Mi
+        limits:
+          cpu: 100m
+          memory: 128Mi
+      app:
+        requests:
+          cpu: 10m
+          memory: 16Mi
+        limits:
+          cpu: 50m
+          memory: 64Mi
+    staging:
+      sidecar:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 200m
+          memory: 256Mi
+      app:
+        requests:
+          cpu: 25m
+          memory: 32Mi
+        limits:
+          cpu: 100m
+          memory: 128Mi
+    production:
+      sidecar:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      app:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 200m
+          memory: 256Mi
+
+# Sidecar configuration
+sidecar:
+  enabled: true
+  image:
+    repository: promptstrike/guardrail-sidecar
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  
+  # Resource limits and requests
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+      ephemeral-storage: 100Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+      ephemeral-storage: 500Mi
+  
+  # Port configuration
+  port: 8001
+  
+  # Environment variables
+  env:
+    LOG_LEVEL: "info"
+    GUARDRAIL_SAMPLING_RATE: "0.01"
+    GUARDRAIL_ADAPTIVE_SAMPLING: "true"
+    GUARDRAIL_COST_GUARD_ENABLED: "true"
+    GUARDRAIL_ASYNC_ANALYSIS: "true"
+    GUARDRAIL_DAILY_BUDGET: "1000.0"
+    PROMPTSTRIKE_OUTPUT_DIR: "/var/reports"
+    # Adaptive sampling configuration
+    GUARDRAIL_HIGH_RISK_SAMPLING_RATE: "0.1"
+    GUARDRAIL_LOW_RISK_SAMPLING_RATE: "0.005"
+    GUARDRAIL_RISK_THRESHOLD_HIGH: "7.0"
+    GUARDRAIL_RISK_THRESHOLD_LOW: "3.0"
+  
+  # Health checks
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8001
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 5
+    successThreshold: 1
+  
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 8001
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+
+# Main application configuration
+app:
+  enabled: true
+  image:
+    repository: promptstrike/demo-app
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  
+  # Resource limits and requests  
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+      ephemeral-storage: 200Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+      ephemeral-storage: 1Gi
+  
+  # Port configuration
+  port: 8000
+  
+  # Environment variables
+  env:
+    APP_ENV: "production"
+    LOG_LEVEL: "info"
+  
+  # Health checks
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 5
+    successThreshold: 1
+  
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+  
+  # Security context
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+
+# Service configuration
+service:
+  type: ClusterIP
+  app:
+    port: 8000
+    targetPort: 8000
+  sidecar:
+    port: 8001
+    targetPort: 8001
+
+# ServiceAccount configuration
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  name: ""
+
+# Pod Security Policy / Pod Security Standards
+podSecurityPolicy:
+  enabled: true
+  
+# Network Policies
+networkPolicy:
+  enabled: true
+  ingress:
+    enabled: true
+  egress:
+    enabled: true
+    
+# Open Policy Agent (OPA) Gatekeeper
+opa:
+  enabled: true
+  # Resource Quotas enforcement
+  resourceQuotas:
+    enabled: true
+    
+  # Security policies
+  securityPolicies:
+    # Enforce resource limits
+    enforceResourceLimits: true
+    # Enforce security contexts
+    enforceSecurityContext: true
+    # Disallow privileged containers
+    disallowPrivileged: true
+    # Require non-root containers
+    requireNonRoot: true
+    # Enforce read-only root filesystem
+    enforceReadOnlyRootFS: true
+
+# Resource Quotas
+resourceQuota:
+  enabled: true
+  hard:
+    requests.cpu: "1"
+    requests.memory: "1Gi"
+    requests.ephemeral-storage: "5Gi"
+    limits.cpu: "2"
+    limits.memory: "2Gi"
+    limits.ephemeral-storage: "10Gi"
+    persistentvolumeclaims: "0"
+    pods: "10"
+
+# Limit Ranges
+limitRange:
+  enabled: true
+  limits:
+    - type: "Container"
+      default:
+        cpu: "200m"
+        memory: "256Mi"
+        ephemeral-storage: "500Mi"
+      defaultRequest:
+        cpu: "50m"
+        memory: "64Mi"
+        ephemeral-storage: "100Mi"
+      max:
+        cpu: "1"
+        memory: "1Gi"
+        ephemeral-storage: "2Gi"
+      min:
+        cpu: "10m"
+        memory: "32Mi"
+        ephemeral-storage: "50Mi"
+
+# Horizontal Pod Autoscaler
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+  # Custom metrics for scaling
+  customMetrics:
+    - name: guardrail_requests_per_second
+      targetValue: "50"
+    - name: guardrail_security_violations_per_minute
+      targetValue: "10"
+  # Scaling behavior
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      percentPolicy: 100
+      podsPolicy: 2
+      periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      percentPolicy: 10
+      podsPolicy: 1
+      periodSeconds: 60
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+  maxUnavailable: null
+
+# Monitoring and observability
+monitoring:
+  enabled: true
+  prometheus:
+    enabled: true
+    scrape: true
+    port: 8001
+    path: "/security/metrics"
+  
+  # ServiceMonitor for Prometheus Operator
+  serviceMonitor:
+    enabled: true
+    interval: 15s
+    scrapeTimeout: 10s
+  
+  # PrometheusRule for alerting
+  prometheusRule:
+    enabled: true
+    rules:
+      highCPUThreshold: 0.8
+      highMemoryThreshold: 0.85
+      podRestartThreshold: 3
+      securityViolationThreshold: 5
+      evaluationInterval: 5m
+  
+  # Loki integration
+  loki:
+    enabled: false
+    endpoint: "http://loki:3100"
+    scrapeTimeout: 10s
+    
+# Volumes
+volumes:
+  reports:
+    type: emptyDir
+    medium: Memory
+    sizeLimit: 500Mi
+  
+  config:
+    type: configMap
+    name: promptstrike-config
+
+# ConfigMap data
+config:
+  # Application configuration
+  app:
+    promptstrike.yaml: |
+      sampling:
+        rate: 0.01
+        adaptive: true
+      
+      output:
+        format: "json"
+        directory: "/var/reports"
+        retention_days: 7
+  
+  # Sidecar configuration
+  sidecar:
+    cost_guard.yaml: |
+      cost_guard:
+        enabled: true
+        daily_budget: 1000.0
+        hourly_limit: 100.0
+        token_storm_threshold: 5000
+    
+    security.yaml: |
+      security:
+        enabled: true
+        threat_detection: true
+        pii_detection: true
+    
+    adaptive_sampling.yaml: |
+      sampling:
+        adaptive: true
+        base_rate: 0.01
+        risk_based_adjustment:
+          enabled: true
+          high_risk:
+            threshold: 7.0
+            sampling_rate: 0.1
+            duration_minutes: 15
+          medium_risk:
+            threshold: 5.0
+            sampling_rate: 0.05
+            duration_minutes: 10
+          low_risk:
+            threshold: 3.0
+            sampling_rate: 0.005
+            duration_minutes: 5
+        performance_based_adjustment:
+          enabled: true
+          cpu_threshold: 80
+          memory_threshold: 85
+          reduce_sampling_factor: 0.5
+
+# Secrets (these should be set via external secret management)
+secrets:
+  create: true
+  # API keys and sensitive configuration
+  # These are examples - use proper secret management in production
+  apiKeys:
+    openai: ""
+    anthropic: ""
+  
+  # Database credentials if needed
+  database:
+    url: ""
+    username: ""
+    password: ""
+  
+  # Custom secrets for specific configurations
+  custom: {}
+
+# Ingress configuration for external access
+ingress:
+  enabled: false
+  className: "nginx"
+  annotations:
+    # Additional custom annotations can be added here
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/proxy-body-size: "1m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    # Enterprise features
+    nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+  
+  # Rate limiting configuration
+  rateLimit:
+    requests: "100"
+    window: "1m"
+  
+  hosts:
+    - host: promptstrike.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              port:
+                name: http-sidecar
+        - path: /health
+          pathType: Exact
+          backend:
+            service:
+              port:
+                name: http-sidecar
+        - path: /security/metrics
+          pathType: Exact
+          backend:
+            service:
+              port:
+                name: http-sidecar
+    # Additional hosts for different environments
+    - host: promptstrike-api.example.com
+      paths:
+        - path: /api
+          pathType: Prefix
+          backend:
+            service:
+              port:
+                name: http-sidecar
+  
+  tls:
+    - secretName: promptstrike-tls
+      hosts:
+        - promptstrike.example.com
+        - promptstrike-api.example.com
+  
+  # Separate monitoring ingress for restricted access
+  monitoring:
+    enabled: false
+    host: monitoring.promptstrike.example.com
+    allowedCIDRs:
+      - "10.0.0.0/8"
+      - "172.16.0.0/12"
+      - "192.168.0.0/16"
+    rateLimit:
+      requests: "30"
+      window: "1m"
+    basicAuth:
+      enabled: true
+    tls: true
+    tlsSecret: "promptstrike-monitoring-tls"
+
+# Enterprise RBAC Configuration
+rbac:
+  enterprise:
+    enabled: false  # Enable for enterprise deployments
+    customRoles: true  # Allow custom role definitions
+    
+    # Pre-defined enterprise roles
+    roles:
+      - name: "auditor"
+        description: "Read-only access to reports and metrics"
+        permissions:
+          - "read:reports"
+          - "view:metrics"
+          - "access:health"
+        namespaces: ["promptstrike-guardrail"]
+        
+      - name: "security-analyst"
+        description: "Security analysis and report generation"
+        permissions:
+          - "read:reports"
+          - "generate:reports"
+          - "view:metrics"
+          - "access:health"
+          - "view:scan-results"
+        namespaces: ["promptstrike-guardrail"]
+        
+      - name: "compliance-officer"
+        description: "Compliance reporting and audit access"
+        permissions:
+          - "read:reports"
+          - "generate:reports"
+          - "export:compliance"
+          - "view:audit-logs"
+          - "access:evidence"
+        namespaces: ["promptstrike-guardrail"]
+        
+      - name: "admin"
+        description: "Administrative access to configuration and keys"
+        permissions:
+          - "read:reports"
+          - "generate:reports"
+          - "write:config"
+          - "manage:keys"
+          - "view:metrics"
+          - "manage:rbac"
+          - "admin:all"
+        namespaces: ["promptstrike-guardrail"]
+        
+      - name: "developer"
+        description: "Development and testing access"
+        permissions:
+          - "read:reports"
+          - "view:metrics"
+          - "access:health"
+          - "test:endpoints"
+        namespaces: ["promptstrike-dev", "promptstrike-staging"]
+    
+    # User-role bindings (to be configured per deployment)
+    userBindings: []
+    # Example:
+    # - user: "john.doe@company.com"
+    #   role: "security-analyst"
+    # - user: "jane.smith@company.com"
+    #   role: "compliance-officer"
+    
+    # Service account bindings for automation
+    serviceAccountBindings:
+      - serviceAccount: "promptstrike-scanner"
+        role: "developer"
+        namespace: "promptstrike-guardrail"
+      - serviceAccount: "promptstrike-compliance-exporter"
+        role: "compliance-officer"
+        namespace: "promptstrike-guardrail"
+
+# Namespace configuration  
+namespace:
+  create: true
+  name: promptstrike-guardrail
+  labels:
+    name: promptstrike-guardrail
+    security-policy: restricted
+    rbac-enabled: "true"
+  annotations:
+    # OPA Gatekeeper namespace annotations
+    admission.gatekeeper.sh/ignore: "false"
+    pod-security.kubernetes.io/enforce: "restricted"
+    pod-security.kubernetes.io/audit: "restricted"
+    pod-security.kubernetes.io/warn: "restricted"
+
+# Node selection and affinity
+nodeSelector: {}
+
+affinity:
+  # Pod Anti-Affinity to spread replicas across nodes
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: promptstrike-sidecar
+          topologyKey: kubernetes.io/hostname
+
+tolerations: []
+
+# Additional labels for all resources
+labels: {}
+
+# Additional annotations for all resources  
+annotations: {}
+
+# Pod annotations (including OPA)
+podAnnotations:
+  # Prometheus monitoring
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8001"
+  prometheus.io/path: "/security/metrics"
+  
+  # OPA Gatekeeper annotations
+  gatekeeper.sh/mutation: "enabled"
+  gatekeeper.sh/validation: "enabled"
+  
+  # Security annotations
+  container.apparmor.security.beta.kubernetes.io/sidecar: "runtime/default"
+  container.apparmor.security.beta.kubernetes.io/app: "runtime/default"
+  
+  # Chaos engineering (optional)
+  chaos.alpha.kubernetes.io/enabled: "false"
+
+# Priority Class
+priorityClassName: ""
+
+# Termination grace period
+terminationGracePeriodSeconds: 30
+
+# Image pull secrets
+imagePullSecrets: []

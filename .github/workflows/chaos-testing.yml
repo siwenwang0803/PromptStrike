@@ -1,0 +1,290 @@
+name: Chaos Testing & Mutation Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run chaos tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      chaos_intensity:
+        description: 'Chaos intensity (0.0-1.0)'
+        required: false
+        default: '0.3'
+      test_duration:
+        description: 'Test duration in seconds'
+        required: false
+        default: '120'
+
+jobs:
+  mutation-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11]
+        mutation-type: [
+          'data_corruption',
+          'protocol_violation', 
+          'boundary_testing',
+          'security_payloads'
+        ]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+    
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v3
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+    
+    - name: Install dependencies
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      run: poetry install --no-interaction --no-root
+    
+    - name: Install project
+      run: poetry install --no-interaction
+    
+    - name: Run mutation tests - ${{ matrix.mutation-type }}
+      run: |
+        poetry run python -m pytest tests/chaos/ \
+          -v \
+          -k "${{ matrix.mutation-type }}" \
+          --tb=short \
+          --timeout=300 \
+          --junit-xml=results/mutation-${{ matrix.mutation-type }}-${{ matrix.python-version }}.xml
+      env:
+        CHAOS_TESTING_MODE: "true"
+        MUTATION_TYPE: ${{ matrix.mutation-type }}
+        PYTEST_TIMEOUT: 300
+    
+    - name: Upload mutation test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: mutation-results-${{ matrix.python-version }}
+        path: results/
+        retention-days: 30
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      if: matrix.python-version == '3.11'
+      with:
+        file: ./coverage.xml
+        flags: mutation-tests
+        name: mutation-${{ matrix.mutation-type }}
+
+  chaos-replay-tests:
+    runs-on: ubuntu-latest
+    needs: mutation-tests
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+    
+    - name: Install dependencies
+      run: poetry install --no-interaction
+    
+    - name: Run chaos replay tests
+      run: |
+        poetry run python -m pytest tests/chaos/test_chaos_replay.py \
+          -v \
+          --tb=short \
+          --timeout=600 \
+          --junit-xml=results/chaos-replay.xml
+      env:
+        CHAOS_INTENSITY: ${{ github.event.inputs.chaos_intensity || '0.3' }}
+        CHAOS_DURATION: ${{ github.event.inputs.test_duration || '120' }}
+        CHAOS_TESTING_MODE: "true"
+    
+    - name: Upload chaos test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: chaos-replay-results
+        path: results/
+        retention-days: 30
+
+  span-mutation-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+    
+    - name: Install dependencies
+      run: poetry install --no-interaction
+    
+    - name: Run span mutation tests
+      run: |
+        poetry run python -m pytest tests/chaos/test_span_mutator.py \
+          -v \
+          --tb=short \
+          --timeout=300 \
+          --junit-xml=results/span-mutation.xml
+      env:
+        SPAN_MALFORMATION_RATE: "0.8"
+        CHAOS_TESTING_MODE: "true"
+    
+    - name: Upload span mutation results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: span-mutation-results
+        path: results/
+        retention-days: 30
+
+  gork-generation-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+    
+    - name: Install dependencies
+      run: poetry install --no-interaction
+    
+    - name: Run gork generation tests
+      run: |
+        poetry run python -m pytest tests/chaos/test_gork_generator.py \
+          -v \
+          --tb=short \
+          --timeout=300 \
+          --junit-xml=results/gork-generation.xml
+      env:
+        GORK_CORRUPTION_RATE: "0.9"
+        CHAOS_TESTING_MODE: "true"
+    
+    - name: Upload gork test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: gork-generation-results
+        path: results/
+        retention-days: 30
+
+  resilience-scoring:
+    runs-on: ubuntu-latest
+    needs: [mutation-tests, chaos-replay-tests, span-mutation-tests, gork-generation-tests]
+    if: always()
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+    
+    - name: Install dependencies
+      run: poetry install --no-interaction
+    
+    - name: Download all test results
+      uses: actions/download-artifact@v3
+      with:
+        path: test-results/
+    
+    - name: Generate resilience report
+      run: |
+        poetry run python -m tests.chaos.resilience_scorer \
+          --results-path test-results/ \
+          --output-path resilience-report.json \
+          --format json
+      env:
+        CHAOS_TESTING_MODE: "true"
+    
+    - name: Upload resilience report
+      uses: actions/upload-artifact@v3
+      with:
+        name: resilience-report
+        path: resilience-report.json
+        retention-days: 90
+    
+    - name: Post resilience summary
+      uses: actions/github-script@v6
+      if: github.event_name == 'pull_request'
+      with:
+        script: |
+          const fs = require('fs');
+          try {
+            const report = JSON.parse(fs.readFileSync('resilience-report.json', 'utf8'));
+            const score = report.overall_resilience_score;
+            const emoji = score >= 0.8 ? '🟢' : score >= 0.6 ? '🟡' : '🔴';
+            
+            const comment = `## Chaos Testing Results ${emoji}
+            
+            **Overall Resilience Score: ${(score * 100).toFixed(1)}%**
+            
+            - Mutation Tests: ${report.mutation_tests_passed}/${report.mutation_tests_total}
+            - Chaos Replay Tests: ${report.chaos_replay_score.toFixed(2)}
+            - Span Mutation Tests: ${report.span_mutation_score.toFixed(2)}
+            - Gork Generation Tests: ${report.gork_generation_score.toFixed(2)}
+            
+            ${score < 0.7 ? '⚠️ **Warning**: Resilience score below threshold. Review failures.' : '✅ **Good**: System demonstrates adequate resilience.'}
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          } catch (error) {
+            console.error('Failed to post resilience summary:', error);
+          }

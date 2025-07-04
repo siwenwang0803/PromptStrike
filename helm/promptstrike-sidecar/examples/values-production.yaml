@@ -1,0 +1,210 @@
+# Production values for promptstrike-sidecar
+# This file demonstrates enterprise-grade production deployment
+
+# Global configuration for production
+global:
+  environment: production
+  imageRegistry: "your-registry.example.com"
+  imagePullPolicy: IfNotPresent
+
+# Production-grade sidecar configuration
+sidecar:
+  enabled: true
+  image:
+    repository: promptstrike/guardrail-sidecar
+    tag: "v1.0.0"  # Use specific version tags in production
+    pullPolicy: IfNotPresent
+  
+  # Production resource allocation
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+      ephemeral-storage: 200Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+      ephemeral-storage: 1Gi
+  
+  # Production environment variables
+  env:
+    LOG_LEVEL: "warn"
+    GUARDRAIL_SAMPLING_RATE: "0.05"
+    GUARDRAIL_ADAPTIVE_SAMPLING: "true"
+    GUARDRAIL_HIGH_RISK_SAMPLING_RATE: "0.2"
+    GUARDRAIL_LOW_RISK_SAMPLING_RATE: "0.01"
+    GUARDRAIL_COST_GUARD_ENABLED: "true"
+    GUARDRAIL_DAILY_BUDGET: "5000.0"
+
+# Application configuration (if using demo app)
+app:
+  enabled: false  # Disable demo app in production
+
+# Production Ingress configuration
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/proxy-body-size: "1m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    # Production IP allowlist (adjust for your network)
+    nginx.ingress.kubernetes.io/whitelist-source-range: "203.0.113.0/24,198.51.100.0/24"
+    # Additional security headers
+    nginx.ingress.kubernetes.io/server-snippet: |
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+      add_header X-Frame-Options "DENY" always;
+      add_header X-Content-Type-Options "nosniff" always;
+  
+  hosts:
+    - host: guardrail-api.yourcompany.com
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              port:
+                name: http-sidecar
+        - path: /health
+          pathType: Exact
+          backend:
+            service:
+              port:
+                name: http-sidecar
+  
+  tls:
+    - secretName: guardrail-api-tls
+      hosts:
+        - guardrail-api.yourcompany.com
+  
+  # Separate monitoring ingress with restricted access
+  monitoring:
+    enabled: true
+    host: guardrail-monitoring.yourcompany.com
+    allowedCIDRs:
+      - "10.0.0.0/8"        # Corporate network
+      - "203.0.113.0/24"    # Operations team
+    basicAuth:
+      enabled: true
+    tls: true
+    tlsSecret: "guardrail-monitoring-tls"
+
+# Production HPA configuration
+hpa:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 60
+  targetMemoryUtilizationPercentage: 70
+  customMetrics:
+    - name: guardrail_requests_per_second
+      targetValue: "100"
+    - name: guardrail_security_violations_per_minute
+      targetValue: "20"
+
+# Production monitoring
+monitoring:
+  enabled: true
+  prometheus:
+    enabled: true
+    scrape: true
+  serviceMonitor:
+    enabled: true
+    interval: 15s
+  prometheusRule:
+    enabled: true
+    rules:
+      highCPUThreshold: 0.7
+      highMemoryThreshold: 0.8
+      podRestartThreshold: 2
+      securityViolationThreshold: 10
+      evaluationInterval: 2m
+
+# Production pod disruption budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+# Production resource quotas
+resourceQuota:
+  enabled: true
+  hard:
+    requests.cpu: "4"
+    requests.memory: "8Gi"
+    limits.cpu: "10"
+    limits.memory: "20Gi"
+    pods: "50"
+
+# Production secrets (should be managed externally)
+secrets:
+  create: false  # Use external secret management in production
+  # Secrets should be created via Vault, AWS Secrets Manager, etc.
+
+# Enterprise RBAC (enabled for production)
+rbac:
+  enterprise:
+    enabled: true
+    customRoles: true
+    
+    # Production role bindings
+    userBindings:
+      - user: "security-team@company.com"
+        role: "security-analyst"
+      - user: "compliance@company.com"
+        role: "compliance-officer"
+      - user: "devops@company.com"
+        role: "admin"
+      - user: "audit-team@company.com"
+        role: "auditor"
+    
+    # Automated service accounts
+    serviceAccountBindings:
+      - serviceAccount: "promptstrike-ci-scanner"
+        role: "developer"
+        namespace: "promptstrike-production"
+      - serviceAccount: "compliance-exporter"
+        role: "compliance-officer"
+        namespace: "promptstrike-production"
+
+# Production namespace with enhanced security
+namespace:
+  create: true
+  name: promptstrike-production
+  labels:
+    name: promptstrike-production
+    security-policy: restricted
+    environment: production
+  annotations:
+    pod-security.kubernetes.io/enforce: "restricted"
+    pod-security.kubernetes.io/audit: "restricted"
+    pod-security.kubernetes.io/warn: "restricted"
+
+# Production node affinity (spread across AZs)
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+            - key: app.kubernetes.io/name
+              operator: In
+              values:
+                - promptstrike-sidecar
+        topologyKey: topology.kubernetes.io/zone
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: node-role.kubernetes.io/worker
+              operator: Exists
+            - key: kubernetes.io/arch
+              operator: In
+              values:
+                - amd64
+
+# Production tolerations (if using dedicated nodes)
+tolerations:
+  - key: "workload"
+    operator: "Equal"
+    value: "security"
+    effect: "NoSchedule"

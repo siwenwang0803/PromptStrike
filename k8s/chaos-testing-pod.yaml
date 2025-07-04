@@ -1,0 +1,240 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chaos-config
+  namespace: chaos-testing
+data:
+  chaos-config.yaml: |
+    version: "1.0"
+    mutation:
+      enabled: true
+      intensity: 0.3
+      types: ["data_corruption", "protocol_violation", "security_payloads"]
+    chaos_replay:
+      enabled: true
+      duration: 120
+      scenarios: ["malformed_spans", "network_partition", "memory_pressure"]
+    span_mutation:
+      enabled: true
+      malformation_rate: 0.8
+    gork_generation:
+      enabled: true
+      corruption_rate: 0.7
+      categories: ["binary_corruption", "encoding_corruption"]
+    reporting:
+      enabled: true
+      output_path: "/app/results"
+    environments:
+      kubernetes:
+        intensity_multiplier: 0.5
+        resource_limits:
+          memory: "2Gi"
+          cpu: "1000m"
+        disabled_scenarios: ["compression_bomb", "buffer_overflow"]
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: chaos-results-pvc
+  namespace: chaos-testing
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: chaos-testing-job
+  namespace: chaos-testing
+  labels:
+    app: chaos-testing
+    version: v1.0
+spec:
+  template:
+    metadata:
+      labels:
+        app: chaos-testing
+        version: v1.0
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+      - name: chaos-test
+        image: promptstrike-chaos:latest
+        imagePullPolicy: IfNotPresent
+        
+        # Resource limits for safety
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+            ephemeral-storage: "5Gi"
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+            ephemeral-storage: "2Gi"
+        
+        # Environment variables
+        env:
+        - name: CHAOS_ENVIRONMENT
+          value: "kubernetes"
+        - name: CHAOS_TESTING_MODE
+          value: "true"
+        - name: CHAOS_INTENSITY
+          value: "0.3"
+        - name: CHAOS_DURATION
+          value: "120"
+        - name: CHAOS_CONFIG_PATH
+          value: "/config/chaos-config.yaml"
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        
+        # Security context
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
+        
+        # Volume mounts
+        volumeMounts:
+        - name: chaos-config-volume
+          mountPath: /config
+          readOnly: true
+        - name: results-volume
+          mountPath: /app/results
+        - name: tmp-volume
+          mountPath: /tmp
+        
+        # Liveness and readiness probes
+        livenessProbe:
+          exec:
+            command:
+            - python
+            - -c
+            - "import tests.chaos.config; print('Chaos framework ready')"
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        
+        readinessProbe:
+          exec:
+            command:
+            - python
+            - -c
+            - "import tests.chaos.config; print('Chaos framework ready')"
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+        
+        # Command to run chaos tests
+        command: ["./entrypoint.sh"]
+        args: ["pytest", "tests/chaos/", "-v", "--junit-xml=/app/results/chaos-results.xml"]
+      
+      # Volumes
+      volumes:
+      - name: chaos-config-volume
+        configMap:
+          name: chaos-config
+      - name: results-volume
+        persistentVolumeClaim:
+          claimName: chaos-results-pvc
+      - name: tmp-volume
+        emptyDir: {}
+      
+      # Node selection and tolerations
+      nodeSelector:
+        chaos-testing: "allowed"
+      
+      tolerations:
+      - key: "chaos-testing"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      
+      # Pod disruption budget considerations
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - production-app
+              topologyKey: kubernetes.io/hostname
+  
+  # Job completion and cleanup
+  backoffLimit: 3
+  activeDeadlineSeconds: 1800  # 30 minutes max
+  ttlSecondsAfterFinished: 3600  # Clean up after 1 hour
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chaos-testing-metrics
+  namespace: chaos-testing
+  labels:
+    app: chaos-testing
+spec:
+  selector:
+    app: chaos-testing
+  ports:
+  - name: metrics
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: chaos-testing-network-policy
+  namespace: chaos-testing
+spec:
+  podSelector:
+    matchLabels:
+      app: chaos-testing
+  policyTypes:
+  - Ingress
+  - Egress
+  
+  # Restrict ingress - only allow monitoring
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 8080
+  
+  # Restrict egress - only allow necessary external access
+  egress:
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 53  # DNS
+    - protocol: UDP
+      port: 53  # DNS
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+  # Allow access to test targets in same namespace
+  - to:
+    - podSelector: {}
+    ports:
+    - protocol: TCP
+      port: 8080

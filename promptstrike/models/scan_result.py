@@ -117,22 +117,57 @@ class ScanMetadata(BaseModel):
 
 
 class ComplianceReport(BaseModel):
-    """Compliance and audit trail information"""
+    """Enhanced compliance and audit trail information supporting multiple standards"""
     
     # NIST AI RMF mapping
     nist_rmf_controls_tested: List[str] = Field(default_factory=list)
     nist_rmf_gaps_identified: List[str] = Field(default_factory=list)
+    nist_mapping: Dict[str, str] = Field(default_factory=dict, description="NIST AI-RMF control mappings")
     
     # EU AI Act compliance
     eu_ai_act_risk_category: Literal["minimal", "limited", "high", "unacceptable"] = Field("minimal")
     eu_ai_act_articles_relevant: List[str] = Field(default_factory=list)
+    eu_ai_act: Dict[str, str] = Field(default_factory=dict, description="EU AI Act article mappings")
     
     # SOC 2 readiness
     soc2_controls_impact: List[str] = Field(default_factory=list)
+    soc2_mapping: Dict[str, str] = Field(default_factory=dict, description="SOC 2 Trust Service Criteria mappings")
     
-    # Audit trail
+    # ISO 27001 Information Security Management
+    iso_27001: Dict[str, str] = Field(default_factory=dict, description="ISO 27001 control mappings")
+    iso_27001_gaps: List[str] = Field(default_factory=list)
+    
+    # GDPR/CCPA Privacy compliance
+    gdpr_compliance: Dict[str, str] = Field(default_factory=dict, description="GDPR article mappings for privacy")
+    ccpa_compliance: Dict[str, str] = Field(default_factory=dict, description="CCPA compliance mappings")
+    
+    # PCI DSS (for FinTech)
+    pci_dss: Dict[str, str] = Field(default_factory=dict, description="PCI DSS requirement mappings")
+    
+    # HIPAA (for Healthcare)
+    hipaa_safeguards: Dict[str, str] = Field(default_factory=dict, description="HIPAA safeguard mappings")
+    
+    # Industry-specific frameworks
+    ffiec_guidelines: Dict[str, str] = Field(default_factory=dict, description="FFIEC cybersecurity guidelines")
+    nydfs_500: Dict[str, str] = Field(default_factory=dict, description="NYDFS 23 NYCRR 500 requirements")
+    
+    # Framework compatibility matrix
+    supported_frameworks: List[str] = Field(
+        default_factory=lambda: [
+            "nist_ai_rmf", "eu_ai_act", "soc2", "iso_27001", 
+            "gdpr", "ccpa", "pci_dss", "hipaa", "ffiec", "nydfs_500"
+        ]
+    )
+    
+    # Enhanced audit trail
     evidence_artifacts: List[str] = Field(default_factory=list, description="Paths to evidence files")
     audit_hash: str = Field(..., description="Cryptographic hash for audit integrity")
+    compliance_score: float = Field(0.0, ge=0.0, le=1.0, description="Overall compliance score (0-1)")
+    risk_assessment: Dict[str, Any] = Field(default_factory=dict, description="Risk assessment details")
+    
+    # Report generation metadata
+    report_template: str = Field("comprehensive", description="Template used for report generation")
+    custom_mappings: Dict[str, Dict[str, str]] = Field(default_factory=dict, description="Custom framework mappings")
 
 
 class ScanResult(BaseModel):

@@ -1,0 +1,108 @@
+{{- if .Values.opa.enabled }}
+{{- if .Values.opa.securityPolicies.enforceSecurityContext }}
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8ssecuritycontext
+  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  labels:
+    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    app.kubernetes.io/component: opa-policy
+  annotations:
+    description: "Enforces security context requirements for containers"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sSecurityContext
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            runAsNonRoot:
+              type: boolean
+            runAsUser:
+              type: integer
+            readOnlyRootFilesystem:
+              type: boolean
+            allowPrivilegeEscalation:
+              type: boolean
+            seccompProfile:
+              type: object
+              properties:
+                type:
+                  type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8ssecuritycontext
+        
+        violation[{"msg": msg}] {
+          container := input_containers[_]
+          input.parameters.runAsNonRoot
+          not container.securityContext.runAsNonRoot
+          msg := sprintf("Container <%v> must set runAsNonRoot to true", [container.name])
+        }
+        
+        violation[{"msg": msg}] {
+          container := input_containers[_]
+          input.parameters.readOnlyRootFilesystem
+          not container.securityContext.readOnlyRootFilesystem
+          msg := sprintf("Container <%v> must set readOnlyRootFilesystem to true", [container.name])
+        }
+        
+        violation[{"msg": msg}] {
+          container := input_containers[_]
+          not input.parameters.allowPrivilegeEscalation
+          container.securityContext.allowPrivilegeEscalation
+          msg := sprintf("Container <%v> must set allowPrivilegeEscalation to false", [container.name])
+        }
+        
+        violation[{"msg": msg}] {
+          container := input_containers[_]
+          input.parameters.runAsUser
+          not container.securityContext.runAsUser == input.parameters.runAsUser
+          msg := sprintf("Container <%v> must run as user %v", [container.name, input.parameters.runAsUser])
+        }
+        
+        violation[{"msg": msg}] {
+          container := input_containers[_]
+          not container.securityContext.seccompProfile
+          msg := sprintf("Container <%v> must have seccompProfile defined", [container.name])
+        }
+        
+        violation[{"msg": msg}] {
+          container := input_containers[_]
+          container.securityContext.seccompProfile.type != "RuntimeDefault"
+          msg := sprintf("Container <%v> must have seccompProfile.type set to RuntimeDefault", [container.name])
+        }
+        
+        input_containers[c] {
+          c := input.review.object.spec.containers[_]
+        }
+        
+        input_containers[c] {
+          c := input.review.object.spec.initContainers[_]
+        }
+---
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: K8sSecurityContext
+metadata:
+  name: promptstrike-security-context
+  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  labels:
+    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    app.kubernetes.io/component: opa-constraint
+spec:
+  match:
+    kinds:
+      - apiGroups: ["apps"]
+        kinds: ["Deployment"]
+    namespaces: [{{ .Values.namespace.name | quote }}]
+  parameters:
+    runAsNonRoot: {{ .Values.opa.securityPolicies.requireNonRoot }}
+    runAsUser: {{ .Values.global.securityContext.runAsUser }}
+    readOnlyRootFilesystem: {{ .Values.opa.securityPolicies.enforceReadOnlyRootFS }}
+    allowPrivilegeEscalation: false
+{{- end }}
+{{- end }}

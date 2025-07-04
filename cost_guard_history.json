@@ -1,0 +1,999 @@
+{
+  "history": {
+    "2025-07-04": [
+      {
+        "timestamp": "2025-07-04T11:19:52.880199",
+        "user_id": "user1",
+        "request_id": "test",
+        "model": "non-existent-model",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.02,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:19:52.881176",
+        "user_id": "user1",
+        "request_id": "test_actual",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.093392",
+        "user_id": "user1",
+        "request_id": "test_gpt4",
+        "model": "gpt-4",
+        "input_tokens": 7000,
+        "output_tokens": 500,
+        "cost": 0.24,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.093861",
+        "user_id": "user1",
+        "request_id": "test_gpt35",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 4500,
+        "output_tokens": 500,
+        "cost": 0.003,
+        "blocked": true,
+        "block_reason": "token_storm_detected"
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.097833",
+        "user_id": "user1",
+        "request_id": "baseline_0_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.098251",
+        "user_id": "user1",
+        "request_id": "baseline_1_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.098651",
+        "user_id": "user1",
+        "request_id": "baseline_2_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.099069",
+        "user_id": "user1",
+        "request_id": "baseline_3_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.099510",
+        "user_id": "user1",
+        "request_id": "baseline_4_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.100036",
+        "user_id": "user1",
+        "request_id": "test_normal",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.103041",
+        "user_id": "user1",
+        "request_id": "empty",
+        "model": "unknown",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost": 0.0,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.104609",
+        "user_id": "user_0",
+        "request_id": "concurrent_0",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.104970",
+        "user_id": "user_1",
+        "request_id": "concurrent_1",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.105590",
+        "user_id": "user_2",
+        "request_id": "concurrent_2",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.106221",
+        "user_id": "user_3",
+        "request_id": "concurrent_3",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.106928",
+        "user_id": "user_4",
+        "request_id": "concurrent_4",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.107331",
+        "user_id": "user_5",
+        "request_id": "concurrent_5",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.107991",
+        "user_id": "user_6",
+        "request_id": "concurrent_6",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.108965",
+        "user_id": "user_7",
+        "request_id": "concurrent_7",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.110093",
+        "user_id": "user_8",
+        "request_id": "concurrent_8",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.110492",
+        "user_id": "user_9",
+        "request_id": "concurrent_9",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.112679",
+        "user_id": "user1",
+        "request_id": "test",
+        "model": "non-existent-model",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.02,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:28.114375",
+        "user_id": "user1",
+        "request_id": "test_actual",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:57.992704",
+        "user_id": "user1",
+        "request_id": "test_gpt4",
+        "model": "gpt-4",
+        "input_tokens": 7000,
+        "output_tokens": 500,
+        "cost": 0.24,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:57.993716",
+        "user_id": "user1",
+        "request_id": "test_gpt35",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 4500,
+        "output_tokens": 500,
+        "cost": 0.003,
+        "blocked": true,
+        "block_reason": "token_storm_detected"
+      },
+      {
+        "timestamp": "2025-07-04T11:24:57.997624",
+        "user_id": "user1",
+        "request_id": "baseline_0_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:57.998536",
+        "user_id": "user1",
+        "request_id": "baseline_1_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:57.999446",
+        "user_id": "user1",
+        "request_id": "baseline_2_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.000389",
+        "user_id": "user1",
+        "request_id": "baseline_3_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.001338",
+        "user_id": "user1",
+        "request_id": "baseline_4_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.002382",
+        "user_id": "user1",
+        "request_id": "test_normal",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.005972",
+        "user_id": "user1",
+        "request_id": "empty",
+        "model": "unknown",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost": 0.0,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.008044",
+        "user_id": "user_0",
+        "request_id": "concurrent_0",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.008569",
+        "user_id": "user_1",
+        "request_id": "concurrent_1",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.010259",
+        "user_id": "user_2",
+        "request_id": "concurrent_2",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.010769",
+        "user_id": "user_3",
+        "request_id": "concurrent_3",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.012206",
+        "user_id": "user_4",
+        "request_id": "concurrent_4",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.012886",
+        "user_id": "user_5",
+        "request_id": "concurrent_5",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.014503",
+        "user_id": "user_6",
+        "request_id": "concurrent_6",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.015135",
+        "user_id": "user_7",
+        "request_id": "concurrent_7",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.016237",
+        "user_id": "user_8",
+        "request_id": "concurrent_8",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.018081",
+        "user_id": "user_9",
+        "request_id": "concurrent_9",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.020168",
+        "user_id": "user1",
+        "request_id": "test",
+        "model": "non-existent-model",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.02,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:24:58.022028",
+        "user_id": "user1",
+        "request_id": "test_actual",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.442063",
+        "user_id": "user1",
+        "request_id": "test_gpt4",
+        "model": "gpt-4",
+        "input_tokens": 7000,
+        "output_tokens": 500,
+        "cost": 0.24,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.443562",
+        "user_id": "user1",
+        "request_id": "test_gpt35",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 4500,
+        "output_tokens": 500,
+        "cost": 0.003,
+        "blocked": true,
+        "block_reason": "token_storm_detected"
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.447842",
+        "user_id": "user1",
+        "request_id": "baseline_0_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.449107",
+        "user_id": "user1",
+        "request_id": "baseline_1_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.450587",
+        "user_id": "user1",
+        "request_id": "baseline_2_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.451822",
+        "user_id": "user1",
+        "request_id": "baseline_3_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.453122",
+        "user_id": "user1",
+        "request_id": "baseline_4_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.454672",
+        "user_id": "user1",
+        "request_id": "test_normal",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.460649",
+        "user_id": "user1",
+        "request_id": "empty",
+        "model": "unknown",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost": 0.0,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.463154",
+        "user_id": "user_0",
+        "request_id": "concurrent_0",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.463911",
+        "user_id": "user_1",
+        "request_id": "concurrent_1",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.465339",
+        "user_id": "user_2",
+        "request_id": "concurrent_2",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.466077",
+        "user_id": "user_3",
+        "request_id": "concurrent_3",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.467719",
+        "user_id": "user_4",
+        "request_id": "concurrent_4",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.469812",
+        "user_id": "user_5",
+        "request_id": "concurrent_5",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.471479",
+        "user_id": "user_6",
+        "request_id": "concurrent_6",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.473854",
+        "user_id": "user_7",
+        "request_id": "concurrent_7",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.475007",
+        "user_id": "user_8",
+        "request_id": "concurrent_8",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.476060",
+        "user_id": "user_9",
+        "request_id": "concurrent_9",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.480030",
+        "user_id": "user1",
+        "request_id": "test",
+        "model": "non-existent-model",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.02,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:12.482678",
+        "user_id": "user1",
+        "request_id": "test_actual",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.410321",
+        "user_id": "user1",
+        "request_id": "test_gpt4",
+        "model": "gpt-4",
+        "input_tokens": 7000,
+        "output_tokens": 500,
+        "cost": 0.24,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.411995",
+        "user_id": "user1",
+        "request_id": "test_gpt35",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 4500,
+        "output_tokens": 500,
+        "cost": 0.003,
+        "blocked": true,
+        "block_reason": "token_storm_detected"
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.416926",
+        "user_id": "user1",
+        "request_id": "baseline_0_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.418544",
+        "user_id": "user1",
+        "request_id": "baseline_1_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.420267",
+        "user_id": "user1",
+        "request_id": "baseline_2_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.421964",
+        "user_id": "user1",
+        "request_id": "baseline_3_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.424279",
+        "user_id": "user1",
+        "request_id": "baseline_4_actual",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.426219",
+        "user_id": "user1",
+        "request_id": "test_normal",
+        "model": "gpt-3.5-turbo",
+        "input_tokens": 100,
+        "output_tokens": 50,
+        "cost": 0.000125,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.431140",
+        "user_id": "user1",
+        "request_id": "empty",
+        "model": "unknown",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cost": 0.0,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.434197",
+        "user_id": "user_0",
+        "request_id": "concurrent_0",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.437639",
+        "user_id": "user_1",
+        "request_id": "concurrent_1",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.439281",
+        "user_id": "user_2",
+        "request_id": "concurrent_2",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.440797",
+        "user_id": "user_3",
+        "request_id": "concurrent_3",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.444719",
+        "user_id": "user_4",
+        "request_id": "concurrent_4",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.446203",
+        "user_id": "user_5",
+        "request_id": "concurrent_5",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.447072",
+        "user_id": "user_6",
+        "request_id": "concurrent_6",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.450974",
+        "user_id": "user_7",
+        "request_id": "concurrent_7",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.452010",
+        "user_id": "user_8",
+        "request_id": "concurrent_8",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.454113",
+        "user_id": "user_9",
+        "request_id": "concurrent_9",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.458827",
+        "user_id": "user1",
+        "request_id": "test",
+        "model": "non-existent-model",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.02,
+        "blocked": false,
+        "block_reason": null
+      },
+      {
+        "timestamp": "2025-07-04T11:57:49.461928",
+        "user_id": "user1",
+        "request_id": "test_actual",
+        "model": "gpt-4",
+        "input_tokens": 1000,
+        "output_tokens": 500,
+        "cost": 0.06,
+        "blocked": false,
+        "block_reason": null
+      }
+    ]
+  },
+  "user_spending": {
+    "user1": {
+      "2025-07-04-11": 1.3630000000000002,
+      "2025-07-04": 1.3630000000000002
+    },
+    "user_0": {
+      "2025-07-04-11": 0.24,
+      "2025-07-04": 0.24
+    },
+    "user_1": {
+      "2025-07-04-11": 0.24,
+      "2025-07-04": 0.24
+    },
+    "user_2": {
+      "2025-07-04-11": 0.24,
+      "2025-07-04": 0.24
+    },
+    "user_3": {
+      "2025-07-04-11": 0.24,
+      "2025-07-04": 0.24
+    },
+    "user_4": {
+      "2025-07-04-11": 0.24,
+      "2025-07-04": 0.24
+    },
+    "user_5": {
+      "2025-07-04-11": 0.24,
+      "2025-07-04": 0.24
+    },
+    "user_6": {
+      "2025-07-04-11": 0.24,
+      "2025-07-04": 0.24
+    },
+    "user_7": {
+      "2025-07-04-11": 0.24,
+      "2025-07-04": 0.24
+    },
+    "user_8": {
+      "2025-07-04-11": 0.24,
+      "2025-07-04": 0.24
+    },
+    "user_9": {
+      "2025-07-04-11": 0.24,
+      "2025-07-04": 0.24
+    }
+  },
+  "last_updated": "2025-07-04T11:57:49.462792"
+}

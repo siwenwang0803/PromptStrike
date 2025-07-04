@@ -1,0 +1,69 @@
+# Chaos Testing Dockerfile
+# Provides isolated environment for running chaos tests safely
+
+FROM python:3.11-slim
+
+LABEL maintainer="PromptStrike Team"
+LABEL description="Chaos Testing Environment for PromptStrike"
+LABEL version="1.0"
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV CHAOS_TESTING_MODE=true
+ENV CHAOS_ENVIRONMENT=docker
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for security
+RUN groupadd -r chaosuser && useradd -r -g chaosuser chaosuser
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements.txt requirements-chaos.txt ./
+
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r requirements-chaos.txt
+
+# Copy chaos testing framework
+COPY tests/chaos/ ./tests/chaos/
+COPY chaos-config.yaml ./
+COPY promptstrike/ ./promptstrike/
+
+# Create directories for results and logs
+RUN mkdir -p /app/results /app/logs /app/artifacts && \
+    chown -R chaosuser:chaosuser /app
+
+# Copy entrypoint script
+COPY docker/scripts/chaos-entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+
+# Switch to non-root user
+USER chaosuser
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import tests.chaos.config; print('Chaos framework ready')" || exit 1
+
+# Default resource limits (can be overridden)
+ENV CHAOS_MEMORY_LIMIT=2Gi
+ENV CHAOS_CPU_LIMIT=1000m
+ENV CHAOS_TIMEOUT=300
+
+# Expose port for metrics (if needed)
+EXPOSE 8080
+
+# Default entrypoint
+ENTRYPOINT ["./entrypoint.sh"]
+
+# Default command - run all chaos tests
+CMD ["pytest", "tests/chaos/", "-v", "--junit-xml=results/chaos-results.xml"]

@@ -1,0 +1,107 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "promptstrike-sidecar.fullname" . }}-netpol
+  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  labels:
+    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    app.kubernetes.io/component: network-security
+  annotations:
+    description: "Network policies for PromptStrike guardrail sidecar"
+    {{- with .Values.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "promptstrike-sidecar.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    {{- if .Values.networkPolicy.ingress.enabled }}
+    - Ingress
+    {{- end }}
+    {{- if .Values.networkPolicy.egress.enabled }}
+    - Egress
+    {{- end }}
+  
+  {{- if .Values.networkPolicy.ingress.enabled }}
+  ingress:
+  # Allow traffic from within the same namespace
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: {{ .Values.namespace.name }}
+    {{- if .Values.app.enabled }}
+    ports:
+    - protocol: TCP
+      port: {{ .Values.app.port }}
+    {{- end }}
+    {{- if .Values.sidecar.enabled }}
+    - protocol: TCP
+      port: {{ .Values.sidecar.port }}
+    {{- end }}
+  
+  # Allow monitoring traffic (Prometheus)
+  {{- if .Values.monitoring.prometheus.enabled }}
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: {{ .Values.monitoring.prometheus.port }}
+  {{- end }}
+  
+  # Allow Ingress traffic
+  {{- if .Values.ingress.enabled }}
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    - namespaceSelector:
+        matchLabels:
+          name: istio-system
+    - namespaceSelector:
+        matchLabels:
+          name: traefik
+    {{- if .Values.app.enabled }}
+    ports:
+    - protocol: TCP
+      port: {{ .Values.app.port }}
+    {{- end }}
+    {{- if .Values.sidecar.enabled }}
+    - protocol: TCP
+      port: {{ .Values.sidecar.port }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+  
+  {{- if .Values.networkPolicy.egress.enabled }}
+  egress:
+  # Allow DNS resolution
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+  
+  # Allow HTTPS traffic for API calls
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443
+  
+  # Allow HTTP traffic for internal services
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 80
+  
+  # Allow traffic within the same namespace
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: {{ .Values.namespace.name }}
+  {{- end }}
+{{- end }}

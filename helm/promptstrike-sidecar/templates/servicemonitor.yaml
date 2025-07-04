@@ -1,0 +1,44 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "promptstrike-sidecar.fullname" . }}
+  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  labels:
+    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    app.kubernetes.io/component: monitoring
+  annotations:
+    description: "ServiceMonitor for PromptStrike guardrail sidecar metrics"
+    {{- with .Values.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "promptstrike-sidecar.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - port: http-sidecar
+    path: {{ .Values.monitoring.prometheus.path }}
+    interval: {{ .Values.monitoring.serviceMonitor.interval }}
+    scrapeTimeout: {{ .Values.monitoring.serviceMonitor.scrapeTimeout }}
+    honorLabels: true
+    metricRelabelings:
+    - sourceLabels: [__name__]
+      regex: 'go_.*|process_.*|promhttp_.*'
+      action: drop
+    - sourceLabels: [__name__]
+      targetLabel: __tmp_guardrail_metric
+      replacement: 'guardrail_${1}'
+    relabelings:
+    - sourceLabels: [__meta_kubernetes_pod_name]
+      targetLabel: pod
+    - sourceLabels: [__meta_kubernetes_pod_node_name]
+      targetLabel: node
+    - sourceLabels: [__meta_kubernetes_namespace]
+      targetLabel: namespace
+    - targetLabel: service
+      replacement: {{ include "promptstrike-sidecar.fullname" . }}
+  namespaceSelector:
+    matchNames:
+    - {{ include "promptstrike-sidecar.namespaceName" . }}
+{{- end }}

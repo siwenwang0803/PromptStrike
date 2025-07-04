@@ -1,0 +1,74 @@
+# Application ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "promptstrike-sidecar.fullname" . }}-app
+  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  labels:
+    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    app.kubernetes.io/component: app-config
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  {{- range $key, $value := .Values.config.app }}
+  {{ $key }}: |
+    {{- $value | nindent 4 }}
+  {{- end }}
+  
+  # Application configuration
+  app-config.yaml: |
+    app:
+      {{- if .Values.app.enabled }}
+      port: {{ .Values.app.port }}
+      {{- end }}
+    
+    monitoring:
+      enabled: {{ .Values.monitoring.enabled }}
+    
+    environment: {{ .Values.global.environment | quote }}
+
+---
+# Sidecar ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "promptstrike-sidecar.fullname" . }}-sidecar
+  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  labels:
+    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    app.kubernetes.io/component: sidecar-config
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  {{- range $key, $value := .Values.config.sidecar }}
+  {{ $key }}: |
+    {{- $value | nindent 4 }}
+  {{- end }}
+  
+  # Sidecar configuration
+  sidecar-config.yaml: |
+    sidecar:
+      port: {{ .Values.sidecar.port }}
+      sampling_rate: {{ .Values.sidecar.env.GUARDRAIL_SAMPLING_RATE }}
+      cost_guard_enabled: {{ .Values.sidecar.env.GUARDRAIL_COST_GUARD_ENABLED }}
+      async_analysis: {{ .Values.sidecar.env.GUARDRAIL_ASYNC_ANALYSIS }}
+      daily_budget: {{ .Values.sidecar.env.GUARDRAIL_DAILY_BUDGET }}
+      log_level: {{ .Values.sidecar.env.LOG_LEVEL }}
+      output_dir: {{ .Values.sidecar.env.PROMPTSTRIKE_OUTPUT_DIR }}
+    
+    monitoring:
+      enabled: {{ .Values.monitoring.enabled }}
+      prometheus:
+        enabled: {{ .Values.monitoring.prometheus.enabled }}
+        port: {{ .Values.monitoring.prometheus.port }}
+        path: {{ .Values.monitoring.prometheus.path }}
+    
+    security:
+      opa_enabled: {{ .Values.opa.enabled }}
+      enforce_resource_limits: {{ .Values.opa.securityPolicies.enforceResourceLimits }}
+      require_non_root: {{ .Values.opa.securityPolicies.requireNonRoot }}
+      read_only_root_fs: {{ .Values.opa.securityPolicies.enforceReadOnlyRootFS }}

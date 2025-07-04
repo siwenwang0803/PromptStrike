@@ -30,6 +30,7 @@ from guardrail.cost_guard import (
     ModelPricing,
     SpendingRecord,
     RateLimiter,
+    TokenRateLimiter,
     VelocityTracker,
     create_cost_guard,
     estimate_cost,
@@ -146,6 +147,57 @@ class TestRateLimiter:
             limiter.check_and_update(f"req_{i}")
         
         assert limiter.get_remaining() == 5
+
+
+class TestTokenRateLimiter:
+    """Test TokenRateLimiter functionality"""
+    
+    def test_basic_token_limiting(self):
+        """Test basic token limiting within window"""
+        limiter = TokenRateLimiter(max_tokens=1000, window_seconds=1)
+        
+        # First request with 500 tokens should pass
+        allowed, remaining = limiter.check_and_update("req_1", 500)
+        assert allowed == True
+        assert remaining == 500
+        
+        # Second request with 300 tokens should pass
+        allowed, remaining = limiter.check_and_update("req_2", 300)
+        assert allowed == True
+        assert remaining == 200
+        
+        # Third request with 300 tokens should fail (would exceed 1000)
+        allowed, remaining = limiter.check_and_update("req_3", 300)
+        assert allowed == False
+        assert remaining == 200
+    
+    def test_token_window_sliding(self):
+        """Test sliding window behavior for tokens"""
+        limiter = TokenRateLimiter(max_tokens=1000, window_seconds=1)
+        
+        # Use most of the tokens
+        limiter.check_and_update("req_1", 900)
+        
+        # Wait for window to slide
+        time.sleep(1.1)
+        
+        # Should be able to use tokens again
+        allowed, remaining = limiter.check_and_update("req_2", 800)
+        assert allowed == True
+        assert remaining == 200
+    
+    def test_get_remaining_tokens(self):
+        """Test getting remaining tokens"""
+        limiter = TokenRateLimiter(max_tokens=1000, window_seconds=60)
+        
+        assert limiter.get_remaining_tokens() == 1000
+        
+        # Use some tokens
+        limiter.check_and_update("req_1", 300)
+        assert limiter.get_remaining_tokens() == 700
+        
+        limiter.check_and_update("req_2", 200)
+        assert limiter.get_remaining_tokens() == 500
 
 
 class TestVelocityTracker:
@@ -288,23 +340,23 @@ class TestCostGuard:
         # Create a guard with very low budget for easy testing
         config = CostGuardConfig(
             daily_budget=0.15,  # Very low budget ($0.15)
-            hourly_limit=0.15,
+            hourly_limit=0.20,  # Set hourly higher to isolate daily budget test
             per_request_limit=10.0,
             enable_velocity_tracking=False,
             persist_spending_history=False
         )
         budget_guard = CostGuard(config)
         
-        # Record spending that uses most of budget
+        # Record spending that uses most of budget (~$0.12)
         budget_guard.record_actual_usage(
             request_id="spend_1",
             user_id="user1",
             model="gpt-4",
-            actual_input_tokens=1000,  # Cost: ~$0.09
-            actual_output_tokens=500
+            actual_input_tokens=2000,
+            actual_output_tokens=1000
         )
         
-        # Next request should exceed budget (total would be ~$0.18)
+        # Next request should exceed budget (projected total ~$0.18)
         result = budget_guard.check_request(
             request_id="test_budget",
             user_id="user1",
@@ -314,8 +366,8 @@ class TestCostGuard:
         )
         
         assert result.should_block
-        # Should be blocked due to budget or hourly limit
-        assert result.block_reason in [BlockReason.DAILY_BUDGET_EXCEEDED, BlockReason.HOURLY_LIMIT_EXCEEDED]
+        # Should be blocked due to daily budget
+        assert result.block_reason == BlockReason.DAILY_BUDGET_EXCEEDED
     
     def test_hourly_limit_enforcement(self, cost_guard):
         """Test hourly spending limits"""
@@ -329,22 +381,22 @@ class TestCostGuard:
         )
         hourly_guard = CostGuard(config)
         
-        # Record some spending to approach hourly limit
+        # Record some spending to approach hourly limit (~$0.06)
         hourly_guard.record_actual_usage(
             request_id="hour_1",
             user_id="user1",
             model="gpt-4",
-            actual_input_tokens=500,  # Cost: ~$0.045
-            actual_output_tokens=250
+            actual_input_tokens=1000,
+            actual_output_tokens=500
         )
         
-        # Next request should exceed hourly limit (total would be ~$0.09)
+        # Next request should exceed hourly limit (projected total ~$0.12)
         result = hourly_guard.check_request(
             request_id="test_hourly",
             user_id="user1",
             model="gpt-4",
-            estimated_input_tokens=500,
-            estimated_output_tokens=250
+            estimated_input_tokens=1000,
+            estimated_output_tokens=500
         )
         
         assert result.should_block

@@ -27,6 +27,7 @@ import asyncio
 import hashlib
 import json
 import logging
+import os
 import random
 import time
 import uuid
@@ -37,15 +38,27 @@ from typing import Dict, List, Optional, Any, Callable, Union
 from pathlib import Path
 import threading
 from queue import Queue, Empty
+from collections import defaultdict
 try:
-    import aiohttp
+    import aiohttp  # type: ignore
     AIOHTTP_AVAILABLE = True
 except ImportError:
     AIOHTTP_AVAILABLE = False
     aiohttp = None
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+try:
+    import tiktoken
+    TIKTOKEN_AVAILABLE = True
+except ImportError:
+    TIKTOKEN_AVAILABLE = False
+    tiktoken = None
+
+# Configure logging with environment variable support
+log_level = os.getenv('GUARDRAIL_LOG_LEVEL', 'INFO').upper()
+logging.basicConfig(
+    level=getattr(logging, log_level, logging.INFO),
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 
@@ -138,27 +151,32 @@ class CostGuardResult:
 
 
 class SamplingStrategy:
-    """Intelligent sampling strategy for production workloads"""
+    """Intelligent, adaptive sampling strategy for production workloads."""
     
-    def __init__(self, base_rate: float = 0.01):
+    def __init__(self, base_rate: float = 0.01, adaptive_enabled: bool = True):
         self.base_rate = base_rate
+        self.adaptive_enabled = adaptive_enabled
         self.high_risk_multiplier = 10.0  # Sample high-risk traffic more
-        self.user_history: Dict[str, List[float]] = {}
+        self.user_history: Dict[str, List[float]] = defaultdict(list)
         
     def should_sample(self, request: LLMRequest, risk_indicators: Dict[str, float] = None) -> bool:
-        """Determine if this request should be sampled"""
+        """Determine if this request should be sampled based on risk and adaptive rates."""
+        # High-risk requests are always sampled
+        if risk_indicators:
+            risk_score = sum(risk_indicators.values()) / len(risk_indicators)
+            if risk_score > 7.0:
+                logger.debug(f"High-risk request {request.request_id} sampled (risk={risk_score:.2f})")
+                return True
+
+        # Adaptive sampling based on user history
+        if self.adaptive_enabled and request.user_id in self.user_history:
+            avg_risk = sum(self.user_history[request.user_id]) / len(self.user_history[request.user_id])
+            adaptive_rate = min(1.0, self.base_rate * (1 + avg_risk / 5.0)) # Increase rate for risky users
+            if random.random() < adaptive_rate:
+                return True
         
-        # Base sampling rate (1%)
-        if random.random() > self.base_rate:
-            # Check for high-risk indicators that override sampling
-            if risk_indicators:
-                risk_score = sum(risk_indicators.values()) / len(risk_indicators)
-                if risk_score > 7.0:  # High risk always sampled
-                    logger.info(f"High-risk request {request.request_id} sampled (risk={risk_score:.2f})")
-                    return True
-            return False
-        
-        return True
+        # Default base rate sampling
+        return random.random() < self.base_rate
     
     def update_user_risk(self, user_id: str, risk_score: float):
         """Update user risk history for adaptive sampling"""
@@ -250,11 +268,17 @@ class CostGuard:
         return sum(self.spending_history.get(hour, []))
 
 
+import re
+
 class SecurityAnalyzer:
-    """Real-time security analysis engine"""
+    """Real-time security analysis engine with pre-compiled regex for performance."""
     
     def __init__(self):
         self.threat_patterns = self._load_threat_patterns()
+        self.compiled_patterns = {
+            category: [re.compile(p, re.IGNORECASE) for p in patterns]
+            for category, patterns in self.threat_patterns.items()
+        }
         
     def analyze_request(self, request: LLMRequest) -> SecurityAnalysis:
         """Analyze request for security threats"""
@@ -275,7 +299,7 @@ class SecurityAnalyzer:
         
         # PII detection
         pii_score = self._detect_pii(request.prompt)
-        if pii_score > 0.3:
+        if pii_score > 0.2:  # Lower threshold to catch single PII patterns
             threats_detected.append(ThreatCategory.PII_LEAKAGE)
             analysis_details["pii_leakage"] = {
                 "score": pii_score,
@@ -326,7 +350,7 @@ class SecurityAnalyzer:
         
         # Sensitive information disclosure
         sensitive_score = self._detect_sensitive_disclosure(response.response)
-        if sensitive_score > 0.4:
+        if sensitive_score > 0.15:  # Lower threshold to catch single sensitive patterns
             threats_detected.append(ThreatCategory.SENSITIVE_INFO_DISCLOSURE)
             analysis_details["sensitive_disclosure"] = {
                 "score": sensitive_score,
@@ -397,40 +421,42 @@ class SecurityAnalyzer:
         }
     
     def _detect_prompt_injection(self, prompt: str) -> float:
-        """Detect prompt injection attempts"""
-        import re
-        
-        patterns = self.threat_patterns["prompt_injection"]
-        matches = 0
-        for pattern in patterns:
-            if re.search(pattern, prompt.lower()):
-                matches += 1
-        
-        return min(matches / len(patterns), 1.0)
+        """Detect prompt injection attempts using pre-compiled regex."""
+        patterns = self.compiled_patterns["prompt_injection"]
+        matches = sum(1 for pattern in patterns if pattern.search(prompt))
+        if matches > 0:
+            return min(0.6 + (matches - 1) / len(patterns) * 0.4, 1.0) # Ensure it crosses 0.5 threshold
+        return 0.0
     
     def _detect_pii(self, text: str) -> float:
-        """Detect personally identifiable information"""
-        import re
+        """Detect personally identifiable information using pre-compiled regex with weighted scoring."""
+        patterns = self.compiled_patterns["pii_patterns"]
+        # Weight different PII types by severity
+        weights = [0.8, 0.6, 0.9, 0.5]  # SSN, Email, Credit Card, Phone
         
-        patterns = self.threat_patterns["pii_patterns"]
-        matches = 0
-        for pattern in patterns:
-            if re.search(pattern, text):
-                matches += 1
+        total_score = 0.0
+        for i, pattern in enumerate(patterns):
+            if pattern.search(text):
+                total_score += weights[i]
         
-        return min(matches / len(patterns), 1.0)
+        # Normalize by maximum possible score
+        max_score = sum(weights)
+        return min(total_score / max_score, 1.0)
     
     def _detect_sensitive_disclosure(self, response: str) -> float:
-        """Detect sensitive information in response"""
-        import re
+        """Detect sensitive information in response using pre-compiled regex with weighted scoring."""
+        patterns = self.compiled_patterns["sensitive_disclosure"]
+        # Weight different sensitive types by severity
+        weights = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4]  # api_key, password, secret, token, confidential, internal
         
-        patterns = self.threat_patterns["sensitive_disclosure"]
-        matches = 0
-        for pattern in patterns:
-            if re.search(pattern, response.lower()):
-                matches += 1
+        total_score = 0.0
+        for i, pattern in enumerate(patterns):
+            if pattern.search(response):
+                total_score += weights[i]
         
-        return min(matches / len(patterns), 1.0)
+        # Normalize by maximum possible score
+        max_score = sum(weights)
+        return min(total_score / max_score, 1.0)
     
     def _detect_jailbreak_success(self, prompt: str, response: str) -> float:
         """Detect successful jailbreak based on prompt-response analysis"""
@@ -473,37 +499,34 @@ class SecurityAnalyzer:
     
     def _get_injection_patterns(self, prompt: str) -> List[str]:
         """Get matched injection patterns"""
-        import re
         matched = []
-        for pattern in self.threat_patterns["prompt_injection"]:
-            if re.search(pattern, prompt.lower()):
-                matched.append(pattern)
+        for original_pattern, compiled_pattern in zip(self.threat_patterns["prompt_injection"], self.compiled_patterns["prompt_injection"]):
+            if compiled_pattern.search(prompt):
+                matched.append(original_pattern)
         return matched
     
     def _identify_pii_types(self, text: str) -> List[str]:
         """Identify types of PII found"""
-        import re
         pii_types = []
         
-        if re.search(r"\b\d{3}-\d{2}-\d{4}\b", text):
+        if self.compiled_patterns["pii_patterns"][0].search(text):
             pii_types.append("SSN")
-        if re.search(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b", text):
+        if self.compiled_patterns["pii_patterns"][1].search(text):
             pii_types.append("Email")
-        if re.search(r"\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b", text):
+        if self.compiled_patterns["pii_patterns"][2].search(text):
             pii_types.append("Credit Card")
         
         return pii_types
     
     def _identify_sensitive_types(self, text: str) -> List[str]:
         """Identify types of sensitive information"""
-        import re
         sensitive_types = []
         
-        if re.search(r"api[_\s]*key", text.lower()):
+        if self.compiled_patterns["sensitive_disclosure"][0].search(text):
             sensitive_types.append("API Key")
-        if re.search(r"password", text.lower()):
+        if self.compiled_patterns["sensitive_disclosure"][1].search(text):
             sensitive_types.append("Password")
-        if re.search(r"secret", text.lower()):
+        if self.compiled_patterns["sensitive_disclosure"][2].search(text):
             sensitive_types.append("Secret")
         
         return sensitive_types
@@ -531,6 +554,7 @@ class AsyncReplayEngine:
         self.security_analyzer = SecurityAnalyzer()
         self.running = False
         self.worker_tasks = []
+        self.dropped_requests = 0
         
         # Initialize async queue only if asyncio is available
         try:
@@ -565,23 +589,39 @@ class AsyncReplayEngine:
         logger.info("Stopped all replay workers")
     
     async def queue_analysis(self, request: LLMRequest, response: Optional[LLMResponse] = None):
-        """Queue request/response for async analysis"""
+        """Queue request/response for async analysis with comprehensive error handling"""
         if self.analysis_queue is None:
             logger.warning("Analysis queue not initialized, skipping async analysis")
             return
             
         try:
+            # Validate input data
+            if not hasattr(request, 'request_id') or not request.request_id:
+                logger.error("Invalid request object: missing request_id")
+                return
+                
             analysis_item = {
                 "request": request,
                 "response": response,
                 "queued_at": datetime.now()
             }
             
-            await self.analysis_queue.put(analysis_item)
+            await self.analysis_queue.put_nowait(analysis_item)
             logger.debug(f"Queued analysis for request {request.request_id}")
             
         except asyncio.QueueFull:
-            logger.warning(f"Analysis queue full, dropping request {request.request_id}")
+            self.dropped_requests += 1
+            logger.warning(f"Analysis queue full, dropping request {request.request_id}. Total dropped: {self.dropped_requests}")
+            
+            # Optional: Could implement overflow handling here
+            if self.dropped_requests % 100 == 0:  # Alert every 100 dropped requests
+                logger.critical(f"High queue pressure: {self.dropped_requests} requests dropped")
+                
+        except AttributeError as e:
+            logger.error(f"Invalid request/response object structure for {getattr(request, 'request_id', 'unknown')}: {e}")
+        except Exception as e:
+            logger.error(f"Unexpected error queuing analysis for {getattr(request, 'request_id', 'unknown')}: {e}")
+            # Don't re-raise to avoid breaking the application
     
     async def _worker(self, worker_id: str):
         """Worker coroutine for processing analysis queue"""
@@ -649,18 +689,24 @@ class GuardrailClient:
     """Main Guardrail SDK client for production deployment"""
     
     def __init__(self,
-                 sampling_rate: float = 0.01,
-                 cost_guard_enabled: bool = True,
-                 async_analysis: bool = True,
-                 daily_budget: float = 1000.0,
+                 sampling_rate: Optional[float] = None,
+                 cost_guard_enabled: Optional[bool] = None,
+                 async_analysis: Optional[bool] = None,
+                 daily_budget: Optional[float] = None,
                  storage_backend: Optional[str] = None):
         
-        self.sampling_strategy = SamplingStrategy(base_rate=sampling_rate)
-        self.cost_guard = CostGuard(daily_budget=daily_budget) if cost_guard_enabled else None
-        self.security_analyzer = SecurityAnalyzer()
-        self.async_analysis = async_analysis
+        # Load configuration from environment variables with fallbacks
+        self.sampling_rate = sampling_rate or float(os.getenv('GUARDRAIL_SAMPLING_RATE', '0.01'))
+        self.cost_guard_enabled = cost_guard_enabled if cost_guard_enabled is not None else os.getenv('GUARDRAIL_COST_GUARD_ENABLED', 'true').lower() == 'true'
+        self.async_analysis = async_analysis if async_analysis is not None else os.getenv('GUARDRAIL_ASYNC_ANALYSIS', 'true').lower() == 'true'
+        daily_budget = daily_budget or float(os.getenv('GUARDRAIL_DAILY_BUDGET', '1000.0'))
         
-        if async_analysis:
+        self.sampling_strategy = SamplingStrategy(base_rate=self.sampling_rate)
+        self.cost_guard = CostGuard(daily_budget=daily_budget) if self.cost_guard_enabled else None
+        self.security_analyzer = SecurityAnalyzer()
+        self.async_analysis = self.async_analysis
+        
+        if self.async_analysis:
             self.replay_engine = AsyncReplayEngine()
         else:
             self.replay_engine = None
@@ -708,7 +754,7 @@ class GuardrailClient:
         
         # Estimate tokens/cost if not provided
         if estimated_tokens is None:
-            estimated_tokens = self._estimate_tokens(prompt)
+            estimated_tokens = self._estimate_tokens(prompt, model)
         if estimated_cost is None:
             estimated_cost = self._estimate_cost(estimated_tokens, model)
         
@@ -807,8 +853,16 @@ class GuardrailClient:
                 "cost_guard": asdict(cost_guard_result) if cost_guard_result else None
             }
     
-    def _estimate_tokens(self, text: str) -> int:
-        """Estimate token count (rough approximation)"""
+    def _estimate_tokens(self, text: str, model: str = "gpt-4") -> int:
+        """Estimate token count using tiktoken if available, otherwise fallback to approximation."""
+        if TIKTOKEN_AVAILABLE:
+            try:
+                encoding = tiktoken.encoding_for_model(model)
+                return len(encoding.encode(text))
+            except KeyError:
+                logger.debug(f"Tiktoken model {model} not found, falling back to approximation.")
+                pass  # Fallback if model not found
+
         # Rough estimation: ~4 characters per token for English
         return max(1, len(text) // 4)
     

@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: promptstrike-guardrail-demo
+  namespace: promptstrike-guardrail
+  labels:
+    app.kubernetes.io/name: promptstrike-guardrail-demo
+    app.kubernetes.io/component: demo-application
+    app.kubernetes.io/part-of: promptstrike
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: promptstrike-guardrail-demo
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: promptstrike-guardrail-demo
+        app.kubernetes.io/component: demo-application
+        app.kubernetes.io/part-of: promptstrike
+        app: sidecar  # Label for kubectl logs filtering
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8001"
+        prometheus.io/path: "/security/metrics"
+    spec:
+      serviceAccountName: promptstrike-guardrail
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      # Demo Application Container
+      - name: demo-app
+        image: promptstrike/guardrail-demo:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        env:
+        - name: APP_ENV
+          value: "production"
+        - name: LOG_LEVEL
+          value: "info"
+        volumeMounts:
+        - name: reports-volume
+          mountPath: /var/reports
+        - name: config-volume
+          mountPath: /app/config
+          readOnly: true
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+
+      # Guardrail Sidecar Container
+      - name: guardrail-sidecar
+        image: promptstrike/guardrail-sidecar:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8001
+          name: guardrail
+          protocol: TCP
+        env:
+        - name: SIDECAR_ENV
+          value: "production"
+        - name: DEMO_APP_URL
+          value: "http://localhost:8000"
+        - name: LOG_LEVEL
+          value: "info"
+        - name: PROMPTSTRIKE_OUTPUT_DIR
+          value: "/var/reports"
+        volumeMounts:
+        - name: reports-volume
+          mountPath: /var/reports
+        - name: config-volume
+          mountPath: /app/config
+          readOnly: true
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+
+      volumes:
+      - name: reports-volume
+        emptyDir: {}
+      - name: config-volume
+        configMap:
+          name: promptstrike-config
+      
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30

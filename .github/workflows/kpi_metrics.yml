@@ -1,0 +1,474 @@
+# KPI Metrics Collection Workflow
+# Collects download metrics and project KPIs every 6 hours
+# Reference: Sprint S-2, Issue PS-27
+
+name: KPI Metrics Collection
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      force_run:
+        description: 'Force run metrics collection'
+        required: false
+        default: 'false'
+
+env:
+  METRICS_BRANCH: metrics
+  METRICS_FILE: metrics/downloads.csv
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  collect-metrics:
+    name: Collect KPI Metrics
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install requests packaging beautifulsoup4 lxml
+
+    - name: Create metrics branch if not exists
+      run: |
+        if ! git show-ref --verify --quiet refs/remotes/origin/${{ env.METRICS_BRANCH }}; then
+          echo "Creating new metrics branch..."
+          git checkout --orphan ${{ env.METRICS_BRANCH }}
+          git rm -rf .
+          mkdir -p metrics
+          echo "timestamp,pypi_downloads,docker_pulls,github_stars,github_forks,github_watchers,total_downloads" > ${{ env.METRICS_FILE }}
+          git add ${{ env.METRICS_FILE }}
+          git commit -m "Initialize metrics tracking"
+          git push origin ${{ env.METRICS_BRANCH }}
+          git checkout main
+        else
+          echo "Metrics branch already exists"
+        fi
+
+    - name: Switch to metrics branch
+      run: |
+        git fetch origin ${{ env.METRICS_BRANCH }}
+        git checkout ${{ env.METRICS_BRANCH }}
+
+    - name: Collect PyPI download metrics
+      id: pypi-metrics
+      run: |
+        echo "🔍 Collecting PyPI download metrics..."
+        
+        cat > collect_pypi.py << 'EOF'
+        import requests
+        import json
+        from datetime import datetime, timedelta
+        
+        def get_pypi_downloads(package_name="promptstrike"):
+            try:
+                # Get download stats from pypistats.org
+                url = f"https://pypistats.org/api/packages/{package_name}/recent"
+                response = requests.get(url, timeout=10)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    # Get last 30 days downloads
+                    last_month = data.get('data', {}).get('last_month', 0)
+                    return last_month
+                else:
+                    print(f"PyPI API error: {response.status_code}")
+                    return 0
+            except Exception as e:
+                print(f"Error fetching PyPI downloads: {e}")
+                return 0
+        
+        def get_pypi_info(package_name="promptstrike"):
+            try:
+                # Get package info from PyPI API
+                url = f"https://pypi.org/pypi/{package_name}/json"
+                response = requests.get(url, timeout=10)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    info = data.get('info', {})
+                    return {
+                        'version': info.get('version', 'unknown'),
+                        'downloads': get_pypi_downloads(package_name)
+                    }
+                else:
+                    print(f"PyPI info API error: {response.status_code}")
+                    return {'version': 'unknown', 'downloads': 0}
+            except Exception as e:
+                print(f"Error fetching PyPI info: {e}")
+                return {'version': 'unknown', 'downloads': 0}
+        
+        pypi_info = get_pypi_info()
+        print(f"PyPI Downloads: {pypi_info['downloads']}")
+        print(f"::set-output name=downloads::{pypi_info['downloads']}")
+        print(f"::set-output name=version::{pypi_info['version']}")
+        EOF
+        
+        python collect_pypi.py
+
+    - name: Collect Docker Hub metrics
+      id: docker-metrics
+      run: |
+        echo "🐳 Collecting Docker Hub download metrics..."
+        
+        cat > collect_docker.py << 'EOF'
+        import requests
+        import json
+        
+        def get_docker_pulls(repository="promptstrike/cli"):
+            try:
+                # Docker Hub API v2
+                url = f"https://hub.docker.com/v2/repositories/{repository}/"
+                response = requests.get(url, timeout=10)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    pull_count = data.get('pull_count', 0)
+                    return pull_count
+                else:
+                    print(f"Docker Hub API error: {response.status_code}")
+                    return 0
+            except Exception as e:
+                print(f"Error fetching Docker pulls: {e}")
+                return 0
+        
+        docker_pulls = get_docker_pulls()
+        print(f"Docker Pulls: {docker_pulls}")
+        print(f"::set-output name=pulls::{docker_pulls}")
+        EOF
+        
+        python collect_docker.py
+
+    - name: Collect GitHub metrics
+      id: github-metrics
+      run: |
+        echo "📊 Collecting GitHub repository metrics..."
+        
+        cat > collect_github.py << 'EOF'
+        import requests
+        import json
+        import os
+        
+        def get_github_metrics(repo="siwenwang0803/PromptStrike"):
+            try:
+                headers = {}
+                if os.environ.get('GITHUB_TOKEN'):
+                    headers['Authorization'] = f"token {os.environ['GITHUB_TOKEN']}"
+                
+                url = f"https://api.github.com/repos/{repo}"
+                response = requests.get(url, headers=headers, timeout=10)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    return {
+                        'stars': data.get('stargazers_count', 0),
+                        'forks': data.get('forks_count', 0),
+                        'watchers': data.get('watchers_count', 0),
+                        'issues': data.get('open_issues_count', 0)
+                    }
+                else:
+                    print(f"GitHub API error: {response.status_code}")
+                    return {'stars': 0, 'forks': 0, 'watchers': 0, 'issues': 0}
+            except Exception as e:
+                print(f"Error fetching GitHub metrics: {e}")
+                return {'stars': 0, 'forks': 0, 'watchers': 0, 'issues': 0}
+        
+        github_metrics = get_github_metrics()
+        print(f"GitHub Stars: {github_metrics['stars']}")
+        print(f"GitHub Forks: {github_metrics['forks']}")
+        print(f"GitHub Watchers: {github_metrics['watchers']}")
+        print(f"::set-output name=stars::{github_metrics['stars']}")
+        print(f"::set-output name=forks::{github_metrics['forks']}")
+        print(f"::set-output name=watchers::{github_metrics['watchers']}")
+        EOF
+        
+        python collect_github.py
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update metrics CSV
+      run: |
+        echo "📝 Updating metrics CSV..."
+        
+        # Get current timestamp
+        TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+        
+        # Get metrics from previous steps
+        PYPI_DOWNLOADS="${{ steps.pypi-metrics.outputs.downloads }}"
+        DOCKER_PULLS="${{ steps.docker-metrics.outputs.pulls }}"
+        GITHUB_STARS="${{ steps.github-metrics.outputs.stars }}"
+        GITHUB_FORKS="${{ steps.github-metrics.outputs.forks }}"
+        GITHUB_WATCHERS="${{ steps.github-metrics.outputs.watchers }}"
+        
+        # Calculate total downloads
+        TOTAL_DOWNLOADS=$((PYPI_DOWNLOADS + DOCKER_PULLS))
+        
+        # Ensure metrics directory exists
+        mkdir -p metrics
+        
+        # Create CSV if it doesn't exist
+        if [ ! -f "${{ env.METRICS_FILE }}" ]; then
+          echo "timestamp,pypi_downloads,docker_pulls,github_stars,github_forks,github_watchers,total_downloads" > ${{ env.METRICS_FILE }}
+        fi
+        
+        # Append new metrics
+        echo "${TIMESTAMP},${PYPI_DOWNLOADS},${DOCKER_PULLS},${GITHUB_STARS},${GITHUB_FORKS},${GITHUB_WATCHERS},${TOTAL_DOWNLOADS}" >> ${{ env.METRICS_FILE }}
+        
+        echo "📊 Metrics updated:"
+        echo "  Timestamp: ${TIMESTAMP}"
+        echo "  PyPI Downloads: ${PYPI_DOWNLOADS}"
+        echo "  Docker Pulls: ${DOCKER_PULLS}"
+        echo "  GitHub Stars: ${GITHUB_STARS}"
+        echo "  GitHub Forks: ${GITHUB_FORKS}"
+        echo "  GitHub Watchers: ${GITHUB_WATCHERS}"
+        echo "  Total Downloads: ${TOTAL_DOWNLOADS}"
+        
+        # Show last 5 entries
+        echo "📈 Recent metrics:"
+        tail -5 ${{ env.METRICS_FILE }}
+
+    - name: Generate metrics summary
+      run: |
+        echo "📋 Generating metrics summary..."
+        
+        cat > generate_summary.py << 'EOF'
+        import csv
+        from datetime import datetime
+        import json
+        
+        def analyze_metrics(csv_file):
+            metrics = []
+            with open(csv_file, 'r') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    metrics.append(row)
+            
+            if len(metrics) == 0:
+                return {}
+            
+            latest = metrics[-1]
+            
+            # Calculate growth if we have previous data
+            growth = {}
+            if len(metrics) > 1:
+                previous = metrics[-2]
+                for key in ['pypi_downloads', 'docker_pulls', 'github_stars', 'total_downloads']:
+                    current_val = int(latest.get(key, 0))
+                    previous_val = int(previous.get(key, 0))
+                    change = current_val - previous_val
+                    growth[f"{key}_change"] = change
+            
+            summary = {
+                'timestamp': latest.get('timestamp'),
+                'pypi_downloads': int(latest.get('pypi_downloads', 0)),
+                'docker_pulls': int(latest.get('docker_pulls', 0)),
+                'github_stars': int(latest.get('github_stars', 0)),
+                'github_forks': int(latest.get('github_forks', 0)),
+                'github_watchers': int(latest.get('github_watchers', 0)),
+                'total_downloads': int(latest.get('total_downloads', 0)),
+                'total_metrics_collected': len(metrics),
+                **growth
+            }
+            
+            return summary
+        
+        summary = analyze_metrics('${{ env.METRICS_FILE }}')
+        
+        # Write summary to file
+        with open('metrics/latest_summary.json', 'w') as f:
+            json.dump(summary, f, indent=2)
+        
+        print("📊 Metrics Summary:")
+        print(json.dumps(summary, indent=2))
+        
+        # Check if we've hit Sprint S-2 KPI targets
+        total_downloads = summary.get('total_downloads', 0)
+        if total_downloads >= 500:
+            print("🎯 SUCCESS: Hit 500 downloads milestone!")
+        else:
+            remaining = 500 - total_downloads
+            print(f"📈 Progress: {total_downloads}/500 downloads ({remaining} remaining)")
+        EOF
+        
+        python generate_summary.py
+
+    - name: Commit and push metrics
+      run: |
+        # Configure git
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action - KPI Metrics"
+        
+        # Add and commit changes
+        git add metrics/
+        
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+          exit 0
+        fi
+        
+        COMMIT_MSG="chore: Update KPI metrics [skip ci]"
+        git commit -m "$COMMIT_MSG"
+        
+        # Push to metrics branch
+        git push origin ${{ env.METRICS_BRANCH }}
+        
+        echo "✅ Metrics committed and pushed successfully"
+
+    - name: Create KPI status badge
+      if: success()
+      run: |
+        echo "🏷️ Creating KPI status badge..."
+        
+        cat > create_badge.py << 'EOF'
+        import json
+        import requests
+        
+        # Load latest summary
+        try:
+            with open('metrics/latest_summary.json', 'r') as f:
+                summary = json.load(f)
+        except:
+            summary = {'total_downloads': 0}
+        
+        total_downloads = summary.get('total_downloads', 0)
+        
+        # Create badge data
+        if total_downloads >= 500:
+            color = "brightgreen"
+            label = f"{total_downloads} downloads"
+        elif total_downloads >= 250:
+            color = "yellow" 
+            label = f"{total_downloads}/500 downloads"
+        else:
+            color = "red"
+            label = f"{total_downloads}/500 downloads"
+        
+        badge_data = {
+            "schemaVersion": 1,
+            "label": "downloads",
+            "message": label,
+            "color": color,
+            "cacheSeconds": 21600  # 6 hours
+        }
+        
+        # Save badge data
+        with open('metrics/downloads_badge.json', 'w') as f:
+            json.dump(badge_data, f, indent=2)
+        
+        print(f"📊 Badge created: {label} ({color})")
+        EOF
+        
+        python create_badge.py
+        
+        # Commit badge if changed
+        if ! git diff --quiet metrics/downloads_badge.json 2>/dev/null; then
+          git add metrics/downloads_badge.json
+          git commit -m "chore: Update downloads badge [skip ci]"
+          git push origin ${{ env.METRICS_BRANCH }}
+        fi
+
+    - name: Post to Slack (on milestones)
+      if: success()
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      run: |
+        if [ -z "$SLACK_WEBHOOK" ]; then
+          echo "No Slack webhook configured, skipping notification"
+          exit 0
+        fi
+        
+        echo "📱 Checking for milestone notifications..."
+        
+        cat > slack_notify.py << 'EOF'
+        import json
+        import requests
+        import os
+        
+        try:
+            with open('metrics/latest_summary.json', 'r') as f:
+                summary = json.load(f)
+        except:
+            exit(0)
+        
+        total_downloads = summary.get('total_downloads', 0)
+        webhook_url = os.environ.get('SLACK_WEBHOOK')
+        
+        if not webhook_url:
+            exit(0)
+        
+        # Check for milestones
+        milestones = [100, 250, 500, 1000, 2500, 5000]
+        
+        for milestone in milestones:
+            if total_downloads >= milestone:
+                # Check if we just hit this milestone
+                prev_downloads = summary.get('total_downloads_change', 0)
+                if prev_downloads > 0 and (total_downloads - prev_downloads) < milestone <= total_downloads:
+                    message = {
+                        "text": f"🎯 PromptStrike Milestone Alert!",
+                        "attachments": [
+                            {
+                                "color": "good",
+                                "fields": [
+                                    {
+                                        "title": "Downloads Milestone Reached!",
+                                        "value": f"We've hit {milestone} total downloads! 🚀\n\nCurrent stats:\n• PyPI: {summary.get('pypi_downloads', 0)}\n• Docker: {summary.get('docker_pulls', 0)}\n• GitHub ⭐: {summary.get('github_stars', 0)}\n• Total: {total_downloads}",
+                                        "short": False
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                    
+                    response = requests.post(webhook_url, json=message)
+                    print(f"Milestone notification sent for {milestone} downloads")
+                    break
+        EOF
+        
+        python slack_notify.py
+
+  on-failure:
+    name: Handle Collection Failure
+    runs-on: ubuntu-latest
+    needs: collect-metrics
+    if: failure()
+    
+    steps:
+    - name: Log failure
+      run: |
+        echo "❌ KPI metrics collection failed"
+        echo "Timestamp: $(date -u)"
+        echo "Workflow: ${{ github.workflow }}"
+        echo "Run ID: ${{ github.run_id }}"
+        
+    - name: Create error badge
+      run: |
+        mkdir -p /tmp/metrics
+        cat > /tmp/metrics/downloads_badge.json << 'EOF'
+        {
+          "schemaVersion": 1,
+          "label": "downloads",
+          "message": "collection failed",
+          "color": "lightgrey",
+          "cacheSeconds": 3600
+        }
+        EOF
+        echo "Error badge created"

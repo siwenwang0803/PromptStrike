@@ -1,0 +1,43 @@
+FROM python:3.11-slim
+
+LABEL maintainer="PromptStrike Team <dev@promptstrike.com>"
+LABEL description="PromptStrike Guardrail Sidecar for security monitoring"
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy PromptStrike source code (in production this would be installed via pip)
+COPY ../../promptstrike /app/promptstrike
+
+# Copy sidecar code
+COPY guardrail_sidecar.py .
+
+# Create non-root user
+RUN adduser --disabled-password --gecos '' sidecar
+RUN chown -R sidecar:sidecar /app
+
+# Create reports directory for shared volume
+RUN mkdir -p /var/reports && chown -R sidecar:sidecar /var/reports
+
+# Switch to non-root user
+USER sidecar
+
+# Expose port
+EXPOSE 8001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8001/health || exit 1
+
+# Run sidecar
+CMD ["uvicorn", "guardrail_sidecar:app", "--host", "0.0.0.0", "--port", "8001"]

@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promptstrike-config
+  namespace: promptstrike-guardrail
+  labels:
+    app.kubernetes.io/name: promptstrike-guardrail
+    app.kubernetes.io/component: configuration
+data:
+  # Demo application configuration
+  demo-app.yaml: |
+    app:
+      name: "PromptStrike Guardrail Demo"
+      version: "0.1.0"
+      debug: true
+      
+    llm:
+      provider: "mock"
+      model: "gpt-4"
+      temperature: 0.7
+      max_tokens: 150
+      
+    monitoring:
+      enabled: true
+      sampling_rate: 1.0
+      log_level: "info"
+  
+  # Guardrail sidecar configuration
+  guardrail.yaml: |
+    guardrail:
+      enabled: true
+      version: "0.1.0"
+      
+    monitoring:
+      sampling_rate: 1.0
+      analysis_timeout_ms: 50
+      max_concurrent_analyses: 10
+      
+    security:
+      enable_realtime_analysis: true
+      mask_sensitive_data: true
+      log_full_requests: false
+      
+    reports:
+      output_format: "json"
+      output_dir: "/var/reports"
+      retention_days: 30
+      
+    thresholds:
+      high_risk_score: 7.0
+      medium_risk_score: 4.0
+      max_response_length: 2000
+      
+    patterns:
+      prompt_injection:
+        - "ignore previous"
+        - "system:"
+        - "assistant:"
+        - "jailbreak"
+        - "prompt injection"
+      
+      sensitive_info:
+        - "api key"
+        - "password"
+        - "secret"
+        - "token"
+        - "private"
+        - "confidential"
+      
+      malicious_intent:
+        - "hack"
+        - "exploit"
+        - "malware"
+        - "virus"
+        - "attack"
+        - "bypass"

@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # Demo FastAPI Application
+  demo-app:
+    build:
+      context: ./demo-app
+      dockerfile: Dockerfile
+    container_name: promptstrike-demo-app
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=development
+      - LOG_LEVEL=info
+    volumes:
+      - reports-volume:/var/reports
+    networks:
+      - promptstrike-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  # Guardrail Sidecar
+  guardrail-sidecar:
+    build:
+      context: ./sidecar
+      dockerfile: Dockerfile
+    container_name: promptstrike-guardrail-sidecar
+    ports:
+      - "8001:8001"
+    environment:
+      - SIDECAR_ENV=development
+      - DEMO_APP_URL=http://demo-app:8000
+      - LOG_LEVEL=info
+      - PROMPTSTRIKE_OUTPUT_DIR=/var/reports
+    volumes:
+      - reports-volume:/var/reports
+      - ../promptstrike:/app/promptstrike:ro
+    networks:
+      - promptstrike-network
+    depends_on:
+      demo-app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  reports-volume:
+    driver: local
+
+networks:
+  promptstrike-network:
+    driver: bridge
+    name: promptstrike-guardrail

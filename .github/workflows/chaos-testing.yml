@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11]
+        python-version: ["3.9", "3.10", "3.11"]
         mutation-type: [
           'data_corruption',
           'protocol_violation', 
@@ -49,7 +49,7 @@ jobs:
     
     - name: Load cached venv
       id: cached-poetry-dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -63,6 +63,7 @@ jobs:
     
     - name: Run mutation tests - ${{ matrix.mutation-type }}
       run: |
+        mkdir -p results
         poetry run python -m pytest tests/chaos/ \
           -v \
           -k "${{ matrix.mutation-type }}" \
@@ -75,7 +76,7 @@ jobs:
         PYTEST_TIMEOUT: 300
     
     - name: Upload mutation test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: mutation-results-${{ matrix.python-version }}
@@ -114,6 +115,7 @@ jobs:
     
     - name: Run chaos replay tests
       run: |
+        mkdir -p results
         poetry run python -m pytest tests/chaos/test_chaos_replay.py \
           -v \
           --tb=short \
@@ -125,7 +127,7 @@ jobs:
         CHAOS_TESTING_MODE: "true"
     
     - name: Upload chaos test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: chaos-replay-results
@@ -155,6 +157,7 @@ jobs:
     
     - name: Run span mutation tests
       run: |
+        mkdir -p results
         poetry run python -m pytest tests/chaos/test_span_mutator.py \
           -v \
           --tb=short \
@@ -165,7 +168,7 @@ jobs:
         CHAOS_TESTING_MODE: "true"
     
     - name: Upload span mutation results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: span-mutation-results
@@ -195,6 +198,7 @@ jobs:
     
     - name: Run gork generation tests
       run: |
+        mkdir -p results
         poetry run python -m pytest tests/chaos/test_gork_generator.py \
           -v \
           --tb=short \
@@ -205,7 +209,7 @@ jobs:
         CHAOS_TESTING_MODE: "true"
     
     - name: Upload gork test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: gork-generation-results
@@ -236,9 +240,11 @@ jobs:
       run: poetry install --no-interaction
     
     - name: Download all test results
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
+        pattern: "*-results*"
         path: test-results/
+        merge-multiple: true
     
     - name: Generate resilience report
       run: |
@@ -250,7 +256,7 @@ jobs:
         CHAOS_TESTING_MODE: "true"
     
     - name: Upload resilience report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: resilience-report
         path: resilience-report.json

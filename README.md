@@ -42,6 +42,26 @@ docker run --rm \
   promptstrike/cli scan gpt-4 --format pdf
 ```
 
+### ⚓ Kubernetes + Helm (Production)
+
+```bash
+# Add PromptStrike Helm repository
+helm repo add promptstrike https://charts.promptstrike.com
+helm repo update
+
+# Install as sidecar in your namespace
+helm install promptstrike-sidecar promptstrike/promptstrike-sidecar \
+  --namespace your-app-namespace \
+  --set config.openai.apiKey=$OPENAI_API_KEY \
+  --set resources.limits.memory="1Gi" \
+  --set resources.limits.cpu="500m"
+
+# Or install locally with custom values
+git clone https://github.com/siwenwang0803/PromptStrike.git
+cd PromptStrike/helm/promptstrike-sidecar
+helm install promptstrike-sidecar . -f values-production.yaml
+```
+
 ### 📦 Poetry (Development)
 
 ```bash
@@ -76,6 +96,7 @@ promptstrike scan gpt-4
 - **NIST AI-RMF** control mapping (GV, MP, MS, MG categories)
 - **EU AI Act** article references (Art.15, 16, 52, 55)
 - **SOC 2** impact analysis (CC6.1, CC6.7, CC7.2, CC8.1)
+- **PCI DSS** compliance framework with merchant validation
 - **Cryptographic audit trails** with evidence preservation
 
 ### 🚀 **Production Ready**
@@ -83,6 +104,74 @@ promptstrike scan gpt-4
 - **Rate limiting** and timeout controls
 - **Parallel execution** for faster scans
 - **Error handling** and graceful degradation
+- **Chaos testing** framework for resilience validation
+- **Lightweight mode** for resource-constrained environments
+
+### 🤝 **Community-Driven Development**
+- **Multi-source feedback** collection (GitHub, telemetry, surveys)
+- **Pattern analysis** with automated insight generation
+- **Priority-based roadmaps** driven by community input
+- **Implementation tracking** and progress monitoring
+- **CLI integration** for complete feedback lifecycle management
+
+## Community Features
+
+### 🤝 Community Feedback Management
+
+PromptStrike includes a comprehensive community feedback system that helps drive development priorities based on real user needs.
+
+```bash
+# Collect feedback from GitHub issues and telemetry
+promptstrike community collect --days 30 --repo siwenwang0803/PromptStrike
+
+# Analyze feedback patterns and generate insights
+promptstrike community analyze --days 90 --insights
+
+# View prioritized feedback for development planning
+promptstrike community priorities --limit 20 --status new
+
+# Generate community-driven development roadmap
+promptstrike community roadmap --quarters 4 --format tree
+
+# Update feedback implementation status
+promptstrike community update fb_12345 --status implemented --notes "Fixed in v1.2.0"
+
+# View community feedback statistics
+promptstrike community stats --days 30 --export stats.json
+```
+
+### 📊 Automated Insights
+
+The community system automatically:
+- **Collects feedback** from GitHub issues, telemetry data, and surveys
+- **Analyzes patterns** to identify recurring bugs and popular feature requests
+- **Generates insights** with confidence scoring and business value assessment
+- **Creates roadmaps** based on community priorities and development capacity
+- **Tracks implementation** progress and community satisfaction metrics
+
+## Chaos Testing & Resilience
+
+### 🌪️ Chaos Engineering Framework
+
+PromptStrike includes built-in chaos testing to validate system resilience under various failure conditions.
+
+```bash
+# Run chaos tests with different mutation types
+pytest tests/chaos/ -m data_corruption -v
+pytest tests/chaos/ -m protocol_violation -v
+pytest tests/chaos/ -m boundary_testing -v
+pytest tests/chaos/ -m security_payloads -v
+
+# Generate resilience reports
+python -m tests.chaos.resilience_scorer --results-path ./test-results --format json
+```
+
+### 🔬 Test Categories
+
+- **Data Corruption**: Malformed payloads, encoding errors, corrupted data
+- **Protocol Violation**: Invalid spans, malformed headers, spec violations  
+- **Boundary Testing**: Memory pressure, timeout chaos, resource exhaustion
+- **Security Payloads**: Injection attacks, malicious inputs, exploit attempts
 
 ## Command Reference
 
@@ -104,6 +193,11 @@ promptstrike list-attacks
 
 # Health check
 promptstrike doctor
+
+# Community feedback management
+promptstrike community collect --days 30 --repo siwenwang0803/PromptStrike
+promptstrike community priorities --limit 10 --status new
+promptstrike community roadmap --quarters 4 --format tree
 ```
 
 ### Advanced Usage
@@ -117,6 +211,12 @@ promptstrike scan $MODEL --max-requests 20 --timeout 10
 
 # Multiple output formats
 promptstrike scan gpt-4 --format all --output ./reports
+
+# Chaos testing for resilience validation
+promptstrike scan gpt-4 --chaos-testing --intensity 0.3
+
+# Lightweight mode for resource optimization  
+promptstrike scan gpt-4 --lightweight --memory-limit 512MB
 ```
 
 ## Attack Packs
@@ -193,6 +293,9 @@ scan:
   timeout: 30
   parallel_workers: 3
   rate_limit_rps: 5
+  lightweight_mode: false
+  memory_limit: "1Gi"
+  cpu_limit: "500m"
 
 attack_packs:
   default: "owasp-llm-top10"
@@ -200,13 +303,27 @@ attack_packs:
 
 output:
   directory: "./reports"
-  formats: ["json", "pdf"]
+  formats: ["json", "pdf", "html", "csv"]
   retention_days: 30
 
 compliance:
   nist_rmf_enabled: true
   eu_ai_act_enabled: true
   soc2_enabled: false
+  pci_dss_enabled: true
+  merchant_level: "level_1"  # level_1, level_2, level_3, level_4
+
+chaos_testing:
+  enabled: false
+  intensity: 0.3
+  duration_seconds: 120
+  mutation_types: ["data_corruption", "protocol_violation"]
+
+community:
+  feedback_collection: true
+  github_repo: "siwenwang0803/PromptStrike"
+  telemetry_enabled: true
+  auto_analysis: true
 ```
 
 ## 🎯 Sprint S-1 Completion
@@ -217,19 +334,28 @@ compliance:
 
 - **Complete OWASP LLM Top 10**: 47 attacks across 10 categories
 - **Multi-Format Reports**: JSON, HTML, PDF with compliance mapping
-- **Docker Deployment**: Production-ready containerized CLI
-- **CLI Interface**: 5 commands with Rich terminal UI
-- **Compliance Ready**: NIST AI-RMF, EU AI Act, SOC 2 integration
+- **Docker Deployment**: Production-ready containerized CLI + Kubernetes Helm charts
+- **CLI Interface**: 6 command groups with Rich terminal UI
+- **Compliance Ready**: NIST AI-RMF, EU AI Act, SOC 2, PCI DSS integration
 - **Local Execution**: Zero data exfiltration, keys stay on-premises
 - **CI/CD Integration**: GitHub Actions, Jenkins pipeline support
+- **Advanced Testing Features**:
+  - **Chaos Engineering**: High-load concurrent testing with fault injection
+  - **Configuration Validation**: Pre-flight scenario compatibility checking
+  - **Resource Optimization**: Lightweight mode with memory and CPU limits
+  - **Enhanced Compliance**: PCI DSS framework with merchant level assessment
+  - **Community Feedback System**: Multi-source collection, analysis, and roadmap generation
 
 ### 📊 Technical Metrics
 
 - **47 Attack Patterns**: Complete coverage of OWASP LLM Top 10
-- **5 CLI Commands**: scan, list-attacks, doctor, version, config
-- **3 Report Formats**: JSON (API), HTML (web), PDF (executive)
+- **6 CLI Command Groups**: scan, list-attacks, doctor, version, community, config
+- **4 Report Formats**: JSON (API), HTML (web), PDF (executive), CSV (analysis)
+- **4 Compliance Frameworks**: NIST AI-RMF, EU AI Act, SOC 2, PCI DSS
 - **100% Local**: All operations run locally, no cloud dependencies
-- **Docker Ready**: Multi-stage build with security best practices
+- **Docker + K8s Ready**: Multi-stage build with Helm charts and security best practices
+- **Chaos Testing**: 30+ resilience tests with mutation and fault injection
+- **Community Features**: Multi-source feedback collection and automated roadmap generation
 
 ### 🚀 Next: Pilot-0 / Sprint S-2
 
@@ -352,6 +478,12 @@ make cli-dry-run
 
 # Schema validation
 make schema-export
+
+# Run chaos tests
+make chaos-test
+
+# Community feedback analysis
+make community-analysis
 ```
 
 ## Roadmap & Status
@@ -363,11 +495,12 @@ make schema-export
 - [x] NIST AI-RMF compliance mapping
 - [x] **Target:** 500 downloads, 5 GitHub issues closed
 
-### 🚧 **Sprint S-2** (Jul 22-Aug 04) - **IN PROGRESS**
-- [ ] Guardrail Side-car α (Kubernetes deployment)
-- [ ] Python SDK for programmatic access
-- [ ] Real-time monitoring dashboard
-- [ ] **Target:** Live in 1 design partner staging environment
+### ✅ **Sprint S-2** (Jul 22-Aug 04) - **COMPLETED**
+- [x] Guardrail Side-car α (Kubernetes deployment with Helm charts)
+- [x] Enhanced chaos testing framework with resilience scoring
+- [x] Community feedback system with automated roadmap generation
+- [x] PCI DSS compliance framework integration
+- [x] **Target:** Advanced testing capabilities and community-driven development
 
 ### 📋 **Upcoming Sprints**
 - **S-3:** Pilot template, Stripe checkout, $15k revenue target

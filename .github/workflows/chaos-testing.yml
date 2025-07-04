@@ -66,7 +66,7 @@ jobs:
         mkdir -p results
         poetry run python -m pytest tests/chaos/ \
           -v \
-          -k "${{ matrix.mutation-type }}" \
+          -m "${{ matrix.mutation-type }}" \
           --tb=short \
           --timeout=300 \
           --junit-xml=results/mutation-${{ matrix.mutation-type }}-${{ matrix.python-version }}.xml

@@ -1,0 +1,22 @@
+# PromptStrike Guardrail SDK - Dependencies
+# Production-ready runtime security monitoring for LLM applications
+
+# Core dependencies
+aiohttp>=3.8.0          # Async HTTP client for external integrations
+pydantic>=2.5.0         # Data validation and serialization
+pyyaml>=6.0.1           # Configuration file parsing
+python-dotenv>=1.0.0    # Environment variable management
+
+# Testing dependencies (optional, for development)
+pytest>=7.4.0           # Testing framework
+pytest-asyncio>=0.21.0  # Async testing support
+pytest-cov>=4.1.0       # Coverage reporting
+
+# Optional integrations
+openai>=1.6.0           # OpenAI API integration (optional)
+anthropic>=0.8.0        # Anthropic API integration (optional)
+langchain>=0.1.0        # LangChain integration (optional)
+
+# Production monitoring (optional)
+prometheus-client>=0.17.0  # Metrics export
+structlog>=23.0.0          # Structured logging

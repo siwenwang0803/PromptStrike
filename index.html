@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PromptStrike Helm Repository</title>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 2rem; }
+        .header { text-align: center; margin-bottom: 2rem; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .command { background: #f8f9fa; padding: 1rem; border-radius: 4px; font-family: monospace; }
+        .charts { margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 PromptStrike Helm Repository</h1>
+            <p>Production-ready Kubernetes security for LLM applications</p>
+        </div>
+        
+        <h2>Quick Start</h2>
+        <div class="command">
+helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike<br>
+helm repo update<br>
+helm install guardrail promptstrike/promptstrike-guardrail --set openai.apiKey=$OPENAI_API_KEY
+        </div>
+        
+        <div class="charts">
+            <h2>Available Charts</h2>
+            <ul>
+                <li><strong>promptstrike-guardrail</strong> - LLM security sidecar with OTEL monitoring</li>
+            </ul>
+        </div>
+        
+        <h2>Documentation</h2>
+        <ul>
+            <li><a href="https://github.com/siwenwang0803/PromptStrike">GitHub Repository</a></li>
+            <li><a href="https://github.com/siwenwang0803/PromptStrike/blob/main/charts/promptstrike-guardrail/README.md">Chart Documentation</a></li>
+        </ul>
+    </div>
+</body>
+</html>

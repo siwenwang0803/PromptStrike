@@ -8,8 +8,8 @@
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/r/promptstrike/cli)
 [![OWASP](https://img.shields.io/badge/OWASP-LLM%20Top%2010-red.svg)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 
-> **🚀 Status:** ✅ Sprint S-1 Complete (July 2025) - Production Ready  
-> **📋 Reference:** [Product One-Pager](00-Product-OnePager.md) | [12M Roadmap](01-12M-Roadmap.md) | [Changelog](CHANGELOG-v0.1.0-alpha.md)
+> **🚀 Status:** ✅ Sprint S-2/Pilot-0 Complete (July 2025) - Enterprise Ready  
+> **📋 Reference:** [Product One-Pager](00-Product-OnePager.md) | [12M Roadmap](01-12M-Roadmap.md) | [Changelog](CHANGELOG-v0.1.0-alpha.md) | [DOD Summary](DOD_COMPLETION_SUMMARY.md)
 
 ## Problem We Solve
 
@@ -45,21 +45,24 @@ docker run --rm \
 ### ⚓ Kubernetes + Helm (Production)
 
 ```bash
-# Add PromptStrike Helm repository
-helm repo add promptstrike https://charts.promptstrike.com
+# Add PromptStrike Helm repository (DOD Command)
+helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
 helm repo update
 
-# Install as sidecar in your namespace
-helm install promptstrike-sidecar promptstrike/promptstrike-sidecar \
-  --namespace your-app-namespace \
-  --set config.openai.apiKey=$OPENAI_API_KEY \
-  --set resources.limits.memory="1Gi" \
-  --set resources.limits.cpu="500m"
+# Install guardrail sidecar (Single Command Deployment)
+helm install guardrail promptstrike/promptstrike-sidecar \
+  --namespace ps \
+  --set openai.apiKey=$OPENAI_API_KEY \
+  --create-namespace
 
-# Or install locally with custom values
-git clone https://github.com/siwenwang0803/PromptStrike.git
-cd PromptStrike/helm/promptstrike-sidecar
-helm install promptstrike-sidecar . -f values-production.yaml
+# Or detailed installation with custom configuration
+helm install guardrail promptstrike/promptstrike-sidecar \
+  --namespace promptstrike-pilot \
+  --set guardrail.secrets.openaiApiKey=true \
+  --set guardrail.secrets.openaiSecretName=my-openai-api-key \
+  --set guardrail.secrets.openaiSecretKey=api-key \
+  --set guardrail.samplingRate=0.05 \
+  --set guardrail.tokenGuard.threshold=4000
 ```
 
 ### 📦 Poetry (Development)
@@ -495,12 +498,15 @@ make community-analysis
 - [x] NIST AI-RMF compliance mapping
 - [x] **Target:** 500 downloads, 5 GitHub issues closed
 
-### ✅ **Sprint S-2** (Jul 22-Aug 04) - **COMPLETED**
-- [x] Guardrail Side-car α (Kubernetes deployment with Helm charts)
+### ✅ **Sprint S-2/Pilot-0** (Jul 22-Aug 04) - **COMPLETED**
+- [x] Helm repository publication for one-command deployment
+- [x] Complete DOD implementation with client verification
+- [x] Guardrail Side-car α (Kubernetes deployment with published Helm charts)
 - [x] Enhanced chaos testing framework with resilience scoring
 - [x] Community feedback system with automated roadmap generation
 - [x] PCI DSS compliance framework integration
-- [x] **Target:** Advanced testing capabilities and community-driven development
+- [x] Pydantic v2 migration with backward compatibility
+- [x] **Target:** Enterprise-ready deployment with DOD compliance
 
 ### 📋 **Upcoming Sprints**
 - **S-3:** Pilot template, Stripe checkout, $15k revenue target

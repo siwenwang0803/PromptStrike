@@ -18,7 +18,7 @@ echo ""
 
 # Test repository URL
 REPO_URL="https://siwenwang0803.github.io/PromptStrike"
-CHART_NAME="promptstrike-guardrail"
+CHART_NAME="promptstrike-sidecar"
 CHART_VERSION="0.1.0"
 
 echo -e "${BLUE}📝 Testing DOD Command Sequence${NC}"

@@ -6,3 +6,4 @@ index-path: ./index.yaml
 package-path: .cr-release-packages
 pages-branch: gh-pages
 pages-index-path: index.yaml
+charts-dir: helm

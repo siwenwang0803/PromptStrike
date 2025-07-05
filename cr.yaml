@@ -1,0 +1,8 @@
+# Chart Releaser configuration
+owner: siwenwang0803
+git-repo: PromptStrike
+charts-repo: https://siwenwang0803.github.io/PromptStrike
+index-path: ./index.yaml
+package-path: .cr-release-packages
+pages-branch: gh-pages
+pages-index-path: index.yaml

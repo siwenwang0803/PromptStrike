@@ -10,6 +10,17 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 from jinja2 import Template
 
+try:
+    from reportlab.lib.pagesizes import letter, A4
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import inch
+    from reportlab.lib import colors
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+    REPORTLAB_AVAILABLE = True
+except ImportError:
+    REPORTLAB_AVAILABLE = False
+
 from ..models.scan_result import ScanResult, AttackResult, SeverityLevel
 
 
@@ -100,31 +111,195 @@ class ReportGenerator:
         return output_path
     
     def generate_pdf(self, scan_result: ScanResult) -> Path:
-        """Generate PDF report (simplified version)"""
-        # For now, generate a text-based PDF placeholder
-        # In production, would use libraries like reportlab or weasyprint
-        
+        """Generate PDF report using ReportLab"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"promptstrike_scan_{timestamp}.pdf"
         output_path = self.output_dir / filename
         
-        # Generate markdown content first
-        md_content = self._generate_markdown_report(scan_result)
+        if not REPORTLAB_AVAILABLE:
+            # Fallback to text file if ReportLab not available
+            return self._generate_text_fallback_pdf(scan_result, output_path)
         
-        # Write as text file with .pdf extension for now
-        # TODO: Implement actual PDF generation
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write("PROMPTSTRIKE SECURITY SCAN REPORT\\n")
-            f.write("=" * 50 + "\\n\\n")
-            f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\\n")
-            f.write(f"Target: {scan_result.target}\\n")
-            f.write(f"Risk Score: {scan_result.overall_risk_score}/10\\n")
-            f.write(f"Security Posture: {scan_result.security_posture.upper()}\\n")
-            f.write(f"Vulnerabilities Found: {scan_result.vulnerability_count}\\n\\n")
-            f.write(md_content)
-            f.write("\\n\\nNOTE: This is a simplified PDF. Full PDF generation with charts and formatting will be implemented in Sprint S-2.")
+        # Create PDF document
+        doc = SimpleDocTemplate(str(output_path), pagesize=A4)
+        styles = getSampleStyleSheet()
+        story = []
         
+        # Custom styles
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=24,
+            spaceAfter=30,
+            alignment=TA_CENTER,
+            textColor=colors.darkblue
+        )
+        
+        heading_style = ParagraphStyle(
+            'CustomHeading',
+            parent=styles['Heading2'],
+            fontSize=16,
+            spaceAfter=12,
+            textColor=colors.darkblue
+        )
+        
+        # Title page
+        story.append(Paragraph("PromptStrike Security Scan Report", title_style))
+        story.append(Spacer(1, 0.5*inch))
+        
+        # Executive summary table
+        summary_data = [
+            ['Target', scan_result.target],
+            ['Scan ID', scan_result.scan_id],
+            ['Generated', datetime.now().strftime('%Y-%m-%d %H:%M:%S')],
+            ['Duration', f"{scan_result.duration_seconds:.1f} seconds"],
+            ['Risk Score', f"{scan_result.overall_risk_score}/10"],
+            ['Security Posture', scan_result.security_posture.upper()],
+            ['Vulnerabilities Found', str(scan_result.vulnerability_count)],
+            ['Total Attacks', str(len(scan_result.results))]
+        ]
+        
+        summary_table = Table(summary_data, colWidths=[2*inch, 3*inch])
+        summary_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        
+        story.append(summary_table)
+        story.append(Spacer(1, 0.3*inch))
+        
+        # Vulnerabilities by severity
+        story.append(Paragraph("Vulnerability Summary", heading_style))
+        
+        severity_counts = {'critical': 0, 'high': 0, 'medium': 0, 'low': 0, 'info': 0}
+        for result in scan_result.results:
+            if result.is_vulnerable:
+                severity_counts[result.severity.value] += 1
+        
+        severity_data = [['Severity', 'Count', 'Risk Level']]
+        severity_colors_map = {
+            'critical': colors.red,
+            'high': colors.orange, 
+            'medium': colors.yellow,
+            'low': colors.lightgreen,
+            'info': colors.lightgrey
+        }
+        
+        for severity, count in severity_counts.items():
+            if count > 0:
+                severity_data.append([severity.title(), str(count), self._get_risk_description(severity)])
+        
+        if len(severity_data) > 1:
+            severity_table = Table(severity_data, colWidths=[1.5*inch, 1*inch, 2.5*inch])
+            severity_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 12),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
+            story.append(severity_table)
+        else:
+            story.append(Paragraph("No vulnerabilities detected.", styles['Normal']))
+        
+        story.append(PageBreak())
+        
+        # Detailed findings
+        if scan_result.vulnerability_count > 0:
+            story.append(Paragraph("Detailed Vulnerability Findings", heading_style))
+            
+            for result in scan_result.results:
+                if result.is_vulnerable:
+                    story.append(self._create_vulnerability_section(result, styles))
+                    story.append(Spacer(1, 0.2*inch))
+        
+        # Compliance section
+        story.append(PageBreak())
+        story.append(Paragraph("Compliance & Recommendations", heading_style))
+        
+        # NIST controls
+        if scan_result.compliance.nist_rmf_controls_tested:
+            story.append(Paragraph("NIST AI-RMF Controls Tested:", styles['Heading3']))
+            nist_text = ", ".join(scan_result.compliance.nist_rmf_controls_tested)
+            story.append(Paragraph(nist_text, styles['Normal']))
+            story.append(Spacer(1, 0.1*inch))
+        
+        # EU AI Act
+        if scan_result.compliance.eu_ai_act_articles_relevant:
+            story.append(Paragraph("EU AI Act Articles:", styles['Heading3']))
+            eu_text = ", ".join(scan_result.compliance.eu_ai_act_articles_relevant)
+            story.append(Paragraph(eu_text, styles['Normal']))
+            story.append(Spacer(1, 0.1*inch))
+        
+        # Immediate actions
+        if scan_result.immediate_actions:
+            story.append(Paragraph("Immediate Actions Required:", styles['Heading3']))
+            for action in scan_result.immediate_actions:
+                story.append(Paragraph(f"• {action}", styles['Normal']))
+            story.append(Spacer(1, 0.1*inch))
+        
+        # Footer
+        story.append(Spacer(1, 0.3*inch))
+        footer_text = f"Generated by PromptStrike CLI v0.1.0 | {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        story.append(Paragraph(footer_text, styles['Normal']))
+        
+        # Build PDF
+        doc.build(story)
         return output_path
+    
+    def _generate_text_fallback_pdf(self, scan_result: ScanResult, output_path: Path) -> Path:
+        """Fallback text-based PDF when ReportLab is not available"""
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write("PROMPTSTRIKE SECURITY SCAN REPORT\n")
+            f.write("=" * 50 + "\n\n")
+            f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"Target: {scan_result.target}\n")
+            f.write(f"Risk Score: {scan_result.overall_risk_score}/10\n")
+            f.write(f"Security Posture: {scan_result.security_posture.upper()}\n")
+            f.write(f"Vulnerabilities Found: {scan_result.vulnerability_count}\n\n")
+            f.write("NOTE: ReportLab not installed. Install with: pip install reportlab\n")
+        return output_path
+    
+    def _create_vulnerability_section(self, result: AttackResult, styles) -> Paragraph:
+        """Create a vulnerability section for the PDF"""
+        severity_color = {
+            'critical': 'red',
+            'high': 'orange', 
+            'medium': 'goldenrod',
+            'low': 'green',
+            'info': 'gray'
+        }.get(result.severity.value, 'black')
+        
+        content = f"""
+        <b>Attack ID:</b> {result.attack_id}<br/>
+        <b>Category:</b> {result.category.value.replace('_', ' ').title()}<br/>
+        <b>Severity:</b> <font color="{severity_color}"><b>{result.severity.value.upper()}</b></font><br/>
+        <b>Risk Score:</b> {result.risk_score}/10<br/>
+        <b>Confidence:</b> {result.confidence_score:.2f}<br/>
+        <b>Description:</b> {result.description}<br/>
+        <b>Evidence:</b> {result.evidence or 'N/A'}
+        """
+        
+        return Paragraph(content, styles['Normal'])
+    
+    def _get_risk_description(self, severity: str) -> str:
+        """Get risk description for severity level"""
+        descriptions = {
+            'critical': 'Immediate action required',
+            'high': 'High priority remediation',
+            'medium': 'Medium priority review',
+            'low': 'Low priority monitoring',
+            'info': 'Informational only'
+        }
+        return descriptions.get(severity, 'Unknown')
     
     def _attack_result_to_dict(self, result: AttackResult) -> Dict[str, Any]:
         """Convert AttackResult to dictionary"""

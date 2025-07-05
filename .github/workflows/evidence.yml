@@ -61,6 +61,9 @@ jobs:
       - name: Install project
         run: poetry install --no-interaction
         
+      - name: Install ReportLab for PDF generation
+        run: poetry add reportlab
+        
       - name: Generate compliance evidence pack
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

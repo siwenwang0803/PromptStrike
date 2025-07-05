@@ -1,0 +1,36 @@
+PromptStrike DOD Final Validation - Fri Jul  4 23:47:53 PDT 2025
+═══════════════════════════════════════════════
+
+SUCCESS: All DOD requirements validated ✅
+
+Command Sequence:
+1. helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+2. helm repo update  
+3. helm install guardrail promptstrike/promptstrike-sidecar -n ps --set openai.apiKey=$KEY
+
+Validation Results:
+✅ GitHub Pages accessible
+✅ Helm index.yaml available
+✅ Repository add/update successful
+✅ Chart discoverable via search
+✅ Installation command validated
+
+Chart Details:
+NAME                             	CHART VERSION	APP VERSION	DESCRIPTION                                       
+promptstrike/promptstrike-sidecar	0.2.0        	0.1.0-alpha	PromptStrike Guardrail Sidecar - Runtime Securi...
+
+Repository Contents:
+entries:
+  promptstrike-sidecar:
+  - annotations:
+      category: Security
+      images: |
+        - name: promptstrike-sidecar
+          image: promptstrike/guardrail-sidecar:latest
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: 0.1.0-alpha
+    created: "2025-07-04T23:47:12.971882-07:00"
+
+Generated: Fri Jul  4 23:47:53 PDT 2025
+Status: DOD COMPLETE ✅

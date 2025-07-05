@@ -76,14 +76,17 @@ jobs:
           poetry run promptstrike scan ${{ inputs.scan_target || 'gpt-4' }} \
             --output ./reports/evidence \
             --format ${{ inputs.report_format || 'pdf' }} \
-            --scan-id "${SCAN_ID}" \
             --max-requests 25 \
-            --timeout 15 \
-            --config-comment "Pilot0 Compliance Evidence Pack - Generated $(date)"
+            --timeout 15
             
           # Rename PDF to standard compliance pack name
-          if [ -f "reports/evidence/${SCAN_ID}.pdf" ]; then
-            cp "reports/evidence/${SCAN_ID}.pdf" "reports/evidence/Pilot0_compliance_pack.pdf"
+          # Find the generated PDF (follows ps-YYYYMMDD-HHMMSS-xxxxx pattern)
+          PDF_FILE=$(find reports/evidence -name "*.pdf" -type f | head -1)
+          if [ -n "$PDF_FILE" ]; then
+            cp "$PDF_FILE" "reports/evidence/Pilot0_compliance_pack.pdf"
+            echo "Generated compliance pack: Pilot0_compliance_pack.pdf"
+          else
+            echo "Warning: No PDF file generated"
           fi
           
           # Generate compliance summary
@@ -91,15 +94,14 @@ jobs:
           # Pilot0 Compliance Evidence Pack
           
           **Generated:** $(date -u)
-          **Scan ID:** ${SCAN_ID}
           **Target:** ${{ inputs.scan_target || 'gpt-4' }}
           **Format:** ${{ inputs.report_format || 'pdf' }}
+          **Workflow Run:** ${{ github.run_number }}
           
           ## Evidence Files
           
           - **Pilot0_compliance_pack.pdf** - Executive compliance report
-          - **${SCAN_ID}.json** - Detailed scan results (if generated)
-          - **${SCAN_ID}.html** - Interactive dashboard (if generated)
+          - **Scan results** - Detailed JSON/HTML reports (if generated)
           
           ## Compliance Frameworks Tested
           

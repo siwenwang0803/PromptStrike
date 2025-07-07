@@ -40,10 +40,10 @@ jobs:
           helm repo update
           
           # Verify chart is available
-          helm search repo promptstrike/promptstrike-guardrail --version 0.1.0
+          helm search repo promptstrike/promptstrike-sidecar --version 0.2.0
           
           # Test dry-run installation with DOD command format
-          helm install guardrail promptstrike/promptstrike-guardrail \
+          helm install guardrail promptstrike/promptstrike-sidecar \
             -n ps \
             --set openai.apiKey="test-key-dod" \
             --create-namespace \
@@ -57,7 +57,7 @@ jobs:
       - name: Check for chart package
         run: |
           # Check if the chart package exists
-          if curl -f https://siwenwang0803.github.io/PromptStrike/promptstrike-guardrail-0.1.0.tgz; then
+          if curl -f https://siwenwang0803.github.io/PromptStrike/promptstrike-sidecar-0.2.0.tgz; then
             echo "✅ Chart package is accessible"
           else
             echo "⚠️ Chart package not yet available (may need release workflow)"

@@ -145,7 +145,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo -e "${GREEN}🎉 ALL DOD REQUIREMENTS VALIDATED!${NC}"
 echo ""
 echo -e "${BLUE}✅ Task Completion Status:${NC}"
-echo "   1. Tag & push chart/v0.1.0 ✅ COMPLETE"
+echo "   1. Tag & push chart/v0.2.0 ✅ COMPLETE"
 echo "   2. Merge chart-release workflow ✅ COMPLETE"  
 echo "   3. Helm repository live & working ✅ COMPLETE"
 echo "   4. DOD command sequence validated ✅ COMPLETE"

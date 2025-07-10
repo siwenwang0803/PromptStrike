@@ -52,11 +52,12 @@ COPY --from=builder --chown=promptstrike:promptstrike /app/.venv /app/.venv
 # Copy application code
 COPY --chown=promptstrike:promptstrike . .
 
+# Create directories for output (before switching to non-root user)
+RUN mkdir -p /app/reports /app/data && \
+    chown -R promptstrike:promptstrike /app/reports /app/data
+
 # Switch to non-root user
 USER promptstrike
-
-# Create directories for output
-RUN mkdir -p /app/reports /app/data
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \

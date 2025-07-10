@@ -1,6 +1,6 @@
 apiVersion: v2
-name: promptstrike-sidecar
-description: PromptStrike Guardrail Sidecar - Runtime Security Monitoring for LLM Applications
+name: promptstrike-cli
+description: PromptStrike CLI - Developer-first automated LLM red-team platform
 type: application
 version: 0.2.0
 appVersion: "0.2.0-alpha"
@@ -11,19 +11,19 @@ sources:
 
 maintainers:
   - name: PromptStrike Team
-    email: support@promptstrike.com
+    email: dev@promptstrike.com
 
 keywords:
   - llm
   - security
-  - monitoring
-  - guardrail
-  - sidecar
+  - red-team
+  - testing
+  - owasp
   - kubernetes
 
 annotations:
   category: Security
   images: |
-    - name: promptstrike-sidecar
-      image: promptstrike/guardrail-sidecar:latest
-  licenses: Apache-2.0
+    - name: promptstrike-cli
+      image: siwenwang0803/promptstrike:v0.2.0-alpha
+  licenses: MIT

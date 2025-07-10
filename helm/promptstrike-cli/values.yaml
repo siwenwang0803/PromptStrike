@@ -1,0 +1,145 @@
+# Default values for promptstrike-cli
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Global configuration
+global:
+  # Environment: development, staging, production
+  environment: production
+  # Image registry
+  imageRegistry: "docker.io"
+  # Image pull policy
+  imagePullPolicy: IfNotPresent
+
+# CLI configuration
+cli:
+  enabled: true
+  image:
+    repository: siwenwang0803/promptstrike
+    tag: "v0.2.0-alpha"
+    pullPolicy: IfNotPresent
+  
+  # Resource limits and requests
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+      ephemeral-storage: 100Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+      ephemeral-storage: 1Gi
+
+  # Environment variables
+  env:
+    # OpenAI API Key (set via secret)
+    - name: OPENAI_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: promptstrike-secrets
+          key: openai-api-key
+    # Configuration
+    - name: PS_CONFIG_PATH
+      value: "/app/config/promptstrike.yaml"
+    - name: PS_OUTPUT_DIR
+      value: "/app/reports"
+
+  # Command to run
+  command: ["python", "-m", "promptstrike.cli"]
+  args: ["--help"]
+
+  # Security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+      - ALL
+
+# Service configuration
+service:
+  enabled: false
+  type: ClusterIP
+  port: 8080
+
+# Secret configuration
+secrets:
+  # OpenAI API Key - must be provided
+  openaiApiKey: ""
+
+# ConfigMap configuration
+config:
+  # PromptStrike configuration
+  promptstrike:
+    max_requests: 100
+    timeout: 30
+    output_format: json
+    attack_pack: owasp-llm-top10
+
+# Persistence
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  mountPath: /app/reports
+
+# Job configuration for running scans
+job:
+  enabled: false
+  # Cron schedule for automated scans
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  # Job configuration
+  activeDeadlineSeconds: 3600
+  backoffLimit: 3
+  # Target model to scan
+  target: "gpt-3.5-turbo"
+  # Scan type
+  scanType: "full"  # full, quick, compliance
+
+# Network Policy
+networkPolicy:
+  enabled: false
+  egress:
+    - to: []
+      ports:
+      - protocol: TCP
+        port: 443  # HTTPS for OpenAI API
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+
+# Service Account
+serviceAccount:
+  enabled: true
+  create: true
+  name: ""
+  annotations: {}
+
+# RBAC
+rbac:
+  enabled: true
+  create: true
+
+# Monitoring
+monitoring:
+  enabled: false
+  serviceMonitor:
+    enabled: false
+    labels: {}
+    interval: 30s
+    path: /metrics
+
+# Autoscaling
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80

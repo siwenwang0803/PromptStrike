@@ -4,7 +4,7 @@ PromptStrike - Developer-first automated LLM red-team platform
 Reference: cid-onepager-v1, cid-roadmap-v1 Sprint S-1
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0a0"
 __author__ = "PromptStrike Team"
 __email__ = "dev@promptstrike.com"
 __license__ = "MIT"

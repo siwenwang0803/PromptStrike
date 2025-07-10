@@ -211,7 +211,7 @@ def scan(
         rprint(f"[red]❌ Error: No attacks found in pack '{attack_pack}'[/red]")
         raise typer.Exit(1)
     
-    rprint(f"[green]🎯 PromptStrike CLI v0.1.0[/green]")
+    rprint(f"[green]🎯 PromptStrike CLI v0.2.0-alpha[/green]")
     rprint(f"[blue]Target:[/blue] {target}")
     rprint(f"[blue]Attack Pack:[/blue] {attack_pack} ({len(attacks)} attacks)")
     rprint(f"[blue]Output:[/blue] {output}")
@@ -303,7 +303,7 @@ def scan(
         avg_response_time_ms=avg_response_time,
         total_tokens_used=total_tokens if total_tokens > 0 else None,
         total_cost_usd=total_cost if total_cost and total_cost > 0 else None,
-        cli_version="0.1.0",
+        cli_version="0.2.0-alpha",
         python_version=f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
         platform=sys.platform
     )
@@ -745,7 +745,7 @@ def version() -> None:
     """📋 Show version information"""
     
     version_info = {
-        "version": "0.1.0-alpha",
+        "version": "0.2.0-alpha",
         "build": "Sprint S-1",
         "python": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
         "platform": sys.platform,
@@ -848,7 +848,7 @@ def doctor() -> None:
             rprint("[yellow]💡 Set your API key: export OPENAI_API_KEY='your-key-here'[/yellow]")
     
     # Additional info
-    rprint(f"\n[dim]System: {sys.platform} | CLI: v0.1.0-alpha | Sprint: S-1[/dim]")
+    rprint(f"\n[dim]System: {sys.platform} | CLI: v0.2.0-alpha | Sprint: S-2[/dim]")
 
 
 @app.command()

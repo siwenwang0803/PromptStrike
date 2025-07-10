@@ -1,0 +1,14 @@
+{{- if .Values.cli.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "promptstrike-cli.configMapName" . }}
+  labels:
+    {{- include "promptstrike-cli.labels" . | nindent 4 }}
+data:
+  promptstrike.yaml: |
+    max_requests: {{ .Values.config.promptstrike.max_requests }}
+    timeout: {{ .Values.config.promptstrike.timeout }}
+    output_format: {{ .Values.config.promptstrike.output_format }}
+    attack_pack: {{ .Values.config.promptstrike.attack_pack }}
+{{- end }}

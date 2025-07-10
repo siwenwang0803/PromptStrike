@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "promptstrike"
-version = "0.1.0a0"
+version = "0.2.0a0"
 description = "Developer-first automated LLM red-team platform"
 authors = ["PromptStrike Team <dev@promptstrike.com>"]
 readme = "README.md"

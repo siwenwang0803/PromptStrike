@@ -1,5 +1,5 @@
 # Multi-stage build for PromptStrike CLI
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -28,11 +28,17 @@ WORKDIR /app
 # Copy Poetry files
 COPY pyproject.toml poetry.lock* ./
 
-# Install dependencies
+# Install dependencies and ensure .venv is created
+RUN poetry install --without dev --no-root && rm -rf $POETRY_CACHE_DIR
+
+# Copy source code for the final poetry install
+COPY . .
+
+# Install the package itself
 RUN poetry install --without dev && rm -rf $POETRY_CACHE_DIR
 
 # Production stage
-FROM python:3.11-slim as production
+FROM python:3.11-slim AS production
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \

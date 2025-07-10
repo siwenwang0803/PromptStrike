@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/badge/version-0.1.0--alpha-blue.svg)](https://github.com/siwenwang0803/PromptStrike/releases)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Docker](https://img.shields.io/docker/pulls/siwenwang0803/promptstrike.svg)](https://hub.docker.com/r/siwenwang0803/promptstrike)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://github.com/siwenwang0803/PromptStrike/blob/main/Dockerfile)
 [![PyPI](https://img.shields.io/pypi/v/promptstrike.svg)](https://pypi.org/project/promptstrike/)
 [![OWASP](https://img.shields.io/badge/OWASP-LLM%20Top%2010-red.svg)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 
@@ -33,10 +33,16 @@ Large-language-model (LLM) apps ship to production with **invisible jailbreak, d
 ### 🐳 Docker (Recommended)
 
 ```bash
-docker run --rm -e OPENAI_API_KEY=$OPENAI_API_KEY -v $(pwd)/reports:/app/reports promptstrike/cli:latest scan gpt-4
+# Clone and build locally
+git clone https://github.com/siwenwang0803/PromptStrike.git
+cd PromptStrike
+docker build -t promptstrike/cli .
+
+# Run scan
+docker run --rm -e OPENAI_API_KEY=$OPENAI_API_KEY -v $(pwd)/reports:/app/reports promptstrike/cli scan gpt-4
 ```
 
-For build/local: See [full install guide](docs/installation.md).
+*Docker Hub image coming soon - currently build locally.*
 
 ### 📦 PyPI
 
@@ -165,7 +171,7 @@ CI/CD examples: [CI/CD Guide](docs/cicd.md).
 
 ---
 
-**Ready to secure your LLM?** `docker run promptstrike/cli scan gpt-4 --dry-run`
+**Ready to secure your LLM?** `pip install promptstrike && promptstrike scan gpt-4 --dry-run`
 
 **Questions**: dev@promptstrike.com  
 **SaaS Waitlist**: [promptstrike.com](https://promptstrike.com)

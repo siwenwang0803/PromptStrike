@@ -45,7 +45,7 @@ jobs:
           # Test dry-run installation with DOD command format
           # Note: This will fail with "cluster unreachable" in CI, which is expected
           if helm install guardrail redforge/redforge-sidecar \
-            -n ps \
+            -n redforge \
             --set openai.apiKey="test-key-dod" \
             --create-namespace \
             --dry-run 2>&1 | grep -q "CHART PATH:.*redforge-sidecar-0.2.0.tgz"; then
@@ -53,7 +53,7 @@ jobs:
           else
             # If it's just a K8s connection issue, that's fine
             helm install guardrail redforge/redforge-sidecar \
-              -n ps \
+              -n redforge \
               --set openai.apiKey="test-key-dod" \
               --create-namespace \
               --dry-run --debug 2>&1 | grep -E "(CHART PATH:|cluster unreachable)" || exit 1

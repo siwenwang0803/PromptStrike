@@ -1,5 +1,5 @@
 """
-Comprehensive test suite for PromptStrike CLI
+Comprehensive test suite for RedForge CLI
 Reference: cid-roadmap-v1 Sprint S-1
 
 Tests cover:
@@ -22,12 +22,12 @@ from unittest.mock import Mock, patch, AsyncMock
 from typer.testing import CliRunner
 
 # Import CLI and core modules
-from promptstrike.cli import app
-from promptstrike.core.attacks import AttackPackLoader, AttackDefinition
-from promptstrike.core.scanner import LLMScanner
-from promptstrike.core.report import ReportGenerator
-from promptstrike.utils.config import Config, load_config
-from promptstrike.models.scan_result import (
+from redforge.cli import app
+from redforge.core.attacks import AttackPackLoader, AttackDefinition
+from redforge.core.scanner import LLMScanner
+from redforge.core.report import ReportGenerator
+from redforge.utils.config import Config, load_config
+from redforge.models.scan_result import (
     AttackResult, ScanResult, ScanMetadata, ComplianceReport,
     SeverityLevel, AttackCategory
 )

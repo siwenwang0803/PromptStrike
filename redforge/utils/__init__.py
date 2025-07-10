@@ -1,4 +1,4 @@
-"""Utility modules for PromptStrike."""
+"""Utility modules for RedForge."""
 
 from .config import Config
 

@@ -1,5 +1,5 @@
 """
-PromptStrike Compliance Module
+RedForge Compliance Module
 
 Enterprise-grade compliance and regulatory framework support for LLM security assessments.
 Supports multiple industry standards including NIST AI-RMF, EU AI Act, SOC 2, ISO 27001,

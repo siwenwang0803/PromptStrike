@@ -512,10 +512,10 @@ class ComplianceReportGenerator:
             version=version
         )
         
-        # Enhance with PromptStrike-specific context
+        # Enhance with RedForge-specific context
         enhanced_report = {
             **pci_report,
-            "promptstrike_metadata": {
+            "redforge_metadata": {
                 "scan_id": self.scan_result.scan_id,
                 "target_system": self.scan_result.target,
                 "scan_timestamp": self.scan_result.start_time.isoformat(),
@@ -535,7 +535,7 @@ class ComplianceReportGenerator:
         return enhanced_report
     
     def _map_attack_category_to_type(self, attack_category) -> str:
-        """Map PromptStrike attack categories to PCI DSS attack types"""
+        """Map RedForge attack categories to PCI DSS attack types"""
         category_str = attack_category.value if hasattr(attack_category, 'value') else str(attack_category)
         
         mapping = {
@@ -713,12 +713,12 @@ class ComplianceReportGenerator:
         """Generate audit evidence for PCI DSS compliance"""
         return {
             "evidence_collection_date": datetime.now().isoformat(),
-            "testing_methodology": "PromptStrike Automated Security Testing",
+            "testing_methodology": "RedForge Automated Security Testing",
             "evidence_artifacts": [
                 {
                     "artifact_type": "Security Test Results",
                     "description": "Automated security testing results showing system response to various attack vectors",
-                    "file_reference": f"promptstrike_scan_{self.scan_result.scan_id}.json",
+                    "file_reference": f"redforge_scan_{self.scan_result.scan_id}.json",
                     "integrity_hash": self.scan_result.compliance.audit_hash if self.scan_result.compliance else None
                 },
                 {
@@ -733,7 +733,7 @@ class ComplianceReportGenerator:
                 }
             ],
             "assessor_information": {
-                "tool_name": "PromptStrike",
+                "tool_name": "RedForge",
                 "tool_version": "1.0",
                 "methodology_standard": "OWASP Testing Guide v4.0",
                 "assessment_scope": "AI/ML system security controls"

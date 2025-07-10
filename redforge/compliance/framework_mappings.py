@@ -1,7 +1,7 @@
 """
 Compliance Framework Mappings
 
-Maps OWASP LLM Top 10 vulnerabilities and PromptStrike attack categories 
+Maps OWASP LLM Top 10 vulnerabilities and RedForge attack categories 
 to various regulatory and industry compliance frameworks.
 """
 

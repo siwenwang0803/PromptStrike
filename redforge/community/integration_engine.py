@@ -1,7 +1,7 @@
 """
 Community Feedback Integration Engine
 
-Integrates community feedback into PromptStrike development process.
+Integrates community feedback into RedForge development process.
 Provides automated feedback processing, priority scheduling, and
 implementation tracking.
 """
@@ -629,7 +629,7 @@ class FeedbackIntegrationEngine:
     
     def _load_integration_data(self):
         """Load integration tasks and insights from storage"""
-        storage_path = Path("~/.promptstrike/community").expanduser()
+        storage_path = Path("~/.redforge/community").expanduser()
         storage_path.mkdir(parents=True, exist_ok=True)
         
         # Load tasks
@@ -664,7 +664,7 @@ class FeedbackIntegrationEngine:
     
     def _save_integration_data(self):
         """Save integration tasks and insights to storage"""
-        storage_path = Path("~/.promptstrike/community").expanduser()
+        storage_path = Path("~/.redforge/community").expanduser()
         storage_path.mkdir(parents=True, exist_ok=True)
         
         # Save tasks

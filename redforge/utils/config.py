@@ -1,5 +1,5 @@
 """
-Configuration management for PromptStrike CLI
+Configuration management for RedForge CLI
 Reference: cid-roadmap-v1 Sprint S-1
 """
 
@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field, field_validator
 
 class Config(BaseModel):
     """
-    Configuration model for PromptStrike CLI
+    Configuration model for RedForge CLI
     """
     
     # Target configuration
@@ -122,23 +122,23 @@ def _load_from_environment() -> Dict[str, Any]:
     
     # Map environment variables to config fields
     env_mappings = {
-        'PROMPTSTRIKE_TARGET': 'target_endpoint',
-        'PROMPTSTRIKE_MODEL': 'target_model',
+        'REDFORGE_TARGET': 'target_endpoint',
+        'REDFORGE_MODEL': 'target_model',
         'OPENAI_API_KEY': 'api_key',
-        'PROMPTSTRIKE_MAX_REQUESTS': ('max_requests', int),
-        'PROMPTSTRIKE_TIMEOUT': ('timeout_seconds', int),
-        'PROMPTSTRIKE_WORKERS': ('parallel_workers', int),
-        'PROMPTSTRIKE_RATE_LIMIT': ('rate_limit_rps', float),
-        'PROMPTSTRIKE_ATTACK_PACK': 'default_attack_pack',
-        'PROMPTSTRIKE_OUTPUT_DIR': 'output_directory',
-        'PROMPTSTRIKE_OUTPUT_FORMATS': ('output_formats', lambda x: x.split(',')),
-        'PROMPTSTRIKE_RETENTION_DAYS': ('retention_days', int),
-        'PROMPTSTRIKE_NIST_ENABLED': ('nist_rmf_enabled', lambda x: x.lower() == 'true'),
-        'PROMPTSTRIKE_EU_AI_ACT_ENABLED': ('eu_ai_act_enabled', lambda x: x.lower() == 'true'),
-        'PROMPTSTRIKE_SOC2_ENABLED': ('soc2_enabled', lambda x: x.lower() == 'true'),
-        'PROMPTSTRIKE_SLACK_WEBHOOK': 'slack_webhook',
-        'PROMPTSTRIKE_JIRA_PROJECT': 'jira_project',
-        'PROMPTSTRIKE_SPLUNK_HEC': 'splunk_hec',
+        'REDFORGE_MAX_REQUESTS': ('max_requests', int),
+        'REDFORGE_TIMEOUT': ('timeout_seconds', int),
+        'REDFORGE_WORKERS': ('parallel_workers', int),
+        'REDFORGE_RATE_LIMIT': ('rate_limit_rps', float),
+        'REDFORGE_ATTACK_PACK': 'default_attack_pack',
+        'REDFORGE_OUTPUT_DIR': 'output_directory',
+        'REDFORGE_OUTPUT_FORMATS': ('output_formats', lambda x: x.split(',')),
+        'REDFORGE_RETENTION_DAYS': ('retention_days', int),
+        'REDFORGE_NIST_ENABLED': ('nist_rmf_enabled', lambda x: x.lower() == 'true'),
+        'REDFORGE_EU_AI_ACT_ENABLED': ('eu_ai_act_enabled', lambda x: x.lower() == 'true'),
+        'REDFORGE_SOC2_ENABLED': ('soc2_enabled', lambda x: x.lower() == 'true'),
+        'REDFORGE_SLACK_WEBHOOK': 'slack_webhook',
+        'REDFORGE_JIRA_PROJECT': 'jira_project',
+        'REDFORGE_SPLUNK_HEC': 'splunk_hec',
     }
     
     for env_var, config_field in env_mappings.items():
@@ -198,7 +198,7 @@ def create_default_config_file(output_path: Path) -> None:
 
 def get_config_template() -> str:
     """Get configuration file template as string"""
-    return """# PromptStrike CLI Configuration
+    return """# RedForge CLI Configuration
 # Reference: cid-roadmap-v1 Sprint S-1
 
 target:

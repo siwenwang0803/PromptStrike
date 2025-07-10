@@ -1,12 +1,12 @@
 """
-PromptStrike - Developer-first automated LLM red-team platform
+RedForge - Developer-first automated LLM red-team platform
 
 Reference: cid-onepager-v1, cid-roadmap-v1 Sprint S-1
 """
 
 __version__ = "0.2.0a0"
-__author__ = "PromptStrike Team"
-__email__ = "dev@promptstrike.com"
+__author__ = "RedForge Team"
+__email__ = "dev@redforge.com"
 __license__ = "MIT"
 
 from .core.scanner import LLMScanner

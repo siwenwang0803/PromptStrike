@@ -1,7 +1,7 @@
 """
 PCI DSS (Payment Card Industry Data Security Standard) Compliance Framework
 
-Provides mapping between PromptStrike security findings and PCI DSS requirements
+Provides mapping between RedForge security findings and PCI DSS requirements
 for financial institutions and payment processors.
 """
 
@@ -212,8 +212,8 @@ class PCIDSSFramework:
         # For brevity, returning empty dict
         return {}
     
-    def map_promptstrike_findings(self, scan_results: Dict[str, Any]) -> List[ControlMapping]:
-        """Map PromptStrike findings to PCI DSS controls"""
+    def map_redforge_findings(self, scan_results: Dict[str, Any]) -> List[ControlMapping]:
+        """Map RedForge findings to PCI DSS controls"""
         mappings = []
         
         # Extract relevant findings
@@ -250,7 +250,7 @@ class PCIDSSFramework:
         return mappings
     
     def _get_attack_to_pci_mappings(self) -> Dict[str, List[str]]:
-        """Map PromptStrike attack types to PCI DSS controls"""
+        """Map RedForge attack types to PCI DSS controls"""
         return {
             # Injection attacks -> Secure development requirements
             "prompt_injection": ["6.1", "6.2"],
@@ -436,9 +436,9 @@ class PCIDSSFramework:
 def create_pci_dss_report(scan_results: Dict[str, Any], 
                          merchant_level: PCIDSSLevel = PCIDSSLevel.LEVEL_1,
                          version: PCIDSSVersion = PCIDSSVersion.V4_0) -> Dict[str, Any]:
-    """Create PCI DSS compliance report from PromptStrike scan results"""
+    """Create PCI DSS compliance report from RedForge scan results"""
     framework = PCIDSSFramework(version=version, merchant_level=merchant_level)
-    mappings = framework.map_promptstrike_findings(scan_results)
+    mappings = framework.map_redforge_findings(scan_results)
     return framework.generate_compliance_report(mappings)
 
 

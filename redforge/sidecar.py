@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PromptStrike Sidecar - Cost Guard Implementation
+RedForge Sidecar - Cost Guard Implementation
 Detects Token Storm attacks and other cost-based vulnerabilities
 """
 

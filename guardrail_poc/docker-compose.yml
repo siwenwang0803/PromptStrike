@@ -6,7 +6,7 @@ services:
     build:
       context: ./demo-app
       dockerfile: Dockerfile
-    container_name: promptstrike-demo-app
+    container_name: redforge-demo-app
     ports:
       - "8000:8000"
     environment:
@@ -15,7 +15,7 @@ services:
     volumes:
       - reports-volume:/var/reports
     networks:
-      - promptstrike-network
+      - redforge-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -29,19 +29,19 @@ services:
     build:
       context: ./sidecar
       dockerfile: Dockerfile
-    container_name: promptstrike-guardrail-sidecar
+    container_name: redforge-guardrail-sidecar
     ports:
       - "8001:8001"
     environment:
       - SIDECAR_ENV=development
       - DEMO_APP_URL=http://demo-app:8000
       - LOG_LEVEL=info
-      - PROMPTSTRIKE_OUTPUT_DIR=/var/reports
+      - REDFORGE_OUTPUT_DIR=/var/reports
     volumes:
       - reports-volume:/var/reports
-      - ../promptstrike:/app/promptstrike:ro
+      - ../redforge:/app/redforge:ro
     networks:
-      - promptstrike-network
+      - redforge-network
     depends_on:
       demo-app:
         condition: service_healthy
@@ -58,6 +58,6 @@ volumes:
     driver: local
 
 networks:
-  promptstrike-network:
+  redforge-network:
     driver: bridge
-    name: promptstrike-guardrail
+    name: redforge-guardrail

@@ -1,11 +1,11 @@
-# PromptStrike CLI Makefile
+# RedForge CLI Makefile
 # Reference: cid-roadmap-v1 Sprint S-1
 
 .PHONY: help install build test lint clean docker-build docker-run dev
 
 # Default target
 help: ## Show this help message
-	@echo "PromptStrike CLI - Developer Commands"
+	@echo "RedForge CLI - Developer Commands"
 	@echo "Reference: cid-roadmap-v1 Sprint S-1"
 	@echo ""
 	@awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z_-]+:.*##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -18,7 +18,7 @@ build: ## Build the package
 	poetry build
 
 test: ## Run tests
-	poetry run pytest tests/ -v --cov=promptstrike --cov-report=html
+	poetry run pytest tests/ -v --cov=redforge --cov-report=html
 
 test-fast: ## Run fast tests only
 	poetry run pytest tests/ -v -m "not slow"
@@ -45,7 +45,7 @@ clean: ## Clean build artifacts
 
 # Docker targets
 docker-build: ## Build Docker image
-	docker build -t promptstrike/cli:latest .
+	docker build -t redforge/cli:latest .
 
 docker-build-dev: ## Build development Docker image
 	docker build --target builder -t promptstrike/cli:dev .
@@ -54,16 +54,16 @@ docker-run: ## Run CLI in Docker container
 	docker run --rm \
 		-e OPENAI_API_KEY=${OPENAI_API_KEY} \
 		-v $(PWD)/reports:/app/reports \
-		promptstrike/cli:latest $(ARGS)
+		redforge/cli:latest $(ARGS)
 
 docker-scan: ## Run scan command in Docker
 	docker run --rm \
 		-e OPENAI_API_KEY=${OPENAI_API_KEY} \
 		-v $(PWD)/reports:/app/reports \
-		promptstrike/cli:latest scan $(TARGET) $(ARGS)
+		redforge/cli:latest scan $(TARGET) $(ARGS)
 
 docker-dev: ## Start development environment
-	docker-compose up promptstrike-dev
+	docker-compose up redforge-dev
 
 docker-compose-up: ## Start full development stack
 	docker-compose --profile full up -d

@@ -1,12 +1,12 @@
-# 🎯 PromptStrike CLI
+# 🔥 RedForge CLI
 
 **Developer-first automated LLM red-team platform**
 
-[![Version](https://img.shields.io/badge/version-0.2.0--alpha-blue.svg)](https://github.com/siwenwang0803/PromptStrike/releases)
+[![Version](https://img.shields.io/badge/version-0.2.0--alpha-blue.svg)](https://github.com/siwenwang0803/RedForge/releases)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/r/siwenwang0803/promptstrike)
-[![PyPI](https://img.shields.io/pypi/v/promptstrike.svg)](https://pypi.org/project/promptstrike/)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/r/siwenwang0803/redforge)
+[![PyPI](https://img.shields.io/pypi/v/redforge.svg)](https://pypi.org/project/redforge/)
 [![OWASP](https://img.shields.io/badge/OWASP-LLM%20Top%2010-red.svg)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 
 > **🚀 Status:** ✅ Sprint S-3 Preparation (July 2025) - S-2/Pilot-0 Complete, Enterprise Ready  
@@ -16,7 +16,7 @@
 
 Large-language-model (LLM) apps ship to production with **invisible jailbreak, data-leak, and cost-explosion risks**. Regulators mandate continuous red-teaming (EU AI Act Art.55, US EO 14110).
 
-**PromptStrike** automates OWASP LLM Top 10 testing:
+**RedForge** automates OWASP LLM Top 10 testing:
 - ✅ Local execution (keys on-prem)
 - ✅ Audit-ready reports (NIST AI-RMF mapping)
 - ✅ Docker CLI setup in 5 minutes
@@ -34,37 +34,37 @@ Large-language-model (LLM) apps ship to production with **invisible jailbreak, d
 
 ```bash
 # Pull from Docker Hub and run
-docker run --rm -e OPENAI_API_KEY=$OPENAI_API_KEY -v $(pwd)/reports:/app/reports siwenwang0803/promptstrike:v0.2.0-alpha scan gpt-4
+docker run --rm -e OPENAI_API_KEY=$OPENAI_API_KEY -v $(pwd)/reports:/app/reports siwenwang0803/redforge:v0.2.0-alpha scan gpt-4
 
 # Or use latest tag
-docker run --rm -e OPENAI_API_KEY=$OPENAI_API_KEY -v $(pwd)/reports:/app/reports siwenwang0803/promptstrike:latest scan gpt-4
+docker run --rm -e OPENAI_API_KEY=$OPENAI_API_KEY -v $(pwd)/reports:/app/reports siwenwang0803/redforge:latest scan gpt-4
 
 # Local build (optional)
-git clone https://github.com/siwenwang0803/PromptStrike.git
-cd PromptStrike
-docker build -t promptstrike/cli .
+git clone https://github.com/siwenwang0803/RedForge.git
+cd RedForge
+docker build -t redforge/cli .
 ```
 
 ### 📦 PyPI
 
 ```bash
-pip install promptstrike
-promptstrike scan gpt-4 --dry-run
+pip install redforge
+redforge scan gpt-4 --dry-run
 ```
 
 ### ⚓ Helm (Kubernetes)
 
 ```bash
 # Add repository
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+helm repo add redforge https://siwenwang0803.github.io/RedForge
 helm repo update
 
 # Install CLI for job-based scanning
-helm install my-cli promptstrike/promptstrike-cli \
+helm install my-cli redforge/redforge-cli \
   --set secrets.openaiApiKey="your-api-key"
 
 # Install sidecar for runtime monitoring
-helm install my-sidecar promptstrike/promptstrike-sidecar \
+helm install my-sidecar redforge/redforge-sidecar \
   --set secrets.apiKeys.openai="your-api-key"
 ```
 
@@ -105,8 +105,8 @@ helm install my-sidecar promptstrike/promptstrike-sidecar \
 ## Pro Features & Pilots
 
 - **Free OSS CLI** for basics.
-- **Paid Pilots**: $4-7k one-off pentests with custom PDFs (dev@promptstrike.com).
-- **Upcoming SaaS**: $1k/mo for dashboards, monitoring, premium modules (FinOps, Privacy). Waitlist: [promptstrike.com](https://promptstrike.com)
+- **Paid Pilots**: $4-7k one-off pentests with custom PDFs (dev@redforge.com).
+- **Upcoming SaaS**: $1k/mo for dashboards, monitoring, premium modules (FinOps, Privacy). Waitlist: [redforge.com](https://redforge.com)
 
 ## Attack Packs
 
@@ -135,7 +135,7 @@ Full details: [Attack Packs Reference](docs/attack-packs.md).
 
 ## Configuration
 
-Sample `promptstrike.yaml`:
+Sample `redforge.yaml`:
 
 ```yaml
 target:
@@ -160,7 +160,7 @@ Full: [12M Roadmap](01-12M-Roadmap.md).
 **Prerequisites**: Python 3.11+, Poetry, Docker.
 
 ```bash
-git clone https://github.com/siwenwang0803/PromptStrike.git
+git clone https://github.com/siwenwang0803/RedForge.git
 make install  # Setup
 make test     # Run tests
 ```
@@ -169,7 +169,7 @@ CI/CD examples: [CI/CD Guide](docs/cicd.md).
 
 ## Support & Community
 
-- **Issues**: [GitHub](https://github.com/siwenwang0803/PromptStrike/issues)
+- **Issues**: [GitHub](https://github.com/siwenwang0803/RedForge/issues)
 - **Docs**: [CLI Spec](docs/cli-spec.md), API (Soon)
 - **Community**: Discord/Slack (Soon)
 
@@ -186,11 +186,11 @@ CI/CD examples: [CI/CD Guide](docs/cicd.md).
 
 ## Star History
 
-<img src="https://api.star-history.com/svg?repos=siwenwang0803/PromptStrike&type=Date" alt="Star History Chart">
+<img src="https://api.star-history.com/svg?repos=siwenwang0803/RedForge&type=Date" alt="Star History Chart">
 
 ---
 
-**Ready to secure your LLM?** `pip install promptstrike && promptstrike scan gpt-4 --dry-run`
+**Ready to secure your LLM?** `pip install redforge && redforge scan gpt-4 --dry-run`
 
-**Questions**: dev@promptstrike.com  
-**SaaS Waitlist**: [promptstrike.com](https://promptstrike.com)
+**Questions**: dev@redforge.com  
+**SaaS Waitlist**: [redforge.com](https://redforge.com)

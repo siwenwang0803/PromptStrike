@@ -17,7 +17,7 @@ groups:
           summary: "PSGuard Sidecar CPU usage is high"
           description: "PSGuard sidecar container CPU usage is {{ $value | humanizePercentage }} (> 200m) for more than 1 minute"
           dashboard: "http://grafana:3000/d/psguard-sidecar/psguard-sidecar-monitoring"
-          runbook: "https://docs.promptstrike.com/troubleshooting/high-cpu"
+          runbook: "https://docs.redforge.com/troubleshooting/high-cpu"
 
       # 内存使用告警
       - alert: PSGuardHighMemoryUsage
@@ -31,7 +31,7 @@ groups:
           summary: "PSGuard Sidecar memory usage is high"
           description: "PSGuard sidecar container memory usage is {{ $value | humanize1024 }} (> 180Mi) for more than 1 minute"
           dashboard: "http://grafana:3000/d/psguard-sidecar/psguard-sidecar-monitoring"
-          runbook: "https://docs.promptstrike.com/troubleshooting/high-memory"
+          runbook: "https://docs.redforge.com/troubleshooting/high-memory"
 
       # 严重 CPU 告警
       - alert: PSGuardCriticalCPUUsage
@@ -45,7 +45,7 @@ groups:
           summary: "PSGuard Sidecar CPU usage is critical"
           description: "PSGuard sidecar container CPU usage is {{ $value | humanizePercentage }} (> 300m) for more than 30 seconds"
           dashboard: "http://grafana:3000/d/psguard-sidecar/psguard-sidecar-monitoring"
-          runbook: "https://docs.promptstrike.com/troubleshooting/critical-cpu"
+          runbook: "https://docs.redforge.com/troubleshooting/critical-cpu"
 
       # 严重内存告警
       - alert: PSGuardCriticalMemoryUsage
@@ -59,7 +59,7 @@ groups:
           summary: "PSGuard Sidecar memory usage is critical"
           description: "PSGuard sidecar container memory usage is {{ $value | humanize1024 }} (> 240Mi) for more than 30 seconds"
           dashboard: "http://grafana:3000/d/psguard-sidecar/psguard-sidecar-monitoring"
-          runbook: "https://docs.promptstrike.com/troubleshooting/critical-memory"
+          runbook: "https://docs.redforge.com/troubleshooting/critical-memory"
 
       # 网络异常告警
       - alert: PSGuardHighNetworkTraffic
@@ -112,7 +112,7 @@ groups:
           summary: "PSGuard Sidecar service is down"
           description: "PSGuard sidecar service has been down for more than 30 seconds"
           dashboard: "http://grafana:3000/d/psguard-sidecar/psguard-sidecar-monitoring"
-          runbook: "https://docs.promptstrike.com/troubleshooting/service-down"
+          runbook: "https://docs.redforge.com/troubleshooting/service-down"
 
       # 响应时间告警
       - alert: PSGuardHighResponseTime

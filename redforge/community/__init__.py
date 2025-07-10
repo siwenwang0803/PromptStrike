@@ -2,7 +2,7 @@
 Community Feedback Integration
 
 This module provides comprehensive community feedback collection, analysis,
-and integration capabilities for PromptStrike. It enables data-driven
+and integration capabilities for RedForge. It enables data-driven
 development decisions based on user feedback from multiple sources.
 
 Key Features:
@@ -14,19 +14,19 @@ Key Features:
 
 Usage:
     # Collect feedback from all sources
-    from promptstrike.community import collect_community_feedback
+    from redforge.community import collect_community_feedback
     new_count, analytics = await collect_community_feedback(days_back=30)
     
     # Get prioritized feedback for development
-    from promptstrike.community import get_feedback_priorities
+    from redforge.community import get_feedback_priorities
     priorities = get_feedback_priorities(limit=10)
     
     # Generate community-driven roadmap
-    from promptstrike.community import generate_community_roadmap
+    from redforge.community import generate_community_roadmap
     roadmap = await generate_community_roadmap()
     
     # Update feedback implementation status
-    from promptstrike.community import update_feedback_implementation
+    from redforge.community import update_feedback_implementation
     success = update_feedback_implementation("fb_12345", implemented=True)
 
 Classes:
@@ -39,14 +39,14 @@ Classes:
     FeedbackIntegrationEngine: Integration and planning engine
     
 CLI Integration:
-    The community module integrates with PromptStrike CLI via the 'community' command group:
+    The community module integrates with RedForge CLI via the 'community' command group:
     
-    promptstrike community collect --days 30 --repo anthropics/promptstrike
-    promptstrike community analyze --days 90 --insights
-    promptstrike community priorities --limit 20 --status new
-    promptstrike community roadmap --quarters 4 --format tree
-    promptstrike community update fb_12345 --status implemented --notes "Fixed in v1.2.0"
-    promptstrike community stats --days 30 --export stats.json
+    redforge community collect --days 30 --repo anthropics/redforge
+    redforge community analyze --days 90 --insights
+    redforge community priorities --limit 20 --status new
+    redforge community roadmap --quarters 4 --format tree
+    redforge community update fb_12345 --status implemented --notes "Fixed in v1.2.0"
+    redforge community stats --days 30 --export stats.json
 """
 
 from .feedback_collector import (
@@ -116,13 +116,13 @@ __all__ = [
 
 # Module metadata
 __version__ = "1.0.0"
-__author__ = "PromptStrike Community Team"
-__description__ = "Community feedback integration for PromptStrike"
+__author__ = "RedForge Community Team"
+__description__ = "Community feedback integration for RedForge"
 
 def get_module_info() -> dict:
     """Get module information and capabilities"""
     return {
-        "name": "promptstrike.community",
+        "name": "redforge.community",
         "version": __version__,
         "description": __description__,
         "features": [

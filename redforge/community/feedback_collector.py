@@ -1,7 +1,7 @@
 """
 Community Feedback Collection System
 
-Collects, analyzes, and manages community feedback to improve PromptStrike.
+Collects, analyzes, and manages community feedback to improve RedForge.
 Supports multiple feedback channels including GitHub issues, surveys, telemetry,
 and direct user submissions.
 """
@@ -221,7 +221,7 @@ class TelemetryFeedbackCollector:
     """Collects implicit feedback from usage telemetry"""
     
     def __init__(self, telemetry_data_path: Optional[str] = None):
-        self.telemetry_data_path = telemetry_data_path or "~/.promptstrike/telemetry"
+        self.telemetry_data_path = telemetry_data_path or "~/.redforge/telemetry"
         self.data_path = Path(self.telemetry_data_path).expanduser()
         self.data_path.mkdir(parents=True, exist_ok=True)
     
@@ -403,12 +403,12 @@ class CommunityFeedbackManager:
                  storage_path: Optional[str] = None,
                  github_repo: Optional[str] = None,
                  github_token: Optional[str] = None):
-        self.storage_path = Path(storage_path or "~/.promptstrike/feedback").expanduser()
+        self.storage_path = Path(storage_path or "~/.redforge/feedback").expanduser()
         self.storage_path.mkdir(parents=True, exist_ok=True)
         
         # Initialize collectors
         self.github_collector = GitHubFeedbackCollector(
-            repo_name=github_repo or "anthropics/promptstrike",
+            repo_name=github_repo or "siwenwang0803/RedForge",
             access_token=github_token
         ) if github_repo else None
         

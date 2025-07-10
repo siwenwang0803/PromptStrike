@@ -1,5 +1,5 @@
 """
-LLM Scanner - Core scanning engine for PromptStrike CLI
+LLM Scanner - Core scanning engine for RedForge CLI
 Reference: cid-roadmap-v1 Sprint S-1, OWASP LLM Top 10
 """
 
@@ -63,7 +63,7 @@ class LLMScanner:
         """Setup HTTP headers for API requests"""
         headers = {
             "Content-Type": "application/json",
-            "User-Agent": "PromptStrike/0.1.0"
+            "User-Agent": "RedForge/0.2.0"
         }
         
         if self.api_key:
@@ -97,7 +97,7 @@ class LLMScanner:
             
             if response.status_code == 200:
                 result = response.json()
-                result["_promptstrike_meta"] = {
+                result["_redforge_meta"] = {
                     "response_time_ms": response_time_ms,
                     "status_code": response.status_code
                 }
@@ -180,7 +180,7 @@ class LLMScanner:
             
             # Extract response content
             response_text = self._extract_response_text(response, api_format)
-            response_time_ms = response.get("_promptstrike_meta", {}).get("response_time_ms", 0)
+            response_time_ms = response.get("_redforge_meta", {}).get("response_time_ms", 0)
             
             # Analyze vulnerability
             vulnerability_analysis = self._analyze_vulnerability(

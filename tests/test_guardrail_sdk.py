@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Tests for PromptStrike Guardrail SDK
+Tests for RedForge Guardrail SDK
 
 Comprehensive test suite covering all SDK functionality including
 sampling, cost guard, security analysis, and async replay engine.

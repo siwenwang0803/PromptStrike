@@ -1,7 +1,7 @@
 """
 Mutation Testing Engine
 
-Implements mutation testing strategies for PromptStrike components,
+Implements mutation testing strategies for RedForge components,
 focusing on data corruption, protocol violations, and edge cases.
 """
 

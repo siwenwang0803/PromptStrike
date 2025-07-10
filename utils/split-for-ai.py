@@ -102,7 +102,7 @@ def main():
     ap.add_argument("--max-lines", type=int, default=800, help="Maximum lines per chunk")
     ap.add_argument("--min-lines", type=int, default=50, help="Minimum lines per chunk")
     ap.add_argument("--db", default=".chroma", help="ChromaDB path")
-    ap.add_argument("--collection", default="promptstrike", help="Collection name")
+    ap.add_argument("--collection", default="redforge", help="Collection name")
     ap.add_argument("--dry_run", action="store_true", help="Show what would be processed without doing it")
     args = ap.parse_args()
 

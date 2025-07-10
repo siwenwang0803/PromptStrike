@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run Chaos Tests for PromptStrike
+# Run Chaos Tests for RedForge
 # 目标：验证 data_corruption 和 protocol_violation 场景下系统韧性
 
 set -euo pipefail
@@ -12,12 +12,12 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-NAMESPACE="promptstrike-test"
+NAMESPACE="redforge-test"
 CHAOS_DURATION="120s"
 REPORT_DIR="chaos-test-reports"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 
-echo -e "${GREEN}🎯 PromptStrike Chaos Testing Suite${NC}"
+echo -e "${GREEN}🎯 RedForge Chaos Testing Suite${NC}"
 echo "目标：验证 data_corruption 和 protocol_violation 场景下系统韧性"
 echo "==============================================="
 
@@ -145,7 +145,7 @@ spec:
                     pass
             
             httpd = HTTPServer(('0.0.0.0', 8001), ChaosTestHandler)
-            print("PromptStrike Guardrail Sidecar Test Server starting on port 8001")
+            print("RedForge Guardrail Sidecar Test Server starting on port 8001")
             httpd.serve_forever()
         ports:
         - containerPort: 8001
@@ -403,7 +403,7 @@ generate_chaos_test_report() {
     
     # Create comprehensive report
     cat > $REPORT_DIR/chaos_test_summary_$TIMESTAMP.md <<EOF
-# PromptStrike Chaos Test Report
+# RedForge Chaos Test Report
 
 **Generated**: $(date)
 **Test Duration**: $CHAOS_DURATION
@@ -465,7 +465,7 @@ generate_chaos_test_report() {
 ## Conclusion
 
 ✅ **CHAOS TESTING PASSED**
-The PromptStrike guardrail sidecar demonstrates excellent resilience under:
+The RedForge guardrail sidecar demonstrates excellent resilience under:
 - Data corruption scenarios
 - Protocol violation attacks
 - Network partitions and delays
@@ -493,7 +493,7 @@ cleanup_chaos_experiments() {
 
 # Main execution function
 main() {
-    echo -e "${GREEN}🚀 Starting PromptStrike Chaos Testing...${NC}"
+    echo -e "${GREEN}🚀 Starting RedForge Chaos Testing...${NC}"
     echo "Time: $(date)"
     echo ""
     
@@ -528,7 +528,7 @@ main() {
     echo -e "\n${BLUE}Phase 8: Cleanup${NC}"
     cleanup_chaos_experiments
     
-    echo -e "\n${GREEN}🎉 PromptStrike Chaos Testing Completed Successfully!${NC}"
+    echo -e "\n${GREEN}🎉 RedForge Chaos Testing Completed Successfully!${NC}"
     echo ""
     echo "📊 Reports available in: $REPORT_DIR/"
     echo "📋 Summary report: $REPORT_DIR/chaos_test_summary_$TIMESTAMP.md"

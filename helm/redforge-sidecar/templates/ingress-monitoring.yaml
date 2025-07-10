@@ -2,10 +2,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}-monitoring
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: {{ include "redforge-sidecar.fullname" . }}-monitoring
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: monitoring-ingress
   annotations:
     # Monitoring-specific annotations
@@ -20,8 +20,8 @@ metadata:
     # Basic auth for monitoring endpoints
     {{- if .Values.ingress.monitoring.basicAuth.enabled }}
     nginx.ingress.kubernetes.io/auth-type: basic
-    nginx.ingress.kubernetes.io/auth-secret: {{ include "promptstrike-sidecar.fullname" . }}-monitoring-auth
-    nginx.ingress.kubernetes.io/auth-realm: 'PromptStrike Monitoring'
+    nginx.ingress.kubernetes.io/auth-secret: {{ include "redforge-sidecar.fullname" . }}-monitoring-auth
+    nginx.ingress.kubernetes.io/auth-realm: 'RedForge Monitoring'
     {{- end }}
 spec:
   {{- if .Values.ingress.className }}
@@ -41,21 +41,21 @@ spec:
             pathType: Exact
             backend:
               service:
-                name: {{ include "promptstrike-sidecar.fullname" . }}
+                name: {{ include "redforge-sidecar.fullname" . }}
                 port:
                   name: http-sidecar
           - path: /health
             pathType: Exact
             backend:
               service:
-                name: {{ include "promptstrike-sidecar.fullname" . }}
+                name: {{ include "redforge-sidecar.fullname" . }}
                 port:
                   name: http-sidecar
           - path: /debug/pprof
             pathType: Prefix
             backend:
               service:
-                name: {{ include "promptstrike-sidecar.fullname" . }}
+                name: {{ include "redforge-sidecar.fullname" . }}
                 port:
                   name: http-sidecar
 {{- end }}

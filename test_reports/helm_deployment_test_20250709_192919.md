@@ -1,4 +1,4 @@
-# PromptStrike Helm Deployment Test Report
+# RedForge Helm Deployment Test Report
 
 **Date**: Wed Jul  9 19:29:19 PDT 2025
 **Test Suite**: Comprehensive Helm Deployment

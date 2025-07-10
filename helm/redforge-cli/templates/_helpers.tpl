@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "promptstrike-cli.name" -}}
+{{- define "redforge-cli.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "promptstrike-cli.fullname" -}}
+{{- define "redforge-cli.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "promptstrike-cli.chart" -}}
+{{- define "redforge-cli.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "promptstrike-cli.labels" -}}
-helm.sh/chart: {{ include "promptstrike-cli.chart" . }}
-{{ include "promptstrike-cli.selectorLabels" . }}
+{{- define "redforge-cli.labels" -}}
+helm.sh/chart: {{ include "redforge-cli.chart" . }}
+{{ include "redforge-cli.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "promptstrike-cli.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "promptstrike-cli.name" . }}
+{{- define "redforge-cli.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "redforge-cli.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "promptstrike-cli.serviceAccountName" -}}
+{{- define "redforge-cli.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "promptstrike-cli.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "redforge-cli.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
@@ -64,13 +64,13 @@ Create the name of the service account to use
 {{/*
 Create the name of the secret to use
 */}}
-{{- define "promptstrike-cli.secretName" -}}
-{{- printf "%s-secrets" (include "promptstrike-cli.fullname" .) }}
+{{- define "redforge-cli.secretName" -}}
+{{- printf "%s-secrets" (include "redforge-cli.fullname" .) }}
 {{- end }}
 
 {{/*
 Create the name of the configmap to use
 */}}
-{{- define "promptstrike-cli.configMapName" -}}
-{{- printf "%s-config" (include "promptstrike-cli.fullname" .) }}
+{{- define "redforge-cli.configMapName" -}}
+{{- printf "%s-config" (include "redforge-cli.fullname" .) }}
 {{- end }}

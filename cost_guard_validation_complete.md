@@ -165,7 +165,7 @@ guard = CostGuard(
 ## 📋 完整文档索引
 
 ### 核心实现
-- `promptstrike/sidecar.py` - CostGuard 核心实现
+- `redforge/sidecar.py` - CostGuard 核心实现
 - `cost_guard_validation.py` - 完整验证框架
 
 ### 测试数据

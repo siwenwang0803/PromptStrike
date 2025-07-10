@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: promptstrike-config
-  namespace: promptstrike-guardrail
+  name: redforge-config
+  namespace: redforge-guardrail
   labels:
-    app.kubernetes.io/name: promptstrike-guardrail
+    app.kubernetes.io/name: redforge-guardrail
     app.kubernetes.io/component: configuration
 data:
   # Demo application configuration
   demo-app.yaml: |
     app:
-      name: "PromptStrike Guardrail Demo"
+      name: "RedForge Guardrail Demo"
       version: "0.1.0"
       debug: true
       

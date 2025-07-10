@@ -11,7 +11,7 @@ from unittest.mock import Mock, patch, AsyncMock
 import tempfile
 import shutil
 
-from promptstrike.community.feedback_collector import (
+from redforge.community.feedback_collector import (
     FeedbackType,
     FeedbackPriority,
     FeedbackStatus,
@@ -20,7 +20,7 @@ from promptstrike.community.feedback_collector import (
     GitHubFeedbackCollector,
     TelemetryFeedbackCollector
 )
-from promptstrike.community.integration_engine import (
+from redforge.community.integration_engine import (
     FeedbackIntegrationEngine,
     IntegrationAction,
     IntegrationPlan,
@@ -706,9 +706,9 @@ class TestCommunityConvenienceFunctions:
     @pytest.mark.asyncio
     async def test_collect_community_feedback_function(self, temp_storage):
         """Test collect_community_feedback convenience function"""
-        from promptstrike.community.feedback_collector import collect_community_feedback
+        from redforge.community.feedback_collector import collect_community_feedback
         
-        with patch('promptstrike.community.feedback_collector.CommunityFeedbackManager') as mock_manager_class:
+        with patch('redforge.community.feedback_collector.CommunityFeedbackManager') as mock_manager_class:
             mock_manager = Mock()
             mock_manager.collect_all_feedback = AsyncMock(return_value=5)
             mock_manager.analyze_feedback_trends = Mock(return_value=Mock(
@@ -726,9 +726,9 @@ class TestCommunityConvenienceFunctions:
     
     def test_get_feedback_priorities_function(self):
         """Test get_feedback_priorities convenience function"""
-        from promptstrike.community.feedback_collector import get_feedback_priorities
+        from redforge.community.feedback_collector import get_feedback_priorities
         
-        with patch('promptstrike.community.feedback_collector.CommunityFeedbackManager') as mock_manager_class:
+        with patch('redforge.community.feedback_collector.CommunityFeedbackManager') as mock_manager_class:
             mock_feedback = Mock()
             mock_feedback.feedback_id = "test_001"
             mock_feedback.feedback_type = Mock(value="bug_report")

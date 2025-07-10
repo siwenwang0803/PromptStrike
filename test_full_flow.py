@@ -12,11 +12,11 @@ from datetime import datetime
 # Add the current directory to the Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from promptstrike.core.scanner import LLMScanner
-from promptstrike.core.attacks import AttackPackLoader
-from promptstrike.core.report import ReportGenerator
-from promptstrike.utils.config import Config
-from promptstrike.models.scan_result import ScanResult, ScanMetadata, ComplianceReport
+from redforge.core.scanner import LLMScanner
+from redforge.core.attacks import AttackPackLoader
+from redforge.core.report import ReportGenerator
+from redforge.utils.config import Config
+from redforge.models.scan_result import ScanResult, ScanMetadata, ComplianceReport
 
 async def test_full_flow():
     """Test the complete scanning flow"""
@@ -153,6 +153,6 @@ if __name__ == "__main__":
     success = asyncio.run(test_full_flow())
     if success:
         print("\n✅ Full flow test successful!")
-        print("🎉 PromptStrike CLI is working correctly!")
+        print("🎉 RedForge CLI is working correctly!")
     else:
         print("\n❌ Full flow test failed")

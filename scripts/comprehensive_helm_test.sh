@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# PromptStrike Comprehensive Helm Deployment Test Suite
+# RedForge Comprehensive Helm Deployment Test Suite
 # Tests deployment across Kind, EKS, and Minikube with full validation
 # 目标: 验证 Helm 在多环境的一键部署，脚本自动退出码为 0
 
@@ -30,7 +30,7 @@ print_header() {
     echo ""
     echo -e "${CYAN}╔══════════════════════════════════════════════════════════════╗${NC}"
     echo -e "${CYAN}║                                                              ║${NC}"
-    echo -e "${CYAN}║           🎯 PromptStrike Helm 综合部署测试套件              ║${NC}"
+    echo -e "${CYAN}║           🎯 RedForge Helm 综合部署测试套件              ║${NC}"
     echo -e "${CYAN}║        Comprehensive Helm Deployment Test Suite             ║${NC}"
     echo -e "${CYAN}║                                                              ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
@@ -153,7 +153,7 @@ test_helm_repository() {
     
     # Test repository addition
     run_test "Helm repo add" \
-        "helm repo remove promptstrike 2>/dev/null || true; helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike" \
+        "helm repo remove redforge 2>/dev/null || true; helm repo add redforge https://siwenwang0803.github.io/RedForge" \
         "Repository added"
     
     # Test repository update
@@ -163,17 +163,17 @@ test_helm_repository() {
     
     # Test chart search
     run_test "Chart search" \
-        "helm search repo promptstrike-sidecar" \
+        "helm search repo redforge-sidecar" \
         "Chart found"
     
     # Test chart inspection
     run_test "Chart inspection" \
-        "helm show chart promptstrike/promptstrike-sidecar" \
+        "helm show chart redforge/redforge-sidecar" \
         "Chart details shown"
     
     # Test dry-run template rendering
     run_test "Template rendering" \
-        "helm template test promptstrike/promptstrike-sidecar --set openai.apiKey=test" \
+        "helm template test redforge/redforge-sidecar --set openai.apiKey=test" \
         "Templates rendered"
 }
 
@@ -347,7 +347,7 @@ save_test_results() {
     mkdir -p "$(dirname "$report_file")"
     
     cat > "$report_file" << EOF
-# PromptStrike Helm Deployment Test Report
+# RedForge Helm Deployment Test Report
 
 **Date**: $(date)
 **Test Suite**: Comprehensive Helm Deployment

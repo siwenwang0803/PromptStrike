@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "promptstrike-sidecar.name" -}}
+{{- define "redforge-sidecar.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "promptstrike-sidecar.fullname" -}}
+{{- define "redforge-sidecar.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,38 +26,38 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "promptstrike-sidecar.chart" -}}
+{{- define "redforge-sidecar.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "promptstrike-sidecar.labels" -}}
-helm.sh/chart: {{ include "promptstrike-sidecar.chart" . }}
-{{ include "promptstrike-sidecar.selectorLabels" . }}
+{{- define "redforge-sidecar.labels" -}}
+helm.sh/chart: {{ include "redforge-sidecar.chart" . }}
+{{ include "redforge-sidecar.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/part-of: promptstrike
+app.kubernetes.io/part-of: redforge
 app.kubernetes.io/component: guardrail-sidecar
 {{- end }}
 
 {{/*
 Selector labels
 */}}
-{{- define "promptstrike-sidecar.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "promptstrike-sidecar.name" . }}
+{{- define "redforge-sidecar.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "redforge-sidecar.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "promptstrike-sidecar.serviceAccountName" -}}
+{{- define "redforge-sidecar.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "promptstrike-sidecar.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "redforge-sidecar.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
@@ -66,7 +66,7 @@ Create the name of the service account to use
 {{/*
 Create the name of the namespace to use
 */}}
-{{- define "promptstrike-sidecar.namespaceName" -}}
+{{- define "redforge-sidecar.namespaceName" -}}
 {{- if .Values.namespace.create }}
 {{- .Values.namespace.name }}
 {{- else }}
@@ -77,7 +77,7 @@ Create the name of the namespace to use
 {{/*
 OPA Gatekeeper labels
 */}}
-{{- define "promptstrike-sidecar.opaLabels" -}}
+{{- define "redforge-sidecar.opaLabels" -}}
 {{- if .Values.opa.enabled }}
 gatekeeper.sh/operation: mutate
 gatekeeper.sh/mutation: enabled
@@ -88,7 +88,7 @@ admission.gatekeeper.sh/ignore: "false"
 {{/*
 Security labels
 */}}
-{{- define "promptstrike-sidecar.securityLabels" -}}
+{{- define "redforge-sidecar.securityLabels" -}}
 security-policy: restricted
 pod-security.kubernetes.io/enforce: restricted
 pod-security.kubernetes.io/audit: restricted
@@ -98,7 +98,7 @@ pod-security.kubernetes.io/warn: restricted
 {{/*
 Common security annotations
 */}}
-{{- define "promptstrike-sidecar.commonSecurityAnnotations" -}}
+{{- define "redforge-sidecar.commonSecurityAnnotations" -}}
 pod-security.kubernetes.io/enforce: "restricted"
 pod-security.kubernetes.io/audit: "restricted"
 pod-security.kubernetes.io/warn: "restricted"
@@ -107,7 +107,7 @@ pod-security.kubernetes.io/warn: "restricted"
 {{/*
 Common security context
 */}}
-{{- define "promptstrike-sidecar.securityContext" -}}
+{{- define "redforge-sidecar.securityContext" -}}
 runAsUser: 65534
 runAsGroup: 65534
 runAsNonRoot: true
@@ -119,7 +119,7 @@ seccompProfile:
 {{/*
 Container security context
 */}}
-{{- define "promptstrike-sidecar.containerSecurityContext" -}}
+{{- define "redforge-sidecar.containerSecurityContext" -}}
 runAsUser: 65534
 runAsGroup: 65534
 runAsNonRoot: true
@@ -135,7 +135,7 @@ seccompProfile:
 {{/*
 Resource labels for monitoring
 */}}
-{{- define "promptstrike-sidecar.monitoringLabels" -}}
+{{- define "redforge-sidecar.monitoringLabels" -}}
 {{- if .Values.monitoring.enabled }}
 monitoring: enabled
 prometheus.io/scrape: "true"

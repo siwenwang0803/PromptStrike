@@ -13,11 +13,11 @@
 ### 🔧 Core Components
 
 #### CLI Commands
-- `promptstrike scan <target>` - Run automated LLM red-team scan
-- `promptstrike list-attacks` - List available attack packs and attacks  
-- `promptstrike doctor` - Run diagnostic health checks
-- `promptstrike version` - Show version and build information
-- `promptstrike config` - Manage configuration settings
+- `redforge scan <target>` - Run automated LLM red-team scan
+- `redforge list-attacks` - List available attack packs and attacks  
+- `redforge doctor` - Run diagnostic health checks
+- `redforge version` - Show version and build information
+- `redforge config` - Manage configuration settings
 
 #### Attack Framework
 - **LLM01**: Prompt Injection (12 attacks)
@@ -42,16 +42,16 @@
 
 ```bash
 # Install via pip
-pip install promptstrike
+pip install redforge
 
 # Run basic scan
-promptstrike scan gpt-4 --dry-run
+redforge scan gpt-4 --dry-run
 
 # Health check
-promptstrike doctor
+redforge doctor
 
 # List available attacks
-promptstrike list-attacks
+redforge list-attacks
 ```
 
 ### 📋 Report Schema

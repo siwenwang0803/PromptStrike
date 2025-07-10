@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
-LABEL maintainer="PromptStrike Team <dev@promptstrike.com>"
-LABEL description="PromptStrike Guardrail Sidecar for security monitoring"
+LABEL maintainer="RedForge Team <dev@redforge.com>"
+LABEL description="RedForge Guardrail Sidecar for security monitoring"
 
 # Set working directory
 WORKDIR /app

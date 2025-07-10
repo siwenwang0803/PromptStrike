@@ -10,7 +10,7 @@ CHAOS_ENVIRONMENT ?= development
 CHAOS_INTENSITY ?= 0.3
 CHAOS_DURATION ?= 120
 RESULTS_DIR ?= ./test-results
-DOCKER_IMAGE ?= promptstrike-chaos
+DOCKER_IMAGE ?= redforge-chaos
 DOCKER_TAG ?= latest
 
 # Colors for output

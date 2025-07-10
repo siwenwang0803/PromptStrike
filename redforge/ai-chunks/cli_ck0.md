@@ -3,7 +3,7 @@
 ```py
 #!/usr/bin/env python3
 """
-PromptStrike CLI - Developer-first automated LLM red-team platform
+RedForge CLI - Developer-first automated LLM red-team platform
 Reference: cid-onepager-v1, cid-roadmap-v1 Sprint S-1
 """
 
@@ -85,8 +85,8 @@ TyperCommand.format_help = _standard_format_help
 
 # Create typer app with basic configuration
 app = typer.Typer(
-    name="promptstrike",
-    help="PromptStrike CLI - Developer-first LLM red-team platform",
+    name="redforge",
+    help="RedForge CLI - Developer-first LLM red-team platform",
     add_completion=False,
 )
 
@@ -155,9 +155,9 @@ def scan(
     🎯 Run automated LLM red-team scan
     
     Examples:
-      promptstrike scan gpt-4 --output ./my-scan
-      promptstrike scan https://api.openai.com/v1/chat/completions --attack-pack owasp-llm-top10
-      promptstrike scan local-model --config ./config.yaml --dry-run
+      redforge scan gpt-4 --output ./my-scan
+      redforge scan https://api.openai.com/v1/chat/completions --attack-pack owasp-llm-top10
+      redforge scan local-model --config ./config.yaml --dry-run
     """
     
     if output is None:
@@ -206,7 +206,7 @@ def scan(
         rprint(f"[red]❌ Error: No attacks found in pack '{attack_pack}'[/red]")
         raise typer.Exit(1)
     
-    rprint(f"[green]🎯 PromptStrike CLI v0.1.0[/green]")
+    rprint(f"[green]🎯 RedForge CLI v0.1.0[/green]")
     rprint(f"[blue]Target:[/blue] {target}")
     rprint(f"[blue]Attack Pack:[/blue] {attack_pack} ({len(attacks)} attacks)")
     rprint(f"[blue]Output:[/blue] {output}")
@@ -498,7 +498,7 @@ def version() -> None:
         "reference": "cid-roadmap-v1"
     }
     
-    rprint("[bold blue]🎯 PromptStrike CLI[/bold blue]")
+    rprint("[bold blue]🎯 RedForge CLI[/bold blue]")
     rprint("[dim]Developer-first automated LLM red-team platform[/dim]\n")
     
     for key, value in version_info.items():
@@ -512,7 +512,7 @@ def version() -> None:
 def doctor() -> None:
     """🩺 Run diagnostic checks"""
     
-    rprint("[bold blue]🩺 PromptStrike Health Check[/bold blue]\n")
+    rprint("[bold blue]🩺 RedForge Health Check[/bold blue]\n")
     
     checks = []
     
@@ -582,8 +582,8 @@ def doctor() -> None:
     
     rprint()
     if all_passed:
-        rprint("[green]🎉 All checks passed! PromptStrike is ready to use.[/green]")
-        rprint("[blue]💡 Try: promptstrike scan gpt-3.5-turbo --dry-run[/blue]")
+        rprint("[green]🎉 All checks passed! RedForge is ready to use.[/green]")
+        rprint("[blue]💡 Try: redforge scan gpt-3.5-turbo --dry-run[/blue]")
     else:
         rprint("[red]⚠️ Some checks failed. Please fix the issues above.[/red]")
         
@@ -606,7 +606,7 @@ def config(
     """⚙️ Manage configuration settings"""
     
     if create:
-        config_path = Path(file) if file else Path("promptstrike.yaml")
+        config_path = Path(file) if file else Path("redforge.yaml")
         
         if config_path.exists():
             rprint(f"[yellow]⚠️ Config file already exists: {config_path}[/yellow]")

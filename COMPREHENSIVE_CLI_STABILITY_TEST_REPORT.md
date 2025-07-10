@@ -1,4 +1,4 @@
-# PromptStrike CLI Stability Test - Final Report
+# RedForge CLI Stability Test - Final Report
 
 **Date**: January 8, 2025  
 **Test Phase**: Pre-Production Client Readiness  
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-✅ **PASSED**: PromptStrike CLI is **production-ready** for client deployment  
+✅ **PASSED**: RedForge CLI is **production-ready** for client deployment  
 ✅ **RESOLVED**: All dependency conflicts fixed  
 ✅ **VERIFIED**: API integration working  
 ✅ **TESTED**: Concurrent execution stability  
@@ -109,7 +109,7 @@ OWASP LLM Top 10 Coverage: 19 attacks loaded
 
 2. **Comprehensive Attack Coverage**
    - Complete OWASP LLM Top 10 implementation
-   - Custom PromptStrike extensions
+   - Custom RedForge extensions
    - Compliance mapping (NIST, EU AI Act, SOC 2)
 
 3. **Professional Output**
@@ -181,13 +181,13 @@ OWASP LLM Top 10 Coverage: 19 attacks loaded
 # 2. Basic functionality test
 source .venv/bin/activate
 export OPENAI_API_KEY="your-key-here"
-python -m promptstrike.cli doctor
+python -m redforge.cli doctor
 
 # 3. Dry run test (safe, no API calls)
-python -m promptstrike.cli scan gpt-4 --dry-run
+python -m redforge.cli scan gpt-4 --dry-run
 
 # 4. Limited real test (3 attacks only)
-python -m promptstrike.cli scan gpt-3.5-turbo --max-requests 3
+python -m redforge.cli scan gpt-3.5-turbo --max-requests 3
 
 # 5. Concurrent stability test
 bash scripts/smoke/run_cli_matrix.sh --models "gpt-4" --concurrency 10 --dry-run
@@ -253,7 +253,7 @@ bash scripts/smoke/run_cli_matrix.sh --models "gpt-4,claude-3-sonnet" --concurre
 5. **Documentation**: Extensive and clear
 
 ### 🎯 **Ready for Client Hands**
-The CLI stability testing confirms that PromptStrike is **production-ready** for client deployment. The testing infrastructure ensures:
+The CLI stability testing confirms that RedForge is **production-ready** for client deployment. The testing infrastructure ensures:
 
 - **Quality Assurance**: Comprehensive test coverage
 - **Reliability**: Proven concurrent execution stability
@@ -272,7 +272,7 @@ The CLI stability testing confirms that PromptStrike is **production-ready** for
 
 **✅ CLI STABILITY TESTING: PASSED WITH EXCELLENCE**
 
-PromptStrike CLI has successfully passed all stability tests and is ready for client deployment. The comprehensive test infrastructure ensures reliable operation under concurrent load with proper error handling and professional output.
+RedForge CLI has successfully passed all stability tests and is ready for client deployment. The comprehensive test infrastructure ensures reliable operation under concurrent load with proper error handling and professional output.
 
 **Key Achievements:**
 - 🎯 100% test success rate for concurrent execution

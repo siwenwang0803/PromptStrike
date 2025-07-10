@@ -1,5 +1,5 @@
 #!/bin/bash
-# PromptStrike Guardrail Minikube PoC Test Script
+# RedForge Guardrail Minikube PoC Test Script
 # For Sonnet/o3 validation of Sprint S-2 Minikube PoC
 # Usage: ./test-minikube-poc.sh
 
@@ -13,11 +13,11 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Test configuration
-NAMESPACE="promptstrike-guardrail"
+NAMESPACE="redforge-guardrail"
 TEST_TIMEOUT=300  # 5 minutes
 LOG_TIMEOUT=60    # 1 minute for log validation
 
-echo -e "${BLUE}🚀 PromptStrike Guardrail Minikube PoC Test${NC}"
+echo -e "${BLUE}🚀 RedForge Guardrail Minikube PoC Test${NC}"
 echo "================================================"
 
 # Function to log with timestamp
@@ -83,16 +83,16 @@ log "🔨 Building Docker images..."
 
 # Build demo app image
 log "Building demo app image..."
-docker build -t promptstrike/guardrail-demo:latest guardrail_poc/demo-app/
+docker build -t redforge/guardrail-demo:latest guardrail_poc/demo-app/
 
 # Build sidecar image  
 log "Building sidecar image..."
-docker build -t promptstrike/guardrail-sidecar:latest guardrail_poc/sidecar/
+docker build -t redforge/guardrail-sidecar:latest guardrail_poc/sidecar/
 
 # Load images into minikube
 log "Loading images into minikube..."
-minikube image load promptstrike/guardrail-demo:latest
-minikube image load promptstrike/guardrail-sidecar:latest
+minikube image load redforge/guardrail-demo:latest
+minikube image load redforge/guardrail-sidecar:latest
 
 log "✅ Docker images built and loaded"
 
@@ -107,7 +107,7 @@ log "✅ Manifests applied"
 # Step 5: Wait for deployment
 log "⏳ Waiting for deployment to be ready..."
 
-kubectl wait --for=condition=available --timeout=${TEST_TIMEOUT}s deployment/promptstrike-guardrail-demo -n $NAMESPACE
+kubectl wait --for=condition=available --timeout=${TEST_TIMEOUT}s deployment/redforge-guardrail-demo -n $NAMESPACE
 
 log "✅ Deployment is ready"
 
@@ -218,7 +218,7 @@ echo "Security:    http://$MINIKUBE_IP:30001/security/report"
 
 # Success message
 echo ""
-echo -e "${GREEN}🎉 PromptStrike Guardrail Minikube PoC Test COMPLETED SUCCESSFULLY!${NC}"
+echo -e "${GREEN}🎉 RedForge Guardrail Minikube PoC Test COMPLETED SUCCESSFULLY!${NC}"
 echo -e "${GREEN}✅ All validation criteria met:${NC}"
 echo -e "   • Minikube started with 4 CPUs and 6GB memory"
 echo -e "   • Kubernetes manifests applied successfully"

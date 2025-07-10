@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Extended Tests for PromptStrike Guardrail SDK
+Extended Tests for RedForge Guardrail SDK
 
 This suite adds tests for concurrency, resilience, and security to complement
 the existing test suite.

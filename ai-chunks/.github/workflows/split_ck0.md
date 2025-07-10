@@ -92,7 +92,7 @@ jobs:
           echo "🔍 Running split-for-ai script..."
           
           # 运行脚本并捕获输出
-          if python utils/split-for-ai.py --repo . --max-lines 800 --min-lines 50 --db .chroma --collection promptstrike 2>&1 | tee script_output.log; then
+          if python utils/split-for-ai.py --repo . --max-lines 800 --min-lines 50 --db .chroma --collection redforge 2>&1 | tee script_output.log; then
             echo "✅ Script execution completed successfully"
             echo "script_success=true" >> $GITHUB_OUTPUT
           else

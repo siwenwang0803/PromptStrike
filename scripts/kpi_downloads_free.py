@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 
 class FreeKPITracker:
     def __init__(self):
-        self.github_repo = "siwenwang0803/PromptStrike"
-        self.pypi_package = "promptstrike"
-        self.docker_image = "promptstrike/cli"
+        self.github_repo = "siwenwang0803/RedForge"
+        self.pypi_package = "redforge"
+        self.docker_image = "redforge/cli"
         self.github_token = os.getenv("GITHUB_TOKEN")
         
         if not self.github_token:
@@ -236,7 +236,7 @@ class FreeKPITracker:
     
     def run(self) -> Dict[str, Any]:
         """Main execution function"""
-        logger.info("Starting KPI tracking for PromptStrike CLI")
+        logger.info("Starting KPI tracking for RedForge CLI")
         
         # Collect all KPI data
         kpi_data = {

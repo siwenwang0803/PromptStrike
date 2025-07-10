@@ -1,4 +1,4 @@
-# Development values for promptstrike-sidecar
+# Development values for redforge-sidecar
 # This file is optimized for local development and testing
 
 # Global configuration for development
@@ -11,7 +11,7 @@ global:
 sidecar:
   enabled: true
   image:
-    repository: promptstrike/guardrail-sidecar
+    repository: redforge/guardrail-sidecar
     tag: "latest"  # Use latest for development
     pullPolicy: Always
   
@@ -91,9 +91,9 @@ secrets:
 # Development namespace
 namespace:
   create: true
-  name: promptstrike-dev
+  name: redforge-dev
   labels:
-    name: promptstrike-dev
+    name: redforge-dev
     security-policy: baseline  # Relaxed security for dev
     environment: development
 

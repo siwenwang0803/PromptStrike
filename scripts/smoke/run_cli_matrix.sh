@@ -1,5 +1,5 @@
 #!/bin/bash
-# PromptStrike CLI Matrix Test Script
+# RedForge CLI Matrix Test Script
 # Tests CLI stability with concurrent attacks and multiple output formats
 # Reference: Production readiness testing for Sprint S-2
 
@@ -107,9 +107,9 @@ mkdir -p "$OUTPUT_DIR" "$LOG_DIR" "$OUTPUT_DIR/reports"
 check_prerequisites() {
     print_status "Checking prerequisites..."
     
-    # Check if promptstrike is available
-    if ! command -v promptstrike &> /dev/null && ! poetry run promptstrike --help &> /dev/null 2>&1; then
-        print_error "PromptStrike CLI not found. Please install it first."
+    # Check if redforge is available
+    if ! command -v redforge &> /dev/null && ! poetry run redforge --help &> /dev/null 2>&1; then
+        print_error "RedForge CLI not found. Please install it first."
         exit 1
     fi
     
@@ -241,7 +241,7 @@ validate_html() {
     local html_file=$1
     
     if [[ -f "$html_file" ]]; then
-        if grep -q "<html" "$html_file" && grep -q "PromptStrike" "$html_file"; then
+        if grep -q "<html" "$html_file" && grep -q "RedForge" "$html_file"; then
             print_success "HTML validation passed: $(basename "$html_file")"
             return 0
         else
@@ -266,12 +266,12 @@ run_single_test() {
     print_status "Testing model: $model, format: $format, test: $test_id"
     
     if [[ "$DRY_RUN" == true ]]; then
-        echo "poetry run promptstrike scan $model --format $format --output ${output_base} --max-requests 5"
+        echo "poetry run redforge scan $model --format $format --output ${output_base} --max-requests 5"
         return 0
     fi
     
     # Run the actual command
-    local cmd="poetry run promptstrike scan $model --format $format --output ${output_base} --max-requests 5"
+    local cmd="poetry run redforge scan $model --format $format --output ${output_base} --max-requests 5"
     
     if [[ "$VERBOSE" == true ]]; then
         cmd="$cmd --verbose"
@@ -285,13 +285,13 @@ run_single_test() {
         if [[ "$VALIDATE_OUTPUT" == true ]]; then
             case $format in
                 json)
-                    validate_json "${output_base}/promptstrike_scan_*.json" || true
+                    validate_json "${output_base}/redforge_scan_*.json" || true
                     ;;
                 pdf)
-                    validate_pdf "${output_base}/promptstrike_scan_*.pdf" || true
+                    validate_pdf "${output_base}/redforge_scan_*.pdf" || true
                     ;;
                 html)
-                    validate_html "${output_base}/promptstrike_scan_*.html" || true
+                    validate_html "${output_base}/redforge_scan_*.html" || true
                     ;;
             esac
         fi
@@ -369,14 +369,14 @@ test_error_handling() {
     for test in "${error_tests[@]}"; do
         IFS='|' read -r cmd expected_error <<< "$test"
         
-        print_status "Testing: poetry run promptstrike scan $cmd"
+        print_status "Testing: poetry run redforge scan $cmd"
         
         if [[ "$DRY_RUN" == true ]]; then
             echo "Would test: $cmd"
             continue
         fi
         
-        if poetry run promptstrike scan $cmd 2>&1 | grep -q "$expected_error"; then
+        if poetry run redforge scan $cmd 2>&1 | grep -q "$expected_error"; then
             print_success "Error handling correct: $expected_error"
         else
             print_error "Error handling failed for: $cmd"
@@ -389,7 +389,7 @@ generate_summary() {
     local summary_file="${OUTPUT_DIR}/test_summary_$(date +%Y%m%d_%H%M%S).txt"
     
     {
-        echo "PromptStrike CLI Matrix Test Summary"
+        echo "RedForge CLI Matrix Test Summary"
         echo "==================================="
         echo "Date: $(date)"
         echo "Models tested: ${MODEL_ARRAY[*]}"
@@ -440,7 +440,7 @@ generate_summary() {
 
 # Main execution
 main() {
-    print_status "PromptStrike CLI Matrix Test Starting..."
+    print_status "RedForge CLI Matrix Test Starting..."
     print_status "Models: ${MODEL_ARRAY[*]}"
     print_status "Formats: ${FORMAT_ARRAY[*]}"
     print_status "Concurrency: $CONCURRENCY"

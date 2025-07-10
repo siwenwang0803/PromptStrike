@@ -1,4 +1,4 @@
-# PromptStrike Guardrail SDK - Dependencies
+# RedForge Guardrail SDK - Dependencies
 # Production-ready runtime security monitoring for LLM applications
 
 # Core dependencies

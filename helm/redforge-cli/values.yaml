@@ -1,4 +1,4 @@
-# Default values for promptstrike-cli
+# Default values for redforge-cli
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -15,7 +15,7 @@ global:
 cli:
   enabled: true
   image:
-    repository: siwenwang0803/promptstrike
+    repository: siwenwang0803/redforge
     tag: "v0.2.0-alpha"
     pullPolicy: IfNotPresent
   
@@ -36,16 +36,16 @@ cli:
     - name: OPENAI_API_KEY
       valueFrom:
         secretKeyRef:
-          name: promptstrike-secrets
+          name: redforge-secrets
           key: openai-api-key
     # Configuration
     - name: PS_CONFIG_PATH
-      value: "/app/config/promptstrike.yaml"
+      value: "/app/config/redforge.yaml"
     - name: PS_OUTPUT_DIR
       value: "/app/reports"
 
   # Command to run
-  command: ["python", "-m", "promptstrike.cli"]
+  command: ["python", "-m", "redforge.cli"]
   args: ["--help"]
 
   # Security context
@@ -73,8 +73,8 @@ secrets:
 
 # ConfigMap configuration
 config:
-  # PromptStrike configuration
-  promptstrike:
+  # RedForge configuration
+  redforge:
     max_requests: 100
     timeout: 30
     output_format: json

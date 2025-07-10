@@ -38,7 +38,7 @@ class ComprehensiveThreatValidator:
         # Initialize component validators
         self.jira_validator = ThreatJiraValidator(config_path)
         self.doc_validator = ThreatModelValidator(
-            threat_model_path=self.project_root / "docs/PromptStrike/Security/Guardrail_Threat_Model.md",
+            threat_model_path=self.project_root / "docs/RedForge/Security/Guardrail_Threat_Model.md",
             mapping_path=self.project_root / "scripts/threat_to_jira.yml"
         )
     
@@ -280,7 +280,7 @@ class ComprehensiveThreatValidator:
     
     def run_comprehensive_validation(self) -> bool:
         """Run comprehensive validation"""
-        print("🎯 PromptStrike Comprehensive Threat Model Validation")
+        print("🎯 RedForge Comprehensive Threat Model Validation")
         print("=" * 80)
         print("Combining: Jira Integration + Document Validation + Error Scenarios")
         print("=" * 80)

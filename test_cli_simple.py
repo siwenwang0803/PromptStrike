@@ -12,11 +12,11 @@ from datetime import datetime
 # Add the current directory to the Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from promptstrike.core.scanner import LLMScanner
-from promptstrike.core.attacks import AttackPackLoader
-from promptstrike.core.report import ReportGenerator
-from promptstrike.utils.config import Config
-from promptstrike.models.scan_result import ScanResult, ScanMetadata, ComplianceReport
+from redforge.core.scanner import LLMScanner
+from redforge.core.attacks import AttackPackLoader
+from redforge.core.report import ReportGenerator
+from redforge.utils.config import Config
+from redforge.models.scan_result import ScanResult, ScanMetadata, ComplianceReport
 
 def main():
     """Main function replicating CLI behavior"""
@@ -54,7 +54,7 @@ def main():
     # Limit attacks for testing
     attacks = attacks[:3]
     
-    print(f"🎯 PromptStrike CLI v0.1.0")
+    print(f"🎯 RedForge CLI v0.1.0")
     print(f"Target: {target}")
     print(f"Attack Pack: owasp-llm-top10 ({len(attacks)} attacks)")
     print(f"Output: {output_dir}")

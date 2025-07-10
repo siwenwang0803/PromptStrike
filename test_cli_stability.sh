@@ -14,7 +14,7 @@ NC='\033[0m'
 TEST_DIR="cli_test_$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$TEST_DIR/logs" "$TEST_DIR/results"
 
-echo "PromptStrike CLI Stability Test"
+echo "RedForge CLI Stability Test"
 echo "==============================="
 echo "Test directory: $TEST_DIR"
 echo ""
@@ -50,20 +50,20 @@ run_test() {
 echo "Phase 1: Basic CLI Functionality"
 echo "--------------------------------"
 
-run_test "help_command" "python3 -m promptstrike.cli --help" 0
-run_test "version_command" "python3 -m promptstrike.cli version" 0
-run_test "list_attacks" "python3 -m promptstrike.cli list-attacks" 0
-run_test "doctor_command" "python3 -m promptstrike.cli doctor" 0
+run_test "help_command" "python3 -m redforge.cli --help" 0
+run_test "version_command" "python3 -m redforge.cli version" 0
+run_test "list_attacks" "python3 -m redforge.cli list-attacks" 0
+run_test "doctor_command" "python3 -m redforge.cli doctor" 0
 
 # Phase 2: Error Handling
 echo ""
 echo "Phase 2: Error Handling"
 echo "----------------------"
 
-run_test "invalid_model" "python3 -m promptstrike.cli scan invalid-model --dry-run" 1
-run_test "missing_target" "python3 -m promptstrike.cli scan" 1
-run_test "invalid_format" "python3 -m promptstrike.cli scan gpt-4 --format invalid --dry-run" 1
-run_test "invalid_timeout" "python3 -m promptstrike.cli scan gpt-4 --timeout -1 --dry-run" 1
+run_test "invalid_model" "python3 -m redforge.cli scan invalid-model --dry-run" 1
+run_test "missing_target" "python3 -m redforge.cli scan" 1
+run_test "invalid_format" "python3 -m redforge.cli scan gpt-4 --format invalid --dry-run" 1
+run_test "invalid_timeout" "python3 -m redforge.cli scan gpt-4 --timeout -1 --dry-run" 1
 
 # Phase 3: Dry Run Tests
 echo ""
@@ -82,7 +82,7 @@ for model in "${MODELS[@]}"; do
         # Start 5 concurrent processes (reduced from 50 for quick testing)
         pids=()
         for i in {1..5}; do
-            python3 -m promptstrike.cli scan "$model" \
+            python3 -m redforge.cli scan "$model" \
                 --format "$format" \
                 --output "$TEST_DIR/results/${model}_${format}_${i}" \
                 --max-requests 5 \
@@ -114,7 +114,7 @@ echo "-------------------------"
 
 # Check if dry run shows attack plan
 echo -n "Checking dry run output... "
-if python3 -m promptstrike.cli scan gpt-4 --dry-run 2>&1 | grep -q "attack plan"; then
+if python3 -m redforge.cli scan gpt-4 --dry-run 2>&1 | grep -q "attack plan"; then
     echo -e "${GREEN}✓ Dry run shows attack plan${NC}"
 else
     echo -e "${YELLOW}⚠ Dry run output may be incomplete${NC}"
@@ -128,13 +128,13 @@ echo "----------------------------"
 # Time a list-attacks command
 echo -n "Timing list-attacks command... "
 start_time=$(date +%s)
-python3 -m promptstrike.cli list-attacks > /dev/null 2>&1
+python3 -m redforge.cli list-attacks > /dev/null 2>&1
 end_time=$(date +%s)
 duration=$((end_time - start_time))
 echo "completed in ${duration}s"
 
 # Count attacks
-attack_count=$(python3 -m promptstrike.cli list-attacks 2>/dev/null | grep -E "LLM[0-9]+-[0-9]+" | wc -l)
+attack_count=$(python3 -m redforge.cli list-attacks 2>/dev/null | grep -E "LLM[0-9]+-[0-9]+" | wc -l)
 echo "Found $attack_count attacks in OWASP pack"
 
 # Generate Summary Report
@@ -144,7 +144,7 @@ echo "========================="
 
 report_file="$TEST_DIR/test_summary.txt"
 {
-    echo "PromptStrike CLI Stability Test Summary"
+    echo "RedForge CLI Stability Test Summary"
     echo "======================================"
     echo "Date: $(date)"
     echo "Python: $(python3 --version)"

@@ -1,7 +1,7 @@
 <!-- source: CHANGELOG-α.md idx:0 lines:293 -->
 
 ```md
-# Changelog - PromptStrike CLI α
+# Changelog - RedForge CLI α
 
 **Reference:** `cid-roadmap-v1` Sprint tracking  
 **Format:** [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)  
@@ -75,7 +75,7 @@
 ### 🔧 Technical Implementation
 
 #### Architecture
-- **New:** Modular Python package structure (`promptstrike/`)
+- **New:** Modular Python package structure (`redforge/`)
 - **New:** Core modules: `scanner`, `report`, `attacks`, `models`
 - **New:** Pydantic models for data validation and JSON schema generation
 - **New:** Typer-based CLI with rich formatting and progress tracking

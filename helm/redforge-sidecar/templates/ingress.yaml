@@ -2,10 +2,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: {{ include "redforge-sidecar.fullname" . }}
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: ingress
   annotations:
     {{- with .Values.ingress.annotations }}
@@ -55,7 +55,7 @@ spec:
             {{- end }}
             backend:
               service:
-                name: {{ include "promptstrike-sidecar.fullname" $ }}
+                name: {{ include "redforge-sidecar.fullname" $ }}
                 port:
                   {{- if .backend.service.port.number }}
                   number: {{ .backend.service.port.number }}

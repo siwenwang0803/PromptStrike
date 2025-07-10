@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "promptstrike-cli.fullname" . }}-reports
+  name: {{ include "redforge-cli.fullname" . }}-reports
   labels:
-    {{- include "promptstrike-cli.labels" . | nindent 4 }}
+    {{- include "redforge-cli.labels" . | nindent 4 }}
 spec:
   accessModes:
     - {{ .Values.persistence.accessMode }}

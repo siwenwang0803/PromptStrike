@@ -1,8 +1,8 @@
 """
-Chaos Engineering Test Suite for PromptStrike
+Chaos Engineering Test Suite for RedForge
 
 This module provides chaos engineering capabilities for testing the resilience
-of the PromptStrike replay engine and core components under adverse conditions.
+of the RedForge replay engine and core components under adverse conditions.
 
 Features:
 - Mutation testing for data corruption scenarios

@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: promptstrike-guardrail-demo
-  namespace: promptstrike-guardrail
+  name: redforge-guardrail-demo
+  namespace: redforge-guardrail
   labels:
-    app.kubernetes.io/name: promptstrike-guardrail-demo
+    app.kubernetes.io/name: redforge-guardrail-demo
     app.kubernetes.io/component: demo-application
-    app.kubernetes.io/part-of: promptstrike
+    app.kubernetes.io/part-of: redforge
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: promptstrike-guardrail-demo
+      app.kubernetes.io/name: redforge-guardrail-demo
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: promptstrike-guardrail-demo
+        app.kubernetes.io/name: redforge-guardrail-demo
         app.kubernetes.io/component: demo-application
-        app.kubernetes.io/part-of: promptstrike
+        app.kubernetes.io/part-of: redforge
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8001"
         prometheus.io/path: "/security/metrics"
     spec:
-      serviceAccountName: promptstrike-guardrail
+      serviceAccountName: redforge-guardrail
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -31,7 +31,7 @@ spec:
       containers:
       # Demo Application Container
       - name: demo-app
-        image: promptstrike/guardrail-demo:latest
+        image: redforge/guardrail-demo:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
@@ -80,7 +80,7 @@ spec:
 
       # Guardrail Sidecar Container
       - name: guardrail-sidecar
-        image: promptstrike/guardrail-sidecar:latest
+        image: redforge/guardrail-sidecar:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8001
@@ -93,7 +93,7 @@ spec:
           value: "http://localhost:8000"
         - name: LOG_LEVEL
           value: "info"
-        - name: PROMPTSTRIKE_OUTPUT_DIR
+        - name: REDFORGE_OUTPUT_DIR
           value: "/var/reports"
         volumeMounts:
         - name: reports-volume
@@ -136,7 +136,7 @@ spec:
         emptyDir: {}
       - name: config-volume
         configMap:
-          name: promptstrike-config
+          name: redforge-config
       
       restartPolicy: Always
       terminationGracePeriodSeconds: 30

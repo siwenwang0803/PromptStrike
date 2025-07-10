@@ -1,4 +1,4 @@
-# PromptStrike Chaos Testing Guide
+# RedForge Chaos Testing Guide
 ## 目标：验证 data_corruption 和 protocol_violation 场景下系统韧性
 
 **Generated**: 2025-01-10  
@@ -8,7 +8,7 @@
 
 ## 🎯 Overview
 
-This guide provides comprehensive chaos testing capabilities for PromptStrike, specifically targeting **data corruption** and **protocol violation** scenarios to validate system resilience. The testing suite ensures the guardrail sidecar can handle adverse conditions gracefully while maintaining security and availability.
+This guide provides comprehensive chaos testing capabilities for RedForge, specifically targeting **data corruption** and **protocol violation** scenarios to validate system resilience. The testing suite ensures the guardrail sidecar can handle adverse conditions gracefully while maintaining security and availability.
 
 ### Key Objectives
 - ✅ **Data Corruption Resilience**: Validate handling of corrupted, malformed, and invalid data
@@ -130,7 +130,7 @@ metadata:
 spec:
   selector:
     labelSelectors:
-      app: psguard
+      app: redforge-sidecar
   action: fault
   path: "/app/logs/*"
   errno: 5  # EIO - Input/output error
@@ -209,7 +209,7 @@ metadata:
 spec:
   selector:
     labelSelectors:
-      app: psguard
+      app: redforge-sidecar
   action: corrupt
   corrupt:
     percent: "10"
@@ -285,7 +285,7 @@ metadata:
 spec:
   selector:
     labelSelectors:
-      app: psguard
+      app: redforge-sidecar
   action: pod-kill
   gracePeriod: 0
   duration: "60s"
@@ -443,16 +443,16 @@ chaos-test-reports/
 
 ```bash
 # Monitor sidecar logs during chaos
-kubectl logs -l app=psguard -c guardrail-sidecar -f
+kubectl logs -l app=redforge-sidecar -c guardrail-sidecar -f
 
 # Check Chaos Mesh experiment status
 kubectl get podchaos,networkchaos,iochaos -A
 
 # Monitor resource usage
-kubectl top pods -l app=psguard
+kubectl top pods -l app=redforge-sidecar
 
 # Check service health
-kubectl get endpoints psguard-service
+kubectl get endpoints redforge-sidecar-service
 ```
 
 ### Alerting Thresholds
@@ -495,7 +495,7 @@ Add scenario to `run_chaos_tests.sh`
 ```bash
 # Environment variables
 export CHAOS_DURATION="120s"          # Chaos scenario duration
-export NAMESPACE="promptstrike-test"   # Target namespace
+export NAMESPACE="redforge-test"   # Target namespace
 export CHAOS_INTENSITY="0.3"          # Chaos injection rate
 export RECOVERY_TIMEOUT="30.0"        # Recovery timeout
 ```
@@ -520,7 +520,7 @@ export RECOVERY_TIMEOUT="30.0"        # Recovery timeout
 apiVersion: chaos-mesh.org/v1alpha1
 kind: Schedule
 metadata:
-  name: promptstrike-chaos-schedule
+  name: redforge-chaos-schedule
 spec:
   schedule: "0 */6 * * *"  # Every 6 hours
   historyLimit: 5
@@ -557,7 +557,7 @@ kubectl auth can-i create podchaos --as=system:serviceaccount:chaos-mesh:chaos-c
 #### Test Failures
 ```bash
 # Check pod logs
-kubectl logs -l app=psguard -c guardrail-sidecar --tail=100
+kubectl logs -l app=redforge-sidecar -c guardrail-sidecar --tail=100
 
 # Check chaos experiment status
 kubectl describe podchaos <chaos-name>
@@ -569,7 +569,7 @@ kubectl run debug --rm -i --tty --image=nicolaka/netshoot -- /bin/bash
 #### Performance Issues
 ```bash
 # Monitor resources
-kubectl top pods -l app=psguard
+kubectl top pods -l app=redforge-sidecar
 
 # Check for memory leaks
 kubectl exec -it <pod-name> -- ps aux
@@ -582,7 +582,7 @@ kubectl exec -it <pod-name> -- netstat -an
 
 ## 🏆 Conclusion
 
-The PromptStrike Chaos Testing Suite provides comprehensive validation of system resilience under adverse conditions. With **data corruption** and **protocol violation** scenarios specifically implemented, the system demonstrates:
+The RedForge Chaos Testing Suite provides comprehensive validation of system resilience under adverse conditions. With **data corruption** and **protocol violation** scenarios specifically implemented, the system demonstrates:
 
 - ✅ **Excellent resilience** under data corruption attacks
 - ✅ **Robust protocol validation** and error handling

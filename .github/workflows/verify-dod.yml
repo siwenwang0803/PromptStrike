@@ -36,23 +36,23 @@ jobs:
       - name: Test DOD Command Exactly
         run: |
           # Test the exact DOD command sequence
-          helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+          helm repo add redforge https://siwenwang0803.github.io/RedForge
           helm repo update
           
           # Verify chart is available
-          helm search repo promptstrike/promptstrike-sidecar --version 0.2.0
+          helm search repo redforge/redforge-sidecar --version 0.2.0
           
           # Test dry-run installation with DOD command format
           # Note: This will fail with "cluster unreachable" in CI, which is expected
-          if helm install guardrail promptstrike/promptstrike-sidecar \
+          if helm install guardrail redforge/redforge-sidecar \
             -n ps \
             --set openai.apiKey="test-key-dod" \
             --create-namespace \
-            --dry-run 2>&1 | grep -q "CHART PATH:.*promptstrike-sidecar-0.2.0.tgz"; then
+            --dry-run 2>&1 | grep -q "CHART PATH:.*redforge-sidecar-0.2.0.tgz"; then
             echo "✅ Chart download successful (K8s connection error expected)"
           else
             # If it's just a K8s connection issue, that's fine
-            helm install guardrail promptstrike/promptstrike-sidecar \
+            helm install guardrail redforge/redforge-sidecar \
               -n ps \
               --set openai.apiKey="test-key-dod" \
               --create-namespace \
@@ -61,13 +61,13 @@ jobs:
 
       - name: Verify index.yaml accessibility
         run: |
-          curl -f https://siwenwang0803.github.io/PromptStrike/index.yaml
+          curl -f https://siwenwang0803.github.io/RedForge/index.yaml
           echo "✅ index.yaml is accessible"
 
       - name: Check for chart package
         run: |
           # Check if the chart package exists
-          if curl -f https://siwenwang0803.github.io/PromptStrike/promptstrike-sidecar-0.2.0.tgz; then
+          if curl -f https://siwenwang0803.github.io/RedForge/redforge-sidecar-0.2.0.tgz; then
             echo "✅ Chart package is accessible"
           else
             echo "⚠️ Chart package not yet available (may need release workflow)"

@@ -81,8 +81,8 @@ Add these to your README.md:
 
 ```markdown
 ![Downloads](https://img.shields.io/badge/downloads-loading-blue)
-![Stars](https://img.shields.io/github/stars/siwenwang0803/PromptStrike)
-![Issues](https://img.shields.io/github/issues/siwenwang0803/PromptStrike)
+![Stars](https://img.shields.io/github/stars/siwenwang0803/RedForge)
+![Issues](https://img.shields.io/github/issues/siwenwang0803/RedForge)
 ```
 
 ### Programmatic Access
@@ -92,7 +92,7 @@ import json
 import requests
 
 # Fetch latest KPI data
-url = "https://raw.githubusercontent.com/siwenwang0803/PromptStrike/main/downloads.json"
+url = "https://raw.githubusercontent.com/siwenwang0803/RedForge/main/downloads.json"
 response = requests.get(url)
 kpi_data = response.json()
 

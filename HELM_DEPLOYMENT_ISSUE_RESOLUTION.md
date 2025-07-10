@@ -85,8 +85,8 @@
 ### 生产环境验证 / Production Verification
 ```bash
 # DOD 一键部署命令验证
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
-helm install guardrail promptstrike/promptstrike-sidecar --set openai.apiKey=$KEY
+helm repo add redforge https://siwenwang0803.github.io/RedForge
+helm install guardrail redforge/redforge-sidecar --set openai.apiKey=$KEY
 
 # 预期结果 / Expected result
 # 在有 Kubernetes 集群的环境中成功部署
@@ -177,8 +177,8 @@ helm install guardrail promptstrike/promptstrike-sidecar --set openai.apiKey=$KE
 ### ✅ DOD 合规性 / DOD Compliance
 ```bash
 # DOD 要求的命令序列 / Required DOD command sequence
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike  
-helm install guardrail promptstrike/promptstrike-sidecar --set openai.apiKey=$KEY
+helm repo add redforge https://siwenwang0803.github.io/RedForge  
+helm install guardrail redforge/redforge-sidecar --set openai.apiKey=$KEY
 
 # 结果 / Result
 ✅ 脚本退出码为 0 / Script exits with code 0

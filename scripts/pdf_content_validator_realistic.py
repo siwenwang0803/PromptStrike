@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PromptStrike PDF Content Validator (Realistic Assessment)
+RedForge PDF Content Validator (Realistic Assessment)
 现实评估版 PDF 内容验证器 - 基于实际扫描结果而非理论最大值
 """
 
@@ -171,7 +171,7 @@ class RealisticPDFValidator:
     def _validate_essential_content(self):
         """Validate essential report components"""
         essential_elements = [
-            ("PromptStrike Branding", r"promptstrike", "Tool identification"),
+            ("RedForge Branding", r"redforge", "Tool identification"),
             ("Target Information", r"target|gpt-4|model", "Scan target specified"),
             ("Scan Metadata", r"scan.?id|generated|duration", "Execution metadata"),
             ("Risk Assessment", r"risk.?score|security.?posture", "Risk evaluation"),
@@ -432,7 +432,7 @@ class RealisticPDFValidator:
 def main():
     """Main entry point for realistic PDF content validation"""
     parser = argparse.ArgumentParser(
-        description="Realistic PDF content validation for PromptStrike compliance reports"
+        description="Realistic PDF content validation for RedForge compliance reports"
     )
     parser.add_argument(
         "pdf_path",

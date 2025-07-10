@@ -1,5 +1,5 @@
 /**
- * k6 压力测试脚本 - PromptStrike Sidecar
+ * k6 压力测试脚本 - RedForge Sidecar
  * 目标：测试 500 RPS 下的资源使用情况
  * 期望：CPU ≤ 200m，内存 ≤ 180Mi
  */

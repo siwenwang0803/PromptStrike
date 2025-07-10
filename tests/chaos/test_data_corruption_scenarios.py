@@ -1,5 +1,5 @@
 """
-Data Corruption Chaos Testing for PromptStrike
+Data Corruption Chaos Testing for RedForge
 目标：验证 data_corruption 场景下系统韧性
 """
 

@@ -1,18 +1,18 @@
 apiVersion: v2
 name: psguard
-description: PromptStrike Guardrail Sidecar - Enterprise LLM Security
+description: RedForge Guardrail Sidecar - Enterprise LLM Security
 type: application
 version: 0.1.0
 appVersion: "1.0.0"
-home: https://github.com/promptstrike/psguard
+home: https://github.com/redforge/psguard
 keywords:
   - security
   - llm
   - guardrail
   - sidecar
 maintainers:
-  - name: PromptStrike Team
-    email: dev@promptstrike.com
+  - name: RedForge Team
+    email: dev@redforge.com
 sources:
-  - https://github.com/promptstrike/psguard
-icon: https://promptstrike.com/icon.png
+  - https://github.com/redforge/psguard
+icon: https://redforge.com/icon.png

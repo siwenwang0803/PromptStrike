@@ -1,6 +1,6 @@
-# PromptStrike Guardrail Pilot-0 Installation Guide
+# RedForge Guardrail Pilot-0 Installation Guide
 
-This guide provides step-by-step instructions for installing PromptStrike Guardrail using Helm for Pilot-0 customers, ensuring PCI-DSS and NIST compliance.
+This guide provides step-by-step instructions for installing RedForge Guardrail using Helm for Pilot-0 customers, ensuring PCI-DSS and NIST compliance.
 
 ## Prerequisites
 
@@ -18,31 +18,31 @@ kubectl cluster-info
 helm version
 ```
 
-### Step 2: Add PromptStrike Helm Repository
+### Step 2: Add RedForge Helm Repository
 
 ```bash
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+helm repo add redforge https://siwenwang0803.github.io/RedForge
 helm repo update
 ```
 
 ### Step 3: Create a Namespace (Optional)
 
 ```bash
-kubectl create namespace promptstrike-pilot
-kubectl config set-context --current --namespace=promptstrike-pilot
+kubectl create namespace redforge-pilot
+kubectl config set-context --current --namespace=redforge-pilot
 ```
 
 ### Step 4: Configure Your API Keys
 
 ```bash
-kubectl create secret generic my-openai-api-key --from-literal=api-key="sk-your-openai-api-key-here" -n promptstrike-pilot
+kubectl create secret generic my-openai-api-key --from-literal=api-key="sk-your-openai-api-key-here" -n redforge-pilot
 ```
 
-### Step 5: Install PromptStrike Guardrail
+### Step 5: Install RedForge Guardrail
 
 ```bash
-helm install guardrail promptstrike/promptstrike-guardrail \
-  --namespace promptstrike-pilot \
+helm install guardrail redforge/redforge-guardrail \
+  --namespace redforge-pilot \
   --set guardrail.secrets.openaiApiKey=true \
   --set guardrail.secrets.openaiSecretName=my-openai-api-key \
   --set guardrail.secrets.openaiSecretKey=api-key \
@@ -52,20 +52,20 @@ helm install guardrail promptstrike/promptstrike-guardrail \
 
 **Alternative (DOD Command):**
 ```bash
-helm install guardrail promptstrike/promptstrike-guardrail -n ps --set openai.apiKey=$OPENAI_API_KEY
+helm install guardrail redforge/redforge-guardrail -n rf --set openai.apiKey=$OPENAI_API_KEY
 ```
 
 ### Step 6: Verify Installation
 
 ```bash
-kubectl get deployments -l app.kubernetes.io/name=promptstrike-guardrail
-kubectl get pods -l app.kubernetes.io/name=promptstrike-guardrail
+kubectl get deployments -l app.kubernetes.io/name=redforge-guardrail
+kubectl get pods -l app.kubernetes.io/name=redforge-guardrail
 ```
 
 **Expected Output:**
 ```
 NAME                                READY   UP-TO-DATE   AVAILABLE   AGE
-promptstrike-guardrail   1/1     1            1           2m
+redforge-guardrail   1/1     1            1           2m
 ```
 
 ### Step 7: Run Validation Script
@@ -77,7 +77,7 @@ promptstrike-guardrail   1/1     1            1           2m
 ### Step 8: Access Metrics Dashboard
 
 ```bash
-kubectl port-forward service/promptstrike-guardrail-metrics 9090:9090 -n promptstrike-pilot
+kubectl port-forward service/redforge-guardrail-metrics 9090:9090 -n redforge-pilot
 ```
 
 Open: http://localhost:9090/metrics
@@ -85,7 +85,7 @@ Open: http://localhost:9090/metrics
 ### Step 9: Verify Configuration
 
 ```bash
-kubectl get configmap promptstrike-guardrail-config -n promptstrike-pilot -o yaml
+kubectl get configmap redforge-guardrail-config -n redforge-pilot -o yaml
 ```
 
 ## Screenshots and Verification Points
@@ -94,25 +94,25 @@ kubectl get configmap promptstrike-guardrail-config -n promptstrike-pilot -o yam
 
 ```
 NAME                                                    READY   STATUS    RESTARTS   AGE
-promptstrike-guardrail-xxx-yyy   2/2     Running   0          5m
+redforge-guardrail-xxx-yyy   2/2     Running   0          5m
 ```
 
 ### Expected Services
 
 ```bash
-kubectl get services -l app.kubernetes.io/name=promptstrike-guardrail -n promptstrike-pilot
+kubectl get services -l app.kubernetes.io/name=redforge-guardrail -n redforge-pilot
 ```
 
 ```
 NAME                                             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
-promptstrike-guardrail    ClusterIP   10.96.x.x      <none>        8080/TCP   5m
-promptstrike-guardrail-metrics ClusterIP 10.96.x.x <none>        9090/TCP   5m
+redforge-guardrail    ClusterIP   10.96.x.x      <none>        8080/TCP   5m
+redforge-guardrail-metrics ClusterIP 10.96.x.x <none>        9090/TCP   5m
 ```
 
 ### Expected Log Messages
 
 ```bash
-kubectl logs -l app.kubernetes.io/name=promptstrike-guardrail -c guardrail-sidecar -n promptstrike-pilot
+kubectl logs -l app.kubernetes.io/name=redforge-guardrail -c guardrail-sidecar -n redforge-pilot
 ```
 
 **Look for:**
@@ -131,8 +131,8 @@ kubectl apply -f - <<EOF
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: promptstrike-reports
-  namespace: promptstrike-pilot
+  name: redforge-reports
+  namespace: redforge-pilot
 spec:
   accessModes:
     - ReadWriteOnce
@@ -141,18 +141,18 @@ spec:
       storage: 1Gi
 EOF
 
-helm upgrade guardrail promptstrike/promptstrike-guardrail \
-  --namespace promptstrike-pilot \
+helm upgrade guardrail redforge/redforge-guardrail \
+  --namespace redforge-pilot \
   --reuse-values \
   --set guardrail.reportPVC.enabled=true \
-  --set guardrail.reportPVC.claimName=promptstrike-reports
+  --set guardrail.reportPVC.claimName=redforge-reports
 ```
 
 ### Configure Custom OTEL Endpoint
 
 ```bash
-helm upgrade guardrail promptstrike/promptstrike-guardrail \
-  --namespace promptstrike-pilot \
+helm upgrade guardrail redforge/redforge-guardrail \
+  --namespace redforge-pilot \
   --reuse-values \
   --set guardrail.otelExporter.url="http://your-otel-collector:4317"
 ```
@@ -163,21 +163,21 @@ helm upgrade guardrail promptstrike/promptstrike-guardrail \
 
 **Pod Stuck in Pending:**
 ```bash
-kubectl describe pods -l app.kubernetes.io/name=promptstrike-guardrail -n promptstrike-pilot
+kubectl describe pods -l app.kubernetes.io/name=redforge-guardrail -n redforge-pilot
 ```
 
 **Sidecar Failing:**
 ```bash
-kubectl logs -l app.kubernetes.io/name=promptstrike-guardrail -c guardrail-sidecar -n promptstrike-pilot
+kubectl logs -l app.kubernetes.io/name=redforge-guardrail -c guardrail-sidecar -n redforge-pilot
 ```
 
 **Metrics Not Responding:**
 ```bash
-kubectl exec $POD_NAME -c guardrail-sidecar -n promptstrike-pilot -- wget -q -O - http://localhost:9090/metrics
+kubectl exec $POD_NAME -c guardrail-sidecar -n redforge-pilot -- wget -q -O - http://localhost:9090/metrics
 ```
 
 ## Getting Support
 
-- **Slack:** #promptstrike-pilot-support
-- **Email:** pilot-support@promptstrike.dev
+- **Slack:** #redforge-pilot-support
+- **Email:** pilot-support@redforge.dev
 - **Office Hours:** Tuesdays 2PM PST

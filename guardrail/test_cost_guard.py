@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unit tests for PromptStrike Cost Guard module
+Unit tests for RedForge Cost Guard module
 
 Tests cover:
 - Token storm detection

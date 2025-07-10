@@ -1,4 +1,4 @@
-# Optional dependencies for PromptStrike CLI
+# Optional dependencies for RedForge CLI
 # Install with: pip install -r requirements-extras.txt
 
 # AI chunks generation

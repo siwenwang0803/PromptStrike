@@ -8,7 +8,7 @@
 
 | Installation Method | Status | Docker Image | Repository | Notes |
 |-------------------|---------|--------------|------------|-------|
-| 🐳 **Docker Hub** | ✅ PASS | `siwenwang0803/promptstrike:v0.2.0-alpha` | Live | Direct pull working |
+| 🐳 **Docker Hub** | ✅ PASS | `siwenwang0803/redforge:v0.2.0-alpha` | Live | Direct pull working |
 | ⚓ **Helm Repository** | ✅ PASS | CLI + Sidecar charts | Live | Both charts installable |
 | 📦 **PyPI** | 🚧 READY | Package built | Ready | Awaiting publish |
 
@@ -18,10 +18,10 @@
 
 ```bash
 # TESTED: Direct Docker pull and run
-docker pull siwenwang0803/promptstrike:v0.2.0-alpha
+docker pull siwenwang0803/redforge:v0.2.0-alpha
 # ✅ SUCCESS: Image pulled successfully (456MB)
 
-docker run --rm siwenwang0803/promptstrike:v0.2.0-alpha version
+docker run --rm siwenwang0803/redforge:v0.2.0-alpha version
 # ✅ SUCCESS: Version 0.2.0-alpha confirmed, CLI functional
 ```
 
@@ -29,52 +29,52 @@ docker run --rm siwenwang0803/promptstrike:v0.2.0-alpha version
 ```bash
 docker run --rm -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -v $(pwd)/reports:/app/reports \
-  siwenwang0803/promptstrike:v0.2.0-alpha scan gpt-4
+  siwenwang0803/redforge:v0.2.0-alpha scan gpt-4
 ```
 
 ### 2. Helm Repository Installation ✅
 
 ```bash
 # TESTED: Fresh repository addition
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+helm repo add redforge https://siwenwang0803.github.io/RedForge
 # ✅ SUCCESS: Repository added
 
 helm repo update
 # ✅ SUCCESS: Repository synchronized
 
-helm search repo promptstrike
+helm search repo redforge
 # ✅ SUCCESS: Both charts visible:
-# - promptstrike/promptstrike-cli (0.2.0)
-# - promptstrike/promptstrike-sidecar (0.2.0)
+# - redforge/redforge-cli (0.2.0)
+# - redforge/redforge-sidecar (0.2.0)
 
-helm show chart promptstrike/promptstrike-cli
+helm show chart redforge/redforge-cli
 # ✅ SUCCESS: Chart metadata accessible
 
-helm install test-cli promptstrike/promptstrike-cli --dry-run
+helm install test-cli redforge/redforge-cli --dry-run
 # ✅ SUCCESS: Chart validates and generates Kubernetes manifests
 ```
 
 **Customer Commands:**
 ```bash
 # CLI Installation
-helm install my-cli promptstrike/promptstrike-cli \
+helm install my-cli redforge/redforge-cli \
   --set secrets.openaiApiKey="your-api-key"
 
 # Sidecar Installation  
-helm install my-sidecar promptstrike/promptstrike-sidecar \
+helm install my-sidecar redforge/redforge-sidecar \
   --set secrets.apiKeys.openai="your-api-key"
 ```
 
 ### 3. PyPI Package (Ready for Publish)
 
 **Built Packages:**
-- `promptstrike-0.2.0a0-py3-none-any.whl` (137KB)
-- `promptstrike-0.2.0a0.tar.gz` (118KB)
+- `redforge-0.2.0a0-py3-none-any.whl` (137KB)
+- `redforge-0.2.0a0.tar.gz` (118KB)
 
 **Ready for:**
 ```bash
-pip install promptstrike
-promptstrike scan gpt-4 --dry-run
+pip install redforge
+redforge scan gpt-4 --dry-run
 ```
 
 ## Customer Experience Validation
@@ -92,12 +92,12 @@ promptstrike scan gpt-4 --dry-run
 
 1. **Developer Quick Test:**
    ```bash
-   docker run --rm siwenwang0803/promptstrike:v0.2.0-alpha --help
+   docker run --rm siwenwang0803/redforge:v0.2.0-alpha --help
    ```
 
 2. **Enterprise K8s Deployment:**
    ```bash
-   helm install promptstrike promptstrike/promptstrike-cli \
+   helm install redforge redforge/redforge-cli \
      --set secrets.openaiApiKey="$OPENAI_API_KEY" \
      --set job.enabled=true
    ```
@@ -109,7 +109,7 @@ promptstrike scan gpt-4 --dry-run
        docker run --rm \
          -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
          -v $PWD/reports:/app/reports \
-         siwenwang0803/promptstrike:v0.2.0-alpha scan gpt-4
+         siwenwang0803/redforge:v0.2.0-alpha scan gpt-4
    ```
 
 ## Final Verification Checklist
@@ -133,8 +133,8 @@ promptstrike scan gpt-4 --dry-run
 
 ## Support Channels
 
-- **GitHub Issues**: https://github.com/siwenwang0803/PromptStrike/issues
-- **Email**: dev@promptstrike.com
+- **GitHub Issues**: https://github.com/siwenwang0803/RedForge/issues
+- **Email**: dev@redforge.com
 - **Enterprise**: Custom pilots available
 
 ---

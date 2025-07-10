@@ -1,4 +1,4 @@
-# PromptStrike Guardrail PoC - Testing Instructions
+# RedForge Guardrail PoC - Testing Instructions
 
 ## For Sonnet/o3 Validation
 
@@ -22,7 +22,7 @@ cd guardrail_poc
 
 **Expected Output:**
 ```
-🎉 PromptStrike Guardrail Minikube PoC Test COMPLETED SUCCESSFULLY!
+🎉 RedForge Guardrail Minikube PoC Test COMPLETED SUCCESSFULLY!
 ✅ All validation criteria met:
    • Minikube started with 4 CPUs and 6GB memory
    • Kubernetes manifests applied successfully  
@@ -59,14 +59,14 @@ minikube status
 ### Step 2: Build and Load Images
 ```bash
 # Build demo app
-docker build -t promptstrike/guardrail-demo:latest guardrail_poc/demo-app/
+docker build -t redforge/guardrail-demo:latest guardrail_poc/demo-app/
 
 # Build sidecar
-docker build -t promptstrike/guardrail-sidecar:latest guardrail_poc/sidecar/
+docker build -t redforge/guardrail-sidecar:latest guardrail_poc/sidecar/
 
 # Load into minikube
-minikube image load promptstrike/guardrail-demo:latest
-minikube image load promptstrike/guardrail-sidecar:latest
+minikube image load redforge/guardrail-demo:latest
+minikube image load redforge/guardrail-sidecar:latest
 ```
 
 ### Step 3: Deploy to Kubernetes
@@ -76,18 +76,18 @@ kubectl apply -f guardrail_poc/manifests/
 
 **Validation:**
 ```bash
-kubectl get pods -n promptstrike-guardrail
-# Expected: 1/1 Running for promptstrike-guardrail-demo pod
+kubectl get pods -n redforge-guardrail
+# Expected: 1/1 Running for redforge-guardrail-demo pod
 ```
 
 ### Step 4: Wait for Ready State
 ```bash
-kubectl wait --for=condition=available --timeout=300s deployment/promptstrike-guardrail-demo -n promptstrike-guardrail
+kubectl wait --for=condition=available --timeout=300s deployment/redforge-guardrail-demo -n redforge-guardrail
 ```
 
 ### Step 5: Check Logs for "Span captured" (CRITICAL)
 ```bash
-kubectl logs -l app=sidecar -f --tail 20 -n promptstrike-guardrail
+kubectl logs -l app=sidecar -f --tail 20 -n redforge-guardrail
 ```
 
 **Expected Output:**
@@ -190,13 +190,13 @@ test_units.py::TestSecurityAnalysis::test_analyze_security_risk_safe_content PAS
 ### Issue: "Span captured" not found
 ```bash
 # Check sidecar container logs
-kubectl logs -l app=sidecar --tail 50 -n promptstrike-guardrail
+kubectl logs -l app=sidecar --tail 50 -n redforge-guardrail
 
 # Check if sidecar is running
-kubectl get pods -n promptstrike-guardrail
+kubectl get pods -n redforge-guardrail
 
 # Check container status
-kubectl describe pod -l app=sidecar -n promptstrike-guardrail
+kubectl describe pod -l app=sidecar -n redforge-guardrail
 ```
 
 ### Issue: Minikube fails to start
@@ -212,20 +212,20 @@ minikube status
 ### Issue: Images not found
 ```bash
 # Rebuild and reload images
-docker build -t promptstrike/guardrail-demo:latest guardrail_poc/demo-app/
-docker build -t promptstrike/guardrail-sidecar:latest guardrail_poc/sidecar/
-minikube image load promptstrike/guardrail-demo:latest
-minikube image load promptstrike/guardrail-sidecar:latest
+docker build -t redforge/guardrail-demo:latest guardrail_poc/demo-app/
+docker build -t redforge/guardrail-sidecar:latest guardrail_poc/sidecar/
+minikube image load redforge/guardrail-demo:latest
+minikube image load redforge/guardrail-sidecar:latest
 ```
 
 ### Issue: Pods not ready
 ```bash
 # Check pod events
-kubectl describe pods -n promptstrike-guardrail
+kubectl describe pods -n redforge-guardrail
 
 # Check resource constraints
 kubectl top nodes
-kubectl top pods -n promptstrike-guardrail
+kubectl top pods -n redforge-guardrail
 ```
 
 ## 🎯 **Success Verification Commands**
@@ -233,13 +233,13 @@ kubectl top pods -n promptstrike-guardrail
 ### Final Validation
 ```bash
 # All pods running
-kubectl get pods -n promptstrike-guardrail
+kubectl get pods -n redforge-guardrail
 
 # Services available  
-kubectl get services -n promptstrike-guardrail
+kubectl get services -n redforge-guardrail
 
 # Logs contain span capture
-kubectl logs -l app=sidecar --tail 20 -n promptstrike-guardrail | grep "Span captured"
+kubectl logs -l app=sidecar --tail 20 -n redforge-guardrail | grep "Span captured"
 
 # Endpoints accessible
 MINIKUBE_IP=$(minikube ip)
@@ -250,11 +250,11 @@ curl -f http://$MINIKUBE_IP:30001/health
 ### Expected Final State
 ```
 NAME                                        READY   STATUS    RESTARTS   AGE
-promptstrike-guardrail-demo-xxxxxxxxx-xxxxx   1/1     Running   0          2m
+redforge-guardrail-demo-xxxxxxxxx-xxxxx   1/1     Running   0          2m
 
 NAME                                  TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)
-promptstrike-guardrail-demo          ClusterIP   10.96.xxx.xxx   <none>        8000/TCP,8001/TCP
-promptstrike-guardrail-demo-nodeport NodePort    10.96.xxx.xxx   <none>        8000:30000/TCP,8001:30001/TCP
+redforge-guardrail-demo          ClusterIP   10.96.xxx.xxx   <none>        8000/TCP,8001/TCP
+redforge-guardrail-demo-nodeport NodePort    10.96.xxx.xxx   <none>        8000:30000/TCP,8001:30001/TCP
 
 ✅ Span captured: span_1704067200000 (risk: 2.3, vulns: 0)
 ```

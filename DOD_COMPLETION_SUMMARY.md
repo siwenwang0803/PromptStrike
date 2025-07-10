@@ -6,9 +6,9 @@
 
 | Requirement | Status | Implementation | Verification |
 |-------------|--------|----------------|--------------|
-| **Client can run helm repo add promptstrike https://cdn.promptstrike.ai/charts** | ✅ **COMPLETE** | Published at `https://siwenwang0803.github.io/PromptStrike` | `./scripts/verify_helm_repository.sh` |
-| **helm install guardrail promptstrike/guardrail -n ps --set openai.apiKey=$KEY** | ✅ **COMPLETE** | Chart: `promptstrike/promptstrike-sidecar` | GitHub Actions workflow verification |
-| **Span captured ✅** | ✅ **COMPLETE** | Comprehensive OTEL implementation with 24 mutation types | `/promptstrike/tests/test_span_schema.py` |
+| **Client can run helm repo add redforge https://cdn.redforge.ai/charts** | ✅ **COMPLETE** | Published at `https://siwenwang0803.github.io/RedForge` | `./scripts/verify_helm_repository.sh` |
+| **helm install guardrail redforge/guardrail -n ps --set openai.apiKey=$KEY** | ✅ **COMPLETE** | Chart: `redforge/redforge-sidecar` | GitHub Actions workflow verification |
+| **Span captured ✅** | ✅ **COMPLETE** | Comprehensive OTEL implementation with 24 mutation types | `/redforge/tests/test_span_schema.py` |
 | **Pilot0_compliance_pack.pdf auto-generated nightly** | ✅ **COMPLETE** | Workflow runs daily at 2 AM UTC | `.github/workflows/evidence.yml` |
 | **pytest + security workflow green under Pydantic v2** | ✅ **COMPLETE** | All tests pass with Pydantic v2 migration complete | `.github/workflows/chaos-testing.yml` |
 
@@ -17,7 +17,7 @@
 ### 1. Helm Repository Publication ✅
 
 **What Was Delivered:**
-- GitHub Pages-hosted Helm repository at `https://siwenwang0803.github.io/PromptStrike`
+- GitHub Pages-hosted Helm repository at `https://siwenwang0803.github.io/RedForge`
 - Chart Releaser Action workflow (`.github/workflows/release-chart.yml`)
 - Automated index.yaml generation and chart packaging
 - DOD verification script (`./scripts/verify_helm_repository.sh`)
@@ -25,13 +25,13 @@
 **Client Commands That Work:**
 ```bash
 # DOD Command Sequence
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+helm repo add redforge https://siwenwang0803.github.io/RedForge
 helm repo update
-helm install guardrail promptstrike/promptstrike-sidecar -n ps --set openai.apiKey=$KEY
+helm install guardrail redforge/redforge-sidecar -n ps --set openai.apiKey=$KEY
 
 # Alternative detailed installation
-helm install guardrail promptstrike/promptstrike-sidecar \
-  --namespace promptstrike-pilot \
+helm install guardrail redforge/redforge-sidecar \
+  --namespace redforge-pilot \
   --set guardrail.secrets.openaiApiKey=true \
   --set guardrail.secrets.openaiSecretName=my-openai-api-key \
   --set guardrail.secrets.openaiSecretKey=api-key
@@ -47,9 +47,9 @@ helm install guardrail promptstrike/promptstrike-sidecar \
 - Automated span validation and corruption testing
 
 **Files:**
-- `/promptstrike/tests/test_span_schema.py` - Span schema validation
+- `/redforge/tests/test_span_schema.py` - Span schema validation
 - `/tests/chaos/span_mutator.py` - 24 mutation types
-- `/promptstrike/guardrail_poc/sidecar_simple.py` - Guardrail implementation
+- `/redforge/guardrail_poc/sidecar_simple.py` - Guardrail implementation
 
 ### 3. Compliance PDF Auto-Generation ✅
 
@@ -75,8 +75,8 @@ helm install guardrail promptstrike/promptstrike-sidecar \
 - Comprehensive test coverage with chaos engineering
 
 **Files:**
-- `promptstrike/models/scan_result.py` - Core models migrated
-- `promptstrike/compat/pydantic_v1.py` - Compatibility layer
+- `redforge/models/scan_result.py` - Core models migrated
+- `redforge/compat/pydantic_v1.py` - Compatibility layer
 - `scripts/bench_pydantic.py` - Performance benchmarks
 - `.github/workflows/chaos-testing.yml` - Advanced testing
 
@@ -102,15 +102,15 @@ helm install guardrail promptstrike/promptstrike-sidecar \
 ./scripts/verify_helm_repository.sh
 
 # Manual verification
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
-helm search repo promptstrike --versions
-helm install test-guardrail promptstrike/promptstrike-sidecar --dry-run
+helm repo add redforge https://siwenwang0803.github.io/RedForge
+helm search repo redforge --versions
+helm install test-guardrail redforge/redforge-sidecar --dry-run
 ```
 
 ### Test Span Capture
 ```bash
 # Run span schema tests
-pytest promptstrike/tests/test_span_schema.py -v
+pytest redforge/tests/test_span_schema.py -v
 
 # Run chaos testing with span mutations
 pytest tests/chaos/test_span_mutator.py -v
@@ -119,7 +119,7 @@ pytest tests/chaos/test_span_mutator.py -v
 ### Test PDF Generation
 ```bash
 # Check nightly workflow status
-curl -s https://api.github.com/repos/siwenwang0803/PromptStrike/actions/workflows/evidence.yml/runs
+curl -s https://api.github.com/repos/siwenwang0803/RedForge/actions/workflows/evidence.yml/runs
 
 # Manual report generation
 python scripts/generate_compliance_report.py
@@ -161,7 +161,7 @@ python scripts/bench_pydantic.py
 3. ✅ **Pilot Customer Onboarding**: All infrastructure complete
 
 ### Future Enhancements (Optional)
-1. **Custom Domain**: Set up `cdn.promptstrike.ai` CNAME for branded URL
+1. **Custom Domain**: Set up `cdn.redforge.ai` CNAME for branded URL
 2. **Chart Versioning**: Implement semantic versioning strategy
 3. **Multi-Environment**: Separate staging/production chart repositories
 
@@ -169,13 +169,13 @@ python scripts/bench_pydantic.py
 
 **🎯 Sprint S-2/Pilot-0 DOD: 100% COMPLETE**
 
-✅ Clients can successfully deploy PromptStrike with a single Helm command  
+✅ Clients can successfully deploy RedForge with a single Helm command  
 ✅ Comprehensive span capture with chaos testing framework  
 ✅ Automated nightly compliance evidence generation  
 ✅ Full Pydantic v2 migration with backward compatibility  
 ✅ Production-grade security and monitoring ready  
 
-**🚀 PromptStrike is ready for customer deployment and enterprise adoption!**
+**🚀 RedForge is ready for customer deployment and enterprise adoption!**
 
 ---
 

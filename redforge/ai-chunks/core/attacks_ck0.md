@@ -329,7 +329,7 @@ class AttackPackLoader:
             )
         ])
         
-        # PromptStrike Extensions
+        # RedForge Extensions
         attacks.extend([
             AttackDefinition(
                 id="PS-COST-001",
@@ -340,7 +340,7 @@ class AttackPackLoader:
                 attack_vector="token_exhaustion",
                 nist_controls=["MS-2.5", "MG-1.1"],
                 eu_ai_act_refs=["Art.15"],
-                references=["https://promptstrike.com/attacks/cost-exploitation"]
+                references=["https://redforge.com/attacks/cost-exploitation"]
             ),
             AttackDefinition(
                 id="PS-PII-001",
@@ -351,7 +351,7 @@ class AttackPackLoader:
                 attack_vector="pii_extraction",
                 nist_controls=["GV-1.1", "MP-2.3", "MS-1.1"],
                 eu_ai_act_refs=["Art.15", "Art.52"],
-                references=["https://promptstrike.com/attacks/pii-leakage"]
+                references=["https://redforge.com/attacks/pii-leakage"]
             )
         ])
         

@@ -136,6 +136,6 @@
     "Implement input validation",
     "Add output sanitization"
   ],
-  "generated_by": "PromptStrike CLI v0.1.0",
+  "generated_by": "RedForge CLI v0.1.0",
   "generated_at": "2025-07-09T11:47:18.758447"
 }

@@ -120,7 +120,7 @@ def update_comprehensive_table(table_block: str, mapping: Dict[str, str], jira_b
 
 
 def main(md_path: pathlib.Path, map_path: pathlib.Path, in_place: bool = True, 
-         jira_base_url: str = "https://jira.promptstrike.ai/browse") -> None:
+         jira_base_url: str = "https://jira.redforge.ai/browse") -> None:
     """Main function to update threat model with Jira links."""
     
     # Load files
@@ -194,7 +194,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--doc",
         type=pathlib.Path,
-        default="docs/PromptStrike/Security/Guardrail_Threat_Model.md",
+        default="docs/RedForge/Security/Guardrail_Threat_Model.md",
         help="Path to threat model markdown file"
     )
     parser.add_argument(
@@ -205,7 +205,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--jira-base-url",
-        default="https://jira.promptstrike.ai/browse",
+        default="https://jira.redforge.ai/browse",
         help="Base URL for Jira tickets"
     )
     parser.add_argument(

@@ -2,13 +2,13 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}-hpa
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: {{ include "redforge-sidecar.fullname" . }}-hpa
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: autoscaling
   annotations:
-    description: "Horizontal Pod Autoscaler for PromptStrike guardrail sidecar"
+    description: "Horizontal Pod Autoscaler for RedForge guardrail sidecar"
     {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -16,7 +16,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "promptstrike-sidecar.fullname" . }}
+    name: {{ include "redforge-sidecar.fullname" . }}
   minReplicas: {{ .Values.hpa.minReplicas }}
   maxReplicas: {{ .Values.hpa.maxReplicas }}
   metrics:
@@ -44,7 +44,7 @@ spec:
         name: {{ .name }}
         selector:
           matchLabels:
-            {{- include "promptstrike-sidecar.selectorLabels" $ | nindent 12 }}
+            {{- include "redforge-sidecar.selectorLabels" $ | nindent 12 }}
       target:
         type: AverageValue
         averageValue: {{ .targetValue }}

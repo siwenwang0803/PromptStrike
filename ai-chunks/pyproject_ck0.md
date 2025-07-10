@@ -2,15 +2,15 @@
 
 ```toml
 [tool.poetry]
-name = "promptstrike"
+name = "redforge"
 version = "0.1.0a0"
 description = "Developer-first automated LLM red-team platform"
-authors = ["PromptStrike Team <dev@promptstrike.com>"]
+authors = ["RedForge Team <dev@redforge.com>"]
 readme = "README.md"
 license = "MIT"
-homepage = "https://github.com/siwenwang0803/PromptStrike"
-repository = "https://github.com/siwenwang0803/PromptStrike"
-documentation = "https://docs.promptstrike.com"
+homepage = "https://github.com/siwenwang0803/RedForge"
+repository = "https://github.com/siwenwang0803/RedForge"
+documentation = "https://docs.redforge.com"
 keywords = ["llm", "security", "red-team", "owasp", "ai-safety"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -55,8 +55,8 @@ mkdocs = "^1.5.3"
 mkdocs-material = "^9.5.0"
 
 [tool.poetry.scripts]
-promptstrike = "promptstrike.cli:main"
-ps = "promptstrike.cli:main"
+redforge = "redforge.cli:main"
+ps = "redforge.cli:main"
 
 [build-system]
 requires = ["poetry-core"]
@@ -84,7 +84,7 @@ extend-exclude = '''
 profile = "black"
 multi_line_output = 3
 line_length = 88
-known_first_party = ["promptstrike"]
+known_first_party = ["redforge"]
 
 [tool.mypy]
 python_version = "3.11"

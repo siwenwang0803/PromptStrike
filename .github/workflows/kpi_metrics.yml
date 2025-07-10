@@ -78,7 +78,7 @@ jobs:
         import json
         from datetime import datetime, timedelta
         
-        def get_pypi_downloads(package_name="promptstrike"):
+        def get_pypi_downloads(package_name="redforge"):
             try:
                 # Get download stats from pypistats.org
                 url = f"https://pypistats.org/api/packages/{package_name}/recent"
@@ -96,7 +96,7 @@ jobs:
                 print(f"Error fetching PyPI downloads: {e}")
                 return 0
         
-        def get_pypi_info(package_name="promptstrike"):
+        def get_pypi_info(package_name="redforge"):
             try:
                 # Get package info from PyPI API
                 url = f"https://pypi.org/pypi/{package_name}/json"
@@ -133,7 +133,7 @@ jobs:
         import requests
         import json
         
-        def get_docker_pulls(repository="promptstrike/cli"):
+        def get_docker_pulls(repository="redforge/cli"):
             try:
                 # Docker Hub API v2
                 url = f"https://hub.docker.com/v2/repositories/{repository}/"
@@ -167,7 +167,7 @@ jobs:
         import json
         import os
         
-        def get_github_metrics(repo="siwenwang0803/PromptStrike"):
+        def get_github_metrics(repo="siwenwang0803/RedForge"):
             try:
                 headers = {}
                 if os.environ.get('GITHUB_TOKEN'):
@@ -423,7 +423,7 @@ jobs:
                 prev_downloads = summary.get('total_downloads_change', 0)
                 if prev_downloads > 0 and (total_downloads - prev_downloads) < milestone <= total_downloads:
                     message = {
-                        "text": f"🎯 PromptStrike Milestone Alert!",
+                        "text": f"🎯 RedForge Milestone Alert!",
                         "attachments": [
                             {
                                 "color": "good",

@@ -1,6 +1,6 @@
 # Chaos Testing Framework
 
-PromptStrike's Chaos Testing Framework provides comprehensive resilience testing for LLM security systems through mutation testing, chaos engineering, and fault injection.
+RedForge's Chaos Testing Framework provides comprehensive resilience testing for LLM security systems through mutation testing, chaos engineering, and fault injection.
 
 ## Overview
 
@@ -45,18 +45,18 @@ poetry run python -m tests.chaos.resilience_scorer \
 
 ```bash
 # Build chaos testing image
-docker build -f docker/Dockerfile.chaos -t promptstrike-chaos .
+docker build -f docker/Dockerfile.chaos -t redforge-chaos .
 
 # Run chaos tests in isolation
 docker run --rm \
   -v $(pwd)/test-results:/app/results \
-  promptstrike-chaos \
+  redforge-chaos \
   pytest tests/chaos/ --junit-xml=results/chaos-results.xml
 
 # Generate report
 docker run --rm \
   -v $(pwd)/test-results:/app/results \
-  promptstrike-chaos \
+  redforge-chaos \
   python -m tests.chaos.resilience_scorer \
     --results-path results/ \
     --output-path results/resilience-report.json
@@ -341,7 +341,7 @@ metadata:
 spec:
   containers:
   - name: chaos-test
-    image: promptstrike-chaos:latest
+    image: redforge-chaos:latest
     resources:
       limits:
         memory: "2Gi"
@@ -369,7 +369,7 @@ Monitor resource usage during chaos tests:
 
 ```bash
 # Monitor memory usage
-docker stats promptstrike-chaos
+docker stats redforge-chaos
 
 # Check Kubernetes resource usage
 kubectl top pod chaos-testing -n testing

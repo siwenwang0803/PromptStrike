@@ -1,4 +1,4 @@
-# Default values for promptstrike-sidecar
+# Default values for redforge-sidecar
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -67,7 +67,7 @@ global:
 sidecar:
   enabled: true
   image:
-    repository: promptstrike/guardrail-sidecar
+    repository: redforge/guardrail-sidecar
     tag: "latest"
     pullPolicy: IfNotPresent
   
@@ -93,7 +93,7 @@ sidecar:
     GUARDRAIL_COST_GUARD_ENABLED: "true"
     GUARDRAIL_ASYNC_ANALYSIS: "true"
     GUARDRAIL_DAILY_BUDGET: "1000.0"
-    PROMPTSTRIKE_OUTPUT_DIR: "/var/reports"
+    REDFORGE_OUTPUT_DIR: "/var/reports"
     # Adaptive sampling configuration
     GUARDRAIL_HIGH_RISK_SAMPLING_RATE: "0.1"
     GUARDRAIL_LOW_RISK_SAMPLING_RATE: "0.005"
@@ -133,7 +133,7 @@ sidecar:
 app:
   enabled: true
   image:
-    repository: promptstrike/demo-app
+    repository: redforge/demo-app
     tag: "latest"
     pullPolicy: IfNotPresent
   
@@ -343,13 +343,13 @@ volumes:
   
   config:
     type: configMap
-    name: promptstrike-config
+    name: redforge-config
 
 # ConfigMap data
 config:
   # Application configuration
   app:
-    promptstrike.yaml: |
+    redforge.yaml: |
       sampling:
         rate: 0.01
         adaptive: true
@@ -435,7 +435,7 @@ ingress:
     window: "1m"
   
   hosts:
-    - host: promptstrike.example.com
+    - host: redforge.example.com
       paths:
         - path: /
           pathType: Prefix
@@ -456,7 +456,7 @@ ingress:
               port:
                 name: http-sidecar
     # Additional hosts for different environments
-    - host: promptstrike-api.example.com
+    - host: redforge-api.example.com
       paths:
         - path: /api
           pathType: Prefix
@@ -466,15 +466,15 @@ ingress:
                 name: http-sidecar
   
   tls:
-    - secretName: promptstrike-tls
+    - secretName: redforge-tls
       hosts:
-        - promptstrike.example.com
-        - promptstrike-api.example.com
+        - redforge.example.com
+        - redforge-api.example.com
   
   # Separate monitoring ingress for restricted access
   monitoring:
     enabled: false
-    host: monitoring.promptstrike.example.com
+    host: monitoring.redforge.example.com
     allowedCIDRs:
       - "10.0.0.0/8"
       - "172.16.0.0/12"
@@ -485,7 +485,7 @@ ingress:
     basicAuth:
       enabled: true
     tls: true
-    tlsSecret: "promptstrike-monitoring-tls"
+    tlsSecret: "redforge-monitoring-tls"
 
 # Enterprise RBAC Configuration
 rbac:
@@ -501,7 +501,7 @@ rbac:
           - "read:reports"
           - "view:metrics"
           - "access:health"
-        namespaces: ["promptstrike-guardrail"]
+        namespaces: ["redforge-guardrail"]
         
       - name: "security-analyst"
         description: "Security analysis and report generation"
@@ -511,7 +511,7 @@ rbac:
           - "view:metrics"
           - "access:health"
           - "view:scan-results"
-        namespaces: ["promptstrike-guardrail"]
+        namespaces: ["redforge-guardrail"]
         
       - name: "compliance-officer"
         description: "Compliance reporting and audit access"
@@ -521,7 +521,7 @@ rbac:
           - "export:compliance"
           - "view:audit-logs"
           - "access:evidence"
-        namespaces: ["promptstrike-guardrail"]
+        namespaces: ["redforge-guardrail"]
         
       - name: "admin"
         description: "Administrative access to configuration and keys"
@@ -533,7 +533,7 @@ rbac:
           - "view:metrics"
           - "manage:rbac"
           - "admin:all"
-        namespaces: ["promptstrike-guardrail"]
+        namespaces: ["redforge-guardrail"]
         
       - name: "developer"
         description: "Development and testing access"
@@ -542,7 +542,7 @@ rbac:
           - "view:metrics"
           - "access:health"
           - "test:endpoints"
-        namespaces: ["promptstrike-dev", "promptstrike-staging"]
+        namespaces: ["redforge-dev", "redforge-staging"]
     
     # User-role bindings (to be configured per deployment)
     userBindings: []
@@ -554,19 +554,19 @@ rbac:
     
     # Service account bindings for automation
     serviceAccountBindings:
-      - serviceAccount: "promptstrike-scanner"
+      - serviceAccount: "redforge-scanner"
         role: "developer"
-        namespace: "promptstrike-guardrail"
-      - serviceAccount: "promptstrike-compliance-exporter"
+        namespace: "redforge-guardrail"
+      - serviceAccount: "redforge-compliance-exporter"
         role: "compliance-officer"
-        namespace: "promptstrike-guardrail"
+        namespace: "redforge-guardrail"
 
 # Namespace configuration  
 namespace:
   create: true
-  name: promptstrike-guardrail
+  name: redforge-guardrail
   labels:
-    name: promptstrike-guardrail
+    name: redforge-guardrail
     security-policy: restricted
     rbac-enabled: "true"
   annotations:
@@ -587,7 +587,7 @@ affinity:
         podAffinityTerm:
           labelSelector:
             matchLabels:
-              app.kubernetes.io/name: promptstrike-sidecar
+              app.kubernetes.io/name: redforge-sidecar
           topologyKey: kubernetes.io/hostname
 
 tolerations: []

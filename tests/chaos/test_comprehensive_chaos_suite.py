@@ -1,9 +1,9 @@
 """
-Comprehensive Chaos Test Suite for PromptStrike
+Comprehensive Chaos Test Suite for RedForge
 目标：验证 data_corruption 和 protocol_violation 场景下系统韧性
 
 This suite orchestrates all chaos testing scenarios and provides comprehensive
-resilience validation for the PromptStrike guardrail sidecar system.
+resilience validation for the RedForge guardrail sidecar system.
 """
 
 import pytest
@@ -138,7 +138,7 @@ class SidecarChaosValidator:
     
     async def run_comprehensive_validation(self) -> SidecarResilienceMetrics:
         """Run comprehensive chaos validation"""
-        print("🎯 Starting Comprehensive Chaos Validation for PromptStrike Sidecar")
+        print("🎯 Starting Comprehensive Chaos Validation for RedForge Sidecar")
         print("=" * 80)
         
         # Run individual test suites

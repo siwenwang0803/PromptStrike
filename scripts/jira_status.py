@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PromptStrike Markdown to HTML Converter
+RedForge Markdown to HTML Converter
 Converts threat model and risk matrix markdown files to HTML for compliance reports.
 """
 
@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class ThreatModelConverter:
-    """Converts PromptStrike threat model markdown files to HTML."""
+    """Converts RedForge threat model markdown files to HTML."""
     
     def __init__(self, base_path: str = None):
         """Initialize converter with base path to threat model directory."""
@@ -243,7 +243,7 @@ class ThreatModelConverter:
 
 def main():
     """Main function for command-line usage."""
-    parser = argparse.ArgumentParser(description='Convert PromptStrike threat model to HTML')
+    parser = argparse.ArgumentParser(description='Convert RedForge threat model to HTML')
     parser.add_argument('--threat-model-path', type=str, help='Path to threat model directory')
     parser.add_argument('--output-file', type=str, help='Output HTML file path')
     parser.add_argument('--risk-matrix-only', action='store_true', help='Convert only the risk matrix')

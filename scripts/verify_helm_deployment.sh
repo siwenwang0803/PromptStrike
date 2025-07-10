@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# PromptStrike Helm One-Command Deployment Verification Script
+# RedForge Helm One-Command Deployment Verification Script
 # Tests deployment on Kind and EKS clusters with comprehensive validation
 # 目标: 验证 Helm 在 Kind 和 EKS 上的一键部署，脚本自动退出码为 0
 
@@ -15,11 +15,11 @@ PURPLE='\033[0;35m'
 NC='\033[0m'
 
 # Configuration
-REPO_URL="https://siwenwang0803.github.io/PromptStrike"
-CHART_NAME="promptstrike-sidecar"
+REPO_URL="https://siwenwang0803.github.io/RedForge"
+CHART_NAME="redforge-sidecar"
 CHART_VERSION="0.2.0"
 RELEASE_NAME="psguard"
-NAMESPACE="promptstrike-test"
+NAMESPACE="redforge-test"
 OPENAI_API_KEY="${OPENAI_API_KEY:-sk-test-key-for-deployment}"
 
 # Test environments
@@ -76,12 +76,12 @@ check_prerequisites() {
 
 # Function to add Helm repository
 add_helm_repo() {
-    echo -e "${YELLOW}📦 Adding PromptStrike Helm repository...${NC}"
+    echo -e "${YELLOW}📦 Adding RedForge Helm repository...${NC}"
     
     # Remove if exists
-    helm repo remove promptstrike 2>/dev/null || true
+    helm repo remove redforge 2>/dev/null || true
     
-    if helm repo add promptstrike $REPO_URL; then
+    if helm repo add redforge $REPO_URL; then
         echo -e "${GREEN}✅ Repository added successfully${NC}"
     else
         echo -e "${RED}❌ Failed to add repository${NC}"
@@ -97,7 +97,7 @@ add_helm_repo() {
     fi
     
     echo -e "${YELLOW}🔍 Searching for charts...${NC}"
-    helm search repo promptstrike --versions
+    helm search repo redforge --versions
 }
 
 # Function to create Kind cluster
@@ -158,9 +158,9 @@ deploy_to_kind() {
     kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
     
     # Deploy with Helm
-    echo -e "${YELLOW}🚀 Deploying PromptStrike Guardrail to Kind...${NC}"
+    echo -e "${YELLOW}🚀 Deploying RedForge Guardrail to Kind...${NC}"
     
-    helm install $RELEASE_NAME promptstrike/$CHART_NAME \
+    helm install $RELEASE_NAME redforge/$CHART_NAME \
         --namespace $NAMESPACE \
         --set openai.apiKey="$OPENAI_API_KEY" \
         --set image.tag="latest" \
@@ -201,7 +201,7 @@ verify_deployment() {
     
     # Verify pod is running
     echo -e "${YELLOW}⏳ Waiting for pods to be ready...${NC}"
-    kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=promptstrike-sidecar -n $NAMESPACE --timeout=120s
+    kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=redforge-sidecar -n $NAMESPACE --timeout=120s
     
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}✅ All pods are ready${NC}"
@@ -213,7 +213,7 @@ verify_deployment() {
     
     # Check logs for basic functionality
     echo -e "${YELLOW}📋 Checking Sidecar logs...${NC}"
-    POD_NAME=$(kubectl get pods -n $NAMESPACE -l app.kubernetes.io/name=promptstrike-sidecar -o jsonpath='{.items[0].metadata.name}')
+    POD_NAME=$(kubectl get pods -n $NAMESPACE -l app.kubernetes.io/name=redforge-sidecar -o jsonpath='{.items[0].metadata.name}')
     
     if [ -n "$POD_NAME" ]; then
         echo "Logs from pod $POD_NAME:"
@@ -233,7 +233,7 @@ test_helm_upgrade() {
     echo -e "${YELLOW}🔄 Testing Helm upgrade...${NC}"
     
     # Upgrade with new values
-    helm upgrade $RELEASE_NAME promptstrike/$CHART_NAME \
+    helm upgrade $RELEASE_NAME redforge/$CHART_NAME \
         --namespace $NAMESPACE \
         --set openai.apiKey="$OPENAI_API_KEY" \
         --set image.tag="latest" \
@@ -272,7 +272,7 @@ test_sidecar_functionality() {
     print_section "Sidecar 功能测试 / Sidecar Functionality Test ($cluster_type)"
     
     # Get pod name
-    POD_NAME=$(kubectl get pods -n $NAMESPACE -l app.kubernetes.io/name=promptstrike-sidecar -o jsonpath='{.items[0].metadata.name}')
+    POD_NAME=$(kubectl get pods -n $NAMESPACE -l app.kubernetes.io/name=redforge-sidecar -o jsonpath='{.items[0].metadata.name}')
     
     if [ -z "$POD_NAME" ]; then
         echo -e "${RED}❌ No sidecar pod found${NC}"
@@ -373,9 +373,9 @@ deploy_to_eks() {
     kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
     
     # Deploy with Helm
-    echo -e "${YELLOW}🚀 Deploying PromptStrike Guardrail to EKS...${NC}"
+    echo -e "${YELLOW}🚀 Deploying RedForge Guardrail to EKS...${NC}"
     
-    helm install $RELEASE_NAME promptstrike/$CHART_NAME \
+    helm install $RELEASE_NAME redforge/$CHART_NAME \
         --namespace $NAMESPACE \
         --set openai.apiKey="$OPENAI_API_KEY" \
         --set image.tag="latest" \
@@ -406,7 +406,7 @@ cleanup_eks() {
 # Function to cleanup Helm repo
 cleanup_helm() {
     echo -e "${YELLOW}🧹 Cleaning up Helm repository...${NC}"
-    helm repo remove promptstrike 2>/dev/null || true
+    helm repo remove redforge 2>/dev/null || true
 }
 
 # Main execution function
@@ -415,7 +415,7 @@ main() {
     local test_eks=${TEST_EKS:-false}
     local cleanup=${CLEANUP:-true}
     
-    print_section "PromptStrike Helm 一键部署验证 / One-Command Deployment Verification"
+    print_section "RedForge Helm 一键部署验证 / One-Command Deployment Verification"
     
     echo "Test Configuration:"
     echo "- Kind testing: $test_kind"

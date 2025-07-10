@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
-LABEL maintainer="PromptStrike Team <dev@promptstrike.com>"
-LABEL description="PromptStrike Guardrail Sidecar for security monitoring"
+LABEL maintainer="RedForge Team <dev@redforge.com>"
+LABEL description="RedForge Guardrail Sidecar for security monitoring"
 
 # Set working directory
 WORKDIR /app
@@ -16,8 +16,8 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy PromptStrike source code (in production this would be installed via pip)
-COPY ../../promptstrike /app/promptstrike
+# Copy RedForge source code (in production this would be installed via pip)
+COPY ../../redforge /app/redforge
 
 # Copy sidecar code
 COPY guardrail_sidecar.py .

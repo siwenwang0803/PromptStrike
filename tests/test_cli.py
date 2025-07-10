@@ -127,7 +127,7 @@ class TestCLICommands:
         """Test that CLI help command works"""
         result = runner.invoke(app, ["--help"])
         assert result.exit_code == 0
-        assert "PromptStrike CLI" in result.stdout
+        assert "RedForge CLI" in result.stdout
         assert "Developer-first LLM red-team platform" in result.stdout
 
     def test_version_command(self):
@@ -135,7 +135,7 @@ class TestCLICommands:
         result = runner.invoke(app, ["version"])
         assert result.exit_code == 0
         assert "0.1.0" in result.stdout
-        assert "PromptStrike CLI" in result.stdout
+        assert "RedForge CLI" in result.stdout
 
     def test_doctor_command(self):
         """Test doctor health check command"""
@@ -288,8 +288,8 @@ class TestConfigurationManagement:
     def test_config_from_environment(self, monkeypatch):
         """Test loading config from environment variables"""
         monkeypatch.setenv("OPENAI_API_KEY", "test-key")
-        monkeypatch.setenv("PROMPTSTRIKE_MAX_REQUESTS", "50")
-        monkeypatch.setenv("PROMPTSTRIKE_TIMEOUT", "15")
+        monkeypatch.setenv("REDFORGE_MAX_REQUESTS", "50")
+        monkeypatch.setenv("REDFORGE_TIMEOUT", "15")
         
         config = load_config()
         
@@ -475,7 +475,7 @@ class TestScannerModule:
         with patch.object(scanner, '_make_request', new_callable=AsyncMock) as mock_request:
             mock_request.return_value = {
                 **mock_response,
-                "_promptstrike_meta": {"response_time_ms": 1000, "status_code": 200}
+                "_redforge_meta": {"response_time_ms": 1000, "status_code": 200}
             }
             
             # Create test attack
@@ -542,7 +542,7 @@ class TestReportGeneration:
         with open(html_path, 'r') as f:
             content = f.read()
         
-        assert "PromptStrike Security Report" in content
+        assert "RedForge Security Report" in content
         assert sample_scan_result.target in content
         assert str(sample_scan_result.overall_risk_score) in content
 
@@ -559,7 +559,7 @@ class TestReportGeneration:
         with open(pdf_path, 'r') as f:
             content = f.read()
         
-        assert "PROMPTSTRIKE SECURITY SCAN REPORT" in content
+        assert "REDFORGE SECURITY SCAN REPORT" in content
         assert sample_scan_result.target in content
 
     def test_vulnerability_grouping(self, temp_dir):

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install Chaos Mesh for PromptStrike Chaos Testing
+# Install Chaos Mesh for RedForge Chaos Testing
 # 目标：验证 data_corruption 和 protocol_violation 场景下系统韧性
 
 set -euo pipefail
@@ -10,7 +10,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}🎯 Installing Chaos Mesh for PromptStrike Chaos Testing${NC}"
+echo -e "${GREEN}🎯 Installing Chaos Mesh for RedForge Chaos Testing${NC}"
 echo "==============================================="
 
 # Function to check if kubectl is available
@@ -153,13 +153,13 @@ EOF
 
 # Function to create test target namespace
 create_test_namespace() {
-    echo -e "${YELLOW}🎯 Creating test namespace for PromptStrike...${NC}"
+    echo -e "${YELLOW}🎯 Creating test namespace for RedForge...${NC}"
     
     # Create namespace if it doesn't exist
-    kubectl create namespace promptstrike-test || echo "Namespace promptstrike-test already exists"
+    kubectl create namespace redforge-test || echo "Namespace redforge-test already exists"
     
     # Add chaos-mesh annotation to enable chaos injection
-    kubectl annotate namespace promptstrike-test chaos-mesh.org/inject=enabled --overwrite
+    kubectl annotate namespace redforge-test chaos-mesh.org/inject=enabled --overwrite
     
     echo -e "${GREEN}✅ Test namespace created and configured${NC}"
 }
@@ -174,7 +174,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: stress-ng
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   replicas: 1
   selector:
@@ -206,7 +206,7 @@ EOF
 
 # Main execution
 main() {
-    echo -e "${GREEN}🚀 Starting Chaos Mesh installation for PromptStrike...${NC}"
+    echo -e "${GREEN}🚀 Starting Chaos Mesh installation for RedForge...${NC}"
     
     check_kubectl
     install_chaos_mesh

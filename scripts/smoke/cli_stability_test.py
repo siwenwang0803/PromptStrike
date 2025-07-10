@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CLI Stability Test for PromptStrike
+CLI Stability Test for RedForge
 Tests 50 concurrent attacks with 3 output formats
 """
 
@@ -53,7 +53,7 @@ class CLIStabilityTester:
         
         # Command to run
         cmd = [
-            sys.executable, "-m", "promptstrike.cli",
+            sys.executable, "-m", "redforge.cli",
             "scan", model,
             "--format", format,
             "--output", str(output_path),
@@ -158,7 +158,7 @@ class CLIStabilityTester:
         results = {"passed": 0, "failed": 0, "details": []}
         
         for test in error_tests:
-            cmd = [sys.executable, "-m", "promptstrike.cli"] + test["cmd"]
+            cmd = [sys.executable, "-m", "redforge.cli"] + test["cmd"]
             
             try:
                 process = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
@@ -248,7 +248,7 @@ class CLIStabilityTester:
                         try:
                             with open(file_path, 'r') as f:
                                 content = f.read()
-                            if "<html" in content.lower() and "promptstrike" in content.lower():
+                            if "<html" in content.lower() and "redforge" in content.lower():
                                 validation_summary["valid_files"] += 1
                             else:
                                 validation_summary["invalid_files"] += 1
@@ -267,7 +267,7 @@ class CLIStabilityTester:
         
     def run_full_test(self):
         """Run the complete test suite"""
-        self.log("Starting PromptStrike CLI Stability Test")
+        self.log("Starting RedForge CLI Stability Test")
         self.log(f"Models: {MODELS}")
         self.log(f"Formats: {FORMATS}")
         self.log(f"Concurrency: {CONCURRENCY}")
@@ -336,7 +336,7 @@ class CLIStabilityTester:
             
         # Generate summary report
         report_lines = [
-            "PromptStrike CLI Stability Test Report",
+            "RedForge CLI Stability Test Report",
             "=" * 50,
             f"Test Date: {results['start_time']}",
             f"Output Directory: {self.output_dir}",
@@ -429,8 +429,8 @@ class CLIStabilityTester:
 
 def main():
     # Check if running in correct directory
-    if not Path("promptstrike").exists() or not Path("pyproject.toml").exists():
-        print("Error: Must run from PromptStrike project root directory")
+    if not Path("redforge").exists() or not Path("pyproject.toml").exists():
+        print("Error: Must run from RedForge project root directory")
         sys.exit(1)
         
     # Create and run tester

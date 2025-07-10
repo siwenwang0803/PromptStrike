@@ -3,7 +3,7 @@
 # DOD Simulation - Demonstrates working command sequence
 set -e
 
-echo "🎯 PromptStrike DOD Command Simulation"
+echo "🎯 RedForge DOD Command Simulation"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
@@ -11,7 +11,7 @@ echo ""
 echo "📝 Simulating DOD Command Sequence:"
 echo ""
 
-echo "💡 Step 1: helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike"
+echo "💡 Step 1: helm repo add redforge https://siwenwang0803.github.io/RedForge"
 echo "   Status: Repository URL configured ✅"
 echo "   Note: GitHub Pages will serve charts once workflow completes"
 echo ""
@@ -20,7 +20,7 @@ echo "💡 Step 2: helm repo update"
 echo "   Status: Repository sync command ready ✅"
 echo ""
 
-echo "💡 Step 3: helm install guardrail promptstrike/promptstrike-sidecar -n ps --set openai.apiKey=\$KEY"
+echo "💡 Step 3: helm install guardrail redforge/redforge-sidecar -n ps --set openai.apiKey=\$KEY"
 echo "   Status: Installation command validated ✅"
 echo ""
 
@@ -28,23 +28,23 @@ echo ""
 echo "🔍 Verifying Chart Structure:"
 echo ""
 
-if [ -f "helm/promptstrike-sidecar/Chart.yaml" ]; then
+if [ -f "helm/redforge-sidecar/Chart.yaml" ]; then
     echo "✅ Chart.yaml exists"
-    echo "   Chart: $(grep 'name:' helm/promptstrike-sidecar/Chart.yaml)"
-    echo "   Version: $(grep 'version:' helm/promptstrike-sidecar/Chart.yaml)"
+    echo "   Chart: $(grep 'name:' helm/redforge-sidecar/Chart.yaml)"
+    echo "   Version: $(grep 'version:' helm/redforge-sidecar/Chart.yaml)"
 else
     echo "❌ Chart.yaml missing"
 fi
 
-if [ -f "helm/promptstrike-sidecar/values.yaml" ]; then
+if [ -f "helm/redforge-sidecar/values.yaml" ]; then
     echo "✅ values.yaml exists"
-    echo "   Size: $(wc -l < helm/promptstrike-sidecar/values.yaml) lines"
+    echo "   Size: $(wc -l < helm/redforge-sidecar/values.yaml) lines"
 else
     echo "❌ values.yaml missing"
 fi
 
-if [ -d "helm/promptstrike-sidecar/templates" ]; then
-    TEMPLATE_COUNT=$(find helm/promptstrike-sidecar/templates -name "*.yaml" | wc -l)
+if [ -d "helm/redforge-sidecar/templates" ]; then
+    TEMPLATE_COUNT=$(find helm/redforge-sidecar/templates -name "*.yaml" | wc -l)
     echo "✅ Templates directory exists"
     echo "   Templates: $TEMPLATE_COUNT files"
 else
@@ -55,10 +55,10 @@ echo ""
 
 # Test local chart packaging
 echo "📦 Testing Local Chart Packaging:"
-cd helm/promptstrike-sidecar
+cd helm/redforge-sidecar
 if helm package . --destination ../../ >/dev/null 2>&1; then
     echo "✅ Chart packages successfully"
-    PACKAGE_FILE=$(ls ../../promptstrike-sidecar-*.tgz 2>/dev/null | head -1)
+    PACKAGE_FILE=$(ls ../../redforge-sidecar-*.tgz 2>/dev/null | head -1)
     if [ -f "$PACKAGE_FILE" ]; then
         echo "   Package: $(basename $PACKAGE_FILE)"
         echo "   Size: $(ls -lh $PACKAGE_FILE | awk '{print $5}')"
@@ -101,6 +101,6 @@ echo "🎯 Expected Timeline: Charts available within 10-15 minutes"
 echo "📋 Verification: ./scripts/verify_helm_repository.sh"
 
 # Cleanup
-rm -f promptstrike-sidecar-*.tgz 2>/dev/null || true
+rm -f redforge-sidecar-*.tgz 2>/dev/null || true
 
 exit 0

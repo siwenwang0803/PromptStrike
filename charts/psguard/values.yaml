@@ -1,10 +1,10 @@
-# PromptStrike Guardrail Sidecar Helm Values
+# RedForge Guardrail Sidecar Helm Values
 # 目标：CPU ≤ 200m，内存 ≤ 180Mi，承受 500 RPS
 
 replicaCount: 1
 
 image:
-  repository: promptstrike/psguard
+  repository: redforge/psguard
   pullPolicy: IfNotPresent
   tag: "dev"
 

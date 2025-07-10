@@ -4,9 +4,9 @@ apiVersion: templates.gatekeeper.sh/v1beta1
 kind: ConstraintTemplate
 metadata:
   name: k8srequiredresources
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: opa-policy
   annotations:
     description: "Requires that all containers have resource limits and requests set"
@@ -182,10 +182,10 @@ spec:
 apiVersion: templates.gatekeeper.sh/v1beta1
 kind: K8sRequiredResources
 metadata:
-  name: promptstrike-must-have-resources
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: redforge-must-have-resources
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: opa-constraint
 spec:
   match:

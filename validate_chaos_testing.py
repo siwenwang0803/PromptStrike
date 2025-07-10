@@ -147,7 +147,7 @@ class SimpleChaosValidator:
     
     async def run_comprehensive_validation(self):
         """Run comprehensive validation"""
-        print("🎯 PromptStrike Chaos Testing Validation")
+        print("🎯 RedForge Chaos Testing Validation")
         print("=" * 50)
         
         # Run all validation phases
@@ -240,7 +240,7 @@ def validate_chaos_scenarios():
 
 async def main():
     """Main validation function"""
-    print("🚀 PromptStrike Chaos Testing Validation")
+    print("🚀 RedForge Chaos Testing Validation")
     print("目标：验证 data_corruption 和 protocol_violation 场景下系统韧性")
     print("=" * 70)
     

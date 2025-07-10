@@ -3,13 +3,13 @@ name: update-risk-matrix
 on:
   push:
     paths:
-      - "docs/PromptStrike/Security/Guardrail_Threat_Model.md"
-      - "docs/PromptStrike/Security/ThreatModel/**"
+      - "docs/RedForge/Security/Guardrail_Threat_Model.md"
+      - "docs/RedForge/Security/ThreatModel/**"
       - "scripts/threat_to_jira.yml"
   pull_request:
     paths:
-      - "docs/PromptStrike/Security/Guardrail_Threat_Model.md"
-      - "docs/PromptStrike/Security/ThreatModel/**"
+      - "docs/RedForge/Security/Guardrail_Threat_Model.md"
+      - "docs/RedForge/Security/ThreatModel/**"
       - "scripts/threat_to_jira.yml"
 
 permissions:
@@ -59,16 +59,16 @@ jobs:
         if: github.event_name == 'push'
         run: |
           python scripts/update_risk_matrix.py \
-            --doc docs/PromptStrike/Security/Guardrail_Threat_Model.md \
+            --doc docs/RedForge/Security/Guardrail_Threat_Model.md \
             --map scripts/threat_to_jira.yml
 
       - name: Update Risk Matrix (modular files)
         if: github.event_name == 'push'
         run: |
           # Update modular threat model files if they exist
-          if [ -f "docs/PromptStrike/Security/ThreatModel/06-risk-matrix.md" ]; then
+          if [ -f "docs/RedForge/Security/ThreatModel/06-risk-matrix.md" ]; then
             python scripts/update_risk_matrix.py \
-              --doc docs/PromptStrike/Security/ThreatModel/06-risk-matrix.md \
+              --doc docs/RedForge/Security/ThreatModel/06-risk-matrix.md \
               --map scripts/threat_to_jira.yml
           fi
 
@@ -93,7 +93,7 @@ jobs:
       - name: Commit and push changes
         if: steps.check_changes.outputs.changes == 'true' && github.event_name == 'push'
         run: |
-          git add docs/PromptStrike/Security/
+          git add docs/RedForge/Security/
           git commit -m "chore(security): auto-update Jira links in risk matrix
 
           - Updated threat model risk matrices with Jira ticket links
@@ -162,7 +162,7 @@ jobs:
           import yaml
           
           # Read threat model
-          with open('docs/PromptStrike/Security/Guardrail_Threat_Model.md', 'r') as f:
+          with open('docs/RedForge/Security/Guardrail_Threat_Model.md', 'r') as f:
               content = f.read()
           
           # Extract DREAD scores
@@ -184,7 +184,7 @@ jobs:
           python -c "
           import re
           
-          with open('docs/PromptStrike/Security/Guardrail_Threat_Model.md', 'r') as f:
+          with open('docs/RedForge/Security/Guardrail_Threat_Model.md', 'r') as f:
               content = f.read()
           
           # Check for proper Jira link format

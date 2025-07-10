@@ -182,7 +182,7 @@ validate_args() {
 Chaos Testing Docker Container
 
 Usage:
-  docker run promptstrike-chaos [COMMAND] [OPTIONS]
+  docker run redforge-chaos [COMMAND] [OPTIONS]
 
 Commands:
   pytest [args]              Run pytest with chaos tests
@@ -201,19 +201,19 @@ Environment Variables:
 
 Examples:
   # Run all chaos tests
-  docker run promptstrike-chaos
+  docker run redforge-chaos
 
   # Run specific test category
-  docker run promptstrike-chaos pytest tests/chaos/ -k "mutation"
+  docker run redforge-chaos pytest tests/chaos/ -k "mutation"
 
   # Generate report only
-  docker run promptstrike-chaos report
+  docker run redforge-chaos report
 
   # Run with custom configuration
-  docker run -e CHAOS_INTENSITY=0.5 promptstrike-chaos
+  docker run -e CHAOS_INTENSITY=0.5 redforge-chaos
 
   # Run with mounted config
-  docker run -v \$(pwd)/my-config.yaml:/app/chaos-config.yaml promptstrike-chaos
+  docker run -v \$(pwd)/my-config.yaml:/app/chaos-config.yaml redforge-chaos
 EOF
         exit 0
     fi

@@ -1,4 +1,4 @@
-# PromptStrike CLI Dependencies
+# RedForge CLI Dependencies
 # Reference: cid-roadmap-v1 Sprint S-1
 # Updated to match pyproject.toml versions
 

@@ -1,4 +1,4 @@
-# 🎯 PromptStrike Helm 一键部署验证指南
+# 🎯 RedForge Helm 一键部署验证指南
 
 ## 📋 概述 / Overview
 
@@ -222,24 +222,24 @@ eksctl delete cluster --name psguard-eks-test --region us-west-2
 #### 3. Helm 仓库访问失败 / Helm Repository Access Failed
 ```bash
 # 检查网络连接 / Check network connectivity
-curl -I https://siwenwang0803.github.io/PromptStrike
+curl -I https://siwenwang0803.github.io/RedForge
 
 # 清理和重新添加仓库 / Clean and re-add repository
-helm repo remove promptstrike
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+helm repo remove redforge
+helm repo add redforge https://siwenwang0803.github.io/RedForge
 helm repo update
 ```
 
 #### 4. Sidecar 无日志 / Sidecar No Logs
 ```bash
 # 检查 Pod 状态 / Check pod status
-kubectl get pods -n promptstrike-test
+kubectl get pods -n redforge-test
 
 # 查看详细信息 / View detailed info
-kubectl describe pod <pod-name> -n promptstrike-test
+kubectl describe pod <pod-name> -n redforge-test
 
 # 检查 values.yaml 配置 / Check values.yaml config
-helm get values <release-name> -n promptstrike-test
+helm get values <release-name> -n redforge-test
 ```
 
 ### 调试命令 / Debug Commands
@@ -319,12 +319,12 @@ kubectl get ingress -A
 ### 生产部署命令 / Production Deployment Commands
 ```bash
 # 添加 Helm 仓库 / Add Helm repository
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+helm repo add redforge https://siwenwang0803.github.io/RedForge
 helm repo update
 
 # 生产环境部署 / Production deployment
-helm install guardrail promptstrike/promptstrike-sidecar \
-  --namespace promptstrike-production \
+helm install guardrail redforge/redforge-sidecar \
+  --namespace redforge-production \
   --create-namespace \
   --set openai.apiKey="$OPENAI_API_KEY" \
   --set image.tag="0.1.0-alpha" \
@@ -335,8 +335,8 @@ helm install guardrail promptstrike/promptstrike-sidecar \
   --wait --timeout=600s
 
 # 验证部署 / Verify deployment
-helm status guardrail -n promptstrike-production
-kubectl get pods -n promptstrike-production
+helm status guardrail -n redforge-production
+kubectl get pods -n redforge-production
 ```
 
 ---

@@ -1,5 +1,5 @@
 """
-PromptStrike Guardrail Sidecar
+RedForge Guardrail Sidecar
 Monitors demo application traffic and performs security analysis
 """
 
@@ -14,14 +14,14 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import uvicorn
 
-# Import PromptStrike models (in production this would be from installed package)
+# Import RedForge models (in production this would be from installed package)
 import sys
-sys.path.append('/app/promptstrike')
+sys.path.append('/app/redforge')
 
-from promptstrike.models.scan_result import AttackResult, SeverityLevel, AttackCategory
+from redforge.models.scan_result import AttackResult, SeverityLevel, AttackCategory
 
 app = FastAPI(
-    title="PromptStrike Guardrail Sidecar",
+    title="RedForge Guardrail Sidecar",
     description="Security monitoring sidecar for LLM applications",
     version="0.1.0"
 )
@@ -70,7 +70,7 @@ async def startup_event():
 async def root():
     """Root endpoint"""
     return {
-        "service": "PromptStrike Guardrail Sidecar",
+        "service": "RedForge Guardrail Sidecar",
         "version": "0.1.0",
         "status": "monitoring",
         "monitored_spans": len(monitored_spans)

@@ -1,4 +1,4 @@
-# PromptStrike CLI Specification <!-- cid-cli-spec-v1 -->
+# RedForge CLI Specification <!-- cid-cli-spec-v1 -->
 
 **Reference:** `cid-roadmap-v1` Sprint S-1, Issue PS-2  
 **Status:** Draft PR #12  
@@ -6,43 +6,43 @@
 
 ## Overview
 
-The PromptStrike CLI is a developer-first tool for automated LLM red-team testing. It implements OWASP LLM Top 10 attack patterns with Docker-first deployment and comprehensive JSON/PDF reporting.
+The RedForge CLI is a developer-first tool for automated LLM red-team testing. It implements OWASP LLM Top 10 attack patterns with Docker-first deployment and comprehensive JSON/PDF reporting.
 
 ## Installation
 
 ### Docker (Recommended)
 ```bash
 # Pull from Docker Hub (when published)
-docker pull promptstrike/cli:latest
+docker pull redforge/cli:latest
 
 # Or build locally
-git clone https://github.com/siwenwang0803/PromptStrike.git
-cd PromptStrike
-docker build -t promptstrike/cli .
+git clone https://github.com/siwenwang0803/RedForge.git
+cd RedForge
+docker build -t redforge/cli .
 ```
 
 ### Poetry (Development)
 ```bash
-git clone https://github.com/siwenwang0803/PromptStrike.git
-cd PromptStrike
+git clone https://github.com/siwenwang0803/RedForge.git
+cd RedForge
 poetry install
-poetry run promptstrike --help
+poetry run redforge --help
 ```
 
 ### PyPI (Future)
 ```bash
-pip install promptstrike
+pip install redforge
 ```
 
 ## Command Reference
 
-### `promptstrike scan`
+### `redforge scan`
 
 **Purpose:** Run automated LLM red-team scan against target endpoint.
 
 **Syntax:**
 ```bash
-promptstrike scan TARGET [OPTIONS]
+redforge scan TARGET [OPTIONS]
 ```
 
 **Arguments:**
@@ -62,17 +62,17 @@ promptstrike scan TARGET [OPTIONS]
 **Examples:**
 ```bash
 # Basic scan
-promptstrike scan gpt-4
+redforge scan gpt-4
 
 # Full scan with PDF report
-promptstrike scan https://api.openai.com/v1/chat/completions \
+redforge scan https://api.openai.com/v1/chat/completions \
   --format pdf --output ./security-audit
 
 # Dry run to preview attacks
-promptstrike scan gpt-3.5-turbo --dry-run
+redforge scan gpt-3.5-turbo --dry-run
 
 # Custom configuration
-promptstrike scan local-model --config ./config.yaml
+redforge scan local-model --config ./config.yaml
 ```
 
 **Exit Codes:**
@@ -81,13 +81,13 @@ promptstrike scan local-model --config ./config.yaml
 - `2` - Target unreachable or invalid
 - `3` - Critical vulnerabilities found (if configured)
 
-### `promptstrike list-attacks`
+### `redforge list-attacks`
 
 **Purpose:** List available attack packs and individual attacks.
 
 **Syntax:**
 ```bash
-promptstrike list-attacks [OPTIONS]
+redforge list-attacks [OPTIONS]
 ```
 
 **Options:**
@@ -105,13 +105,13 @@ promptstrike list-attacks [OPTIONS]
 └─────────────────┴─────────────────────┴──────────┴─────────────────────────┘
 ```
 
-### `promptstrike version`
+### `redforge version`
 
 **Purpose:** Display version and build information.
 
 **Example Output:**
 ```
-🎯 PromptStrike CLI
+🎯 RedForge CLI
 Version: 0.1.0
 Build: alpha
 Python: 3.11.5
@@ -119,7 +119,7 @@ Platform: linux
 Reference: cid-roadmap-v1 Sprint S-1
 ```
 
-### `promptstrike doctor`
+### `redforge doctor`
 
 **Purpose:** Run diagnostic health checks.
 
@@ -138,7 +138,7 @@ The CLI generates structured JSON reports following this schema:
 
 ```json
 {
-  "scan_id": "ps-20250703-140502-abc123",
+  "scan_id": "rf-20250703-140502-abc123",
   "target": "gpt-4",
   "attack_pack": "owasp-llm-top10", 
   "start_time": "2025-07-03T14:05:02Z",
@@ -227,10 +227,10 @@ The CLI generates structured JSON reports following this schema:
 ## Configuration File
 
 **Format:** YAML  
-**Default Location:** `./promptstrike.yaml`
+**Default Location:** `./redforge.yaml`
 
 ```yaml
-# PromptStrike CLI Configuration
+# RedForge CLI Configuration
 target:
   endpoint: "https://api.openai.com/v1/chat/completions"
   model: "gpt-4"
@@ -244,7 +244,7 @@ scan:
   
 attack_packs:
   default: "owasp-llm-top10"
-  enabled: ["owasp-llm-top10", "promptstrike-finops"]
+  enabled: ["owasp-llm-top10", "redforge-finops"]
   
 output:
   directory: "./reports"
@@ -276,12 +276,12 @@ integrations:
 - **LLM09:** Overreliance (3 attacks)
 - **LLM10:** Model Theft (2 attacks)
 
-### promptstrike-finops (Future)
+### redforge-finops (Future)
 - Cost explosion attacks
 - Token consumption optimization
 - Billing anomaly detection
 
-### promptstrike-privacy (Future)  
+### redforge-privacy (Future)  
 - PII extraction attempts
 - Data leakage scenarios
 - GDPR compliance validation
@@ -293,7 +293,7 @@ integrations:
 docker run --rm \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -v $(pwd)/reports:/app/reports \
-  promptstrike/cli scan gpt-4
+  redforge/cli scan gpt-4
 ```
 
 ### Custom Configuration
@@ -302,7 +302,7 @@ docker run --rm \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/reports:/app/reports \
-  promptstrike/cli scan gpt-4 --config /app/config.yaml
+  redforge/cli scan gpt-4 --config /app/config.yaml
 ```
 
 ### CI/CD Integration
@@ -311,7 +311,7 @@ docker run --rm \
 docker run --rm \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -v $(pwd)/reports:/app/reports \
-  promptstrike/cli scan $TARGET_MODEL \
+  redforge/cli scan $TARGET_MODEL \
   --format json \
   --max-requests 50
   
@@ -326,7 +326,7 @@ fi
 Future versions will support programmatic access:
 
 ```python
-from promptstrike import LLMScanner, AttackPackLoader
+from redforge import LLMScanner, AttackPackLoader
 
 # Load attack pack
 loader = AttackPackLoader()
@@ -337,7 +337,7 @@ scanner = LLMScanner(target="gpt-4")
 results = scanner.run_attacks(attacks)
 
 # Generate report
-from promptstrike.report import ReportGenerator
+from redforge.report import ReportGenerator
 report_gen = ReportGenerator()
 report_gen.generate_pdf(results, "./security-report.pdf")
 ```

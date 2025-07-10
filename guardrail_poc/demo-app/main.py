@@ -14,7 +14,7 @@ from pydantic import BaseModel
 import uvicorn
 
 app = FastAPI(
-    title="PromptStrike Guardrail Demo",
+    title="RedForge Guardrail Demo",
     description="Demo LLM application for testing Guardrail sidecar",
     version="0.1.0"
 )
@@ -68,7 +68,7 @@ async def startup_event():
 async def root():
     """Root endpoint"""
     return {
-        "message": "PromptStrike Guardrail Demo API",
+        "message": "RedForge Guardrail Demo API",
         "version": "0.1.0",
         "docs": "/docs",
         "health": "/health"

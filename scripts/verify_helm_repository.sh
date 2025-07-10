@@ -12,13 +12,13 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-echo -e "${BLUE}🎯 PromptStrike DOD Verification - Helm Repository${NC}"
+echo -e "${BLUE}🎯 RedForge DOD Verification - Helm Repository${NC}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
 # Test repository URL
-REPO_URL="https://siwenwang0803.github.io/PromptStrike"
-CHART_NAME="promptstrike-sidecar"
+REPO_URL="https://siwenwang0803.github.io/RedForge"
+CHART_NAME="redforge-sidecar"
 CHART_VERSION="0.2.0"
 
 echo -e "${BLUE}📝 Testing DOD Command Sequence${NC}"
@@ -26,7 +26,7 @@ echo ""
 
 # Step 1: Add Helm repository
 echo -e "${YELLOW}Step 1: Adding Helm repository...${NC}"
-if helm repo add promptstrike $REPO_URL 2>/dev/null; then
+if helm repo add redforge $REPO_URL 2>/dev/null; then
     echo -e "${GREEN}✅ Repository added successfully${NC}"
 else
     echo -e "${RED}❌ Failed to add repository${NC}"
@@ -46,8 +46,8 @@ else
 fi
 
 # Step 3: Search for chart
-echo -e "${YELLOW}Step 3: Searching for PromptStrike charts...${NC}"
-if helm search repo promptstrike --versions; then
+echo -e "${YELLOW}Step 3: Searching for RedForge charts...${NC}"
+if helm search repo redforge --versions; then
     echo -e "${GREEN}✅ Chart found in repository${NC}"
 else
     echo -e "${RED}❌ Chart not found in repository${NC}"
@@ -69,20 +69,20 @@ fi
 echo -e "${YELLOW}Step 5: Testing dry-run installation...${NC}"
 NAMESPACE="ps-test"
 # Try dry-run, but don't fail if no K8s cluster (expected in CI)
-if helm install guardrail promptstrike/$CHART_NAME \
+if helm install guardrail redforge/$CHART_NAME \
     --namespace $NAMESPACE \
     --set openai.apiKey="test-key" \
     --dry-run --debug 2>&1 | grep -q "CHART PATH:.*$CHART_NAME-$CHART_VERSION.tgz"; then
     echo -e "${GREEN}✅ Chart download and template rendering successful${NC}"
     echo "   Note: K8s cluster connection error expected in CI environment"
-elif helm install guardrail promptstrike/$CHART_NAME \
+elif helm install guardrail redforge/$CHART_NAME \
     --namespace $NAMESPACE \
     --set openai.apiKey="test-key" \
     --dry-run --debug >/dev/null 2>&1; then
     echo -e "${GREEN}✅ Dry-run installation successful${NC}"
 else
     # Check if it's just a K8s connection issue (expected)
-    ERROR_OUTPUT=$(helm install guardrail promptstrike/$CHART_NAME \
+    ERROR_OUTPUT=$(helm install guardrail redforge/$CHART_NAME \
         --namespace $NAMESPACE \
         --set openai.apiKey="test-key" \
         --dry-run --debug 2>&1)
@@ -125,13 +125,13 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo -e "${GREEN}🎉 DOD COMMAND VERIFIED!${NC}"
 echo ""
 echo -e "${BLUE}✅ Client Success Command:${NC}"
-echo "helm repo add promptstrike $REPO_URL"
+echo "helm repo add redforge $REPO_URL"
 echo "helm repo update"
-echo "helm install guardrail promptstrike/$CHART_NAME --set openai.apiKey=\$KEY"
+echo "helm install guardrail redforge/$CHART_NAME --set openai.apiKey=\$KEY"
 echo ""
-echo -e "${GREEN}🚀 PromptStrike Helm Repository is DOD-compliant!${NC}"
+echo -e "${GREEN}🚀 RedForge Helm Repository is DOD-compliant!${NC}"
 
 # Cleanup
-helm repo remove promptstrike 2>/dev/null || true
+helm repo remove redforge 2>/dev/null || true
 
 exit 0

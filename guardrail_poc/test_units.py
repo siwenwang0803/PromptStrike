@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unit tests for PromptStrike Guardrail PoC
+Unit tests for RedForge Guardrail PoC
 For Sonnet validation of core functionality
 """
 
@@ -147,7 +147,7 @@ class TestGuardrailSidecar:
         assert response.status_code == 200
         
         data = response.json()
-        assert data["service"] == "PromptStrike Guardrail Sidecar"
+        assert data["service"] == "RedForge Guardrail Sidecar"
         assert data["version"] == "0.1.0"
         assert "monitored_spans" in data
     

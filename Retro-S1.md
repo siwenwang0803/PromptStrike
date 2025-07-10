@@ -1,13 +1,13 @@
 # Sprint S-1 Retrospective
 
 **Sprint Duration**: June - July 2025  
-**Sprint Goal**: MVP Release - Production-ready PromptStrike CLI  
+**Sprint Goal**: MVP Release - Production-ready RedForge CLI  
 **Reference**: cid-roadmap-v1 Sprint S-1  
 **Date**: July 3, 2025  
 
 ## 🎯 Sprint Overview
 
-Sprint S-1 marked the successful delivery of PromptStrike CLI v0.1.0-alpha, achieving our MVP milestone with complete OWASP LLM Top 10 coverage, multi-format reporting, and production-ready deployment infrastructure.
+Sprint S-1 marked the successful delivery of RedForge CLI v0.1.0-alpha, achieving our MVP milestone with complete OWASP LLM Top 10 coverage, multi-format reporting, and production-ready deployment infrastructure.
 
 ## ✅ What Went Well
 

@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}-app
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: {{ include "redforge-sidecar.fullname" . }}-app
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: app-config
   {{- with .Values.annotations }}
   annotations:
@@ -34,10 +34,10 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}-sidecar
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: {{ include "redforge-sidecar.fullname" . }}-sidecar
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: sidecar-config
   {{- with .Values.annotations }}
   annotations:
@@ -58,7 +58,7 @@ data:
       async_analysis: {{ .Values.sidecar.env.GUARDRAIL_ASYNC_ANALYSIS }}
       daily_budget: {{ .Values.sidecar.env.GUARDRAIL_DAILY_BUDGET }}
       log_level: {{ .Values.sidecar.env.LOG_LEVEL }}
-      output_dir: {{ .Values.sidecar.env.PROMPTSTRIKE_OUTPUT_DIR }}
+      output_dir: {{ .Values.sidecar.env.REDFORGE_OUTPUT_DIR }}
     
     monitoring:
       enabled: {{ .Values.monitoring.enabled }}

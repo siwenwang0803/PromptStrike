@@ -1,5 +1,5 @@
 #!/bin/bash
-# Performance monitoring script for PromptStrike CLI tests
+# Performance monitoring script for RedForge CLI tests
 # Monitors CPU, memory, disk I/O, and network usage during test execution
 
 set -euo pipefail
@@ -7,7 +7,7 @@ set -euo pipefail
 # Default values
 INTERVAL=2
 OUTPUT_FILE="performance_metrics.csv"
-PROCESS_NAME="promptstrike"
+PROCESS_NAME="redforge"
 MONITOR_PID=""
 MONITOR_DOCKER=false
 
@@ -17,7 +17,7 @@ usage() {
     echo "Options:"
     echo "  -i INTERVAL     Sampling interval in seconds (default: 2)"
     echo "  -o FILE         Output CSV file (default: performance_metrics.csv)"
-    echo "  -p PROCESS      Process name to monitor (default: promptstrike)"
+    echo "  -p PROCESS      Process name to monitor (default: redforge)"
     echo "  -P PID          Specific PID to monitor"
     echo "  -d              Monitor Docker containers"
     echo "  -h              Show this help"
@@ -135,7 +135,7 @@ get_process_metrics() {
 # Function to get Docker container metrics
 get_docker_metrics() {
     if command -v docker &> /dev/null && docker ps &> /dev/null; then
-        local containers=$(docker ps --filter "name=promptstrike" --format "{{.Names}}")
+        local containers=$(docker ps --filter "name=redforge" --format "{{.Names}}")
         local total_cpu=0
         local total_mem=0
         

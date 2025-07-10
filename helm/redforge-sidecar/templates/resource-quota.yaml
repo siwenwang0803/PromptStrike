@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: ResourceQuota
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}-quota
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: {{ include "redforge-sidecar.fullname" . }}-quota
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: resource-management
   annotations:
-    description: "Resource quotas for PromptStrike guardrail sidecar"
+    description: "Resource quotas for RedForge guardrail sidecar"
     {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}

@@ -1,14 +1,14 @@
 <!-- source: makefile idx:0 lines:161 -->
 
 ```text
-# PromptStrike CLI Makefile
+# RedForge CLI Makefile
 # Reference: cid-roadmap-v1 Sprint S-1
 
 .PHONY: help install build test lint clean docker-build docker-run dev
 
 # Default target
 help: ## Show this help message
-	@echo "PromptStrike CLI - Developer Commands"
+	@echo "RedForge CLI - Developer Commands"
 	@echo "Reference: cid-roadmap-v1 Sprint S-1"
 	@echo ""
 	@awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z_-]+:.*##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -21,21 +21,21 @@ build: ## Build the package
 	poetry build
 
 test: ## Run tests
-	poetry run pytest tests/ -v --cov=promptstrike --cov-report=html
+	poetry run pytest tests/ -v --cov=redforge --cov-report=html
 
 test-fast: ## Run fast tests only
 	poetry run pytest tests/ -v -m "not slow"
 
 lint: ## Run linting and formatting
-	poetry run black promptstrike/ tests/
-	poetry run isort promptstrike/ tests/
-	poetry run flake8 promptstrike/ tests/
-	poetry run mypy promptstrike/
+	poetry run black redforge/ tests/
+	poetry run isort redforge/ tests/
+	poetry run flake8 redforge/ tests/
+	poetry run mypy redforge/
 
 lint-check: ## Check formatting without making changes
-	poetry run black --check promptstrike/ tests/
-	poetry run isort --check-only promptstrike/ tests/
-	poetry run flake8 promptstrike/ tests/
+	poetry run black --check redforge/ tests/
+	poetry run isort --check-only redforge/ tests/
+	poetry run flake8 redforge/ tests/
 
 clean: ## Clean build artifacts
 	rm -rf build/
@@ -48,25 +48,25 @@ clean: ## Clean build artifacts
 
 # Docker targets
 docker-build: ## Build Docker image
-	docker build -t promptstrike/cli:latest .
+	docker build -t redforge/cli:latest .
 
 docker-build-dev: ## Build development Docker image
-	docker build --target builder -t promptstrike/cli:dev .
+	docker build --target builder -t redforge/cli:dev .
 
 docker-run: ## Run CLI in Docker container
 	docker run --rm \
 		-e OPENAI_API_KEY=${OPENAI_API_KEY} \
 		-v $(PWD)/reports:/app/reports \
-		promptstrike/cli:latest $(ARGS)
+		redforge/cli:latest $(ARGS)
 
 docker-scan: ## Run scan command in Docker
 	docker run --rm \
 		-e OPENAI_API_KEY=${OPENAI_API_KEY} \
 		-v $(PWD)/reports:/app/reports \
-		promptstrike/cli:latest scan $(TARGET) $(ARGS)
+		redforge/cli:latest scan $(TARGET) $(ARGS)
 
 docker-dev: ## Start development environment
-	docker-compose up promptstrike-dev
+	docker-compose up redforge-dev
 
 docker-compose-up: ## Start full development stack
 	docker-compose --profile full up -d
@@ -79,26 +79,26 @@ dev: ## Start development environment
 	poetry shell
 
 format: ## Format code
-	poetry run black promptstrike/ tests/
-	poetry run isort promptstrike/ tests/
+	poetry run black redforge/ tests/
+	poetry run isort redforge/ tests/
 
 check: lint test ## Run all checks (lint + test)
 
 # CLI testing shortcuts
 cli-help: ## Test CLI help command
-	poetry run python -m promptstrike.cli --help
+	poetry run python -m redforge.cli --help
 
 cli-version: ## Test CLI version command  
-	poetry run python -m promptstrike.cli version
+	poetry run python -m redforge.cli version
 
 cli-doctor: ## Test CLI doctor command
-	poetry run python -m promptstrike.cli doctor
+	poetry run python -m redforge.cli doctor
 
 cli-list: ## Test CLI list-attacks command
-	poetry run python -m promptstrike.cli list-attacks
+	poetry run python -m redforge.cli list-attacks
 
 cli-dry-run: ## Test CLI dry run
-	poetry run python -m promptstrike.cli scan gpt-4 --dry-run --max-requests 5
+	poetry run python -m redforge.cli scan gpt-4 --dry-run --max-requests 5
 
 # Release targets
 bump-version: ## Bump version (use VERSION=x.y.z)
@@ -122,7 +122,7 @@ docs-serve: ## Serve documentation locally
 
 # Issue PS-2 specific targets
 schema-export: ## Export JSON schema for reports
-	poetry run python -c "from promptstrike.models.scan_result import ScanResult; import json; print(json.dumps(ScanResult.schema(), indent=2))" > docs/schema/scan-result.json
+	poetry run python -c "from redforge.models.scan_result import ScanResult; import json; print(json.dumps(ScanResult.schema(), indent=2))" > docs/schema/scan-result.json
 
 schema-validate: ## Validate example reports against schema
 	poetry run python scripts/validate_schema.py
@@ -145,19 +145,19 @@ s1-checklist: ## Verify Sprint S-1 deliverables
 	@test -f pyproject.toml && echo "  ✓ pyproject.toml exists" || echo "  ❌ pyproject.toml missing"
 	@echo ""
 	@echo "✅ CLI Entrypoint:"
-	@test -f promptstrike/cli.py && echo "  ✓ CLI module exists" || echo "  ❌ CLI module missing"
-	@test -f promptstrike/__init__.py && echo "  ✓ Package init exists" || echo "  ❌ Package init missing"
+	@test -f redforge/cli.py && echo "  ✓ CLI module exists" || echo "  ❌ CLI module missing"
+	@test -f redforge/__init__.py && echo "  ✓ Package init exists" || echo "  ❌ Package init missing"
 	@echo ""
 	@echo "✅ Report Schema (Issue PS-2):"
-	@test -f promptstrike/models/scan_result.py && echo "  ✓ Scan result models exist" || echo "  ❌ Models missing"
+	@test -f redforge/models/scan_result.py && echo "  ✓ Scan result models exist" || echo "  ❌ Models missing"
 	@test -f docs/cli-spec.md && echo "  ✓ CLI specification exists" || echo "  ❌ CLI spec missing"
 	@echo ""
 	@echo "📋 Next: Draft PR #12 → Design Partner Testing → 500 downloads target"
 
 # Example usage
 example-scan: ## Run example scan (requires OPENAI_API_KEY)
-	@echo "Running example scan with PromptStrike CLI..."
-	poetry run python -m promptstrike.cli scan gpt-3.5-turbo \
+	@echo "Running example scan with RedForge CLI..."
+	poetry run python -m redforge.cli scan gpt-3.5-turbo \
 		--output ./reports/example \
 		--format json \
 		--max-requests 10 \

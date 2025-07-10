@@ -1,4 +1,4 @@
-# PromptStrike CLI 最终优化报告
+# RedForge CLI 最终优化报告
 
 ## 🎯 优化目标达成状况
 
@@ -18,7 +18,7 @@
 
 ### 并发稳定性测试（50并发攻击）
 ```
-🎯 PromptStrike Concurrent Stability Test
+🎯 RedForge Concurrent Stability Test
 Target: gpt-3.5-turbo
 Concurrent Attacks: 50
 Duration: 9.8 seconds
@@ -61,19 +61,19 @@ Performance: 5.1 attacks/second
 ### 立即投产使用
 ```bash
 # 标准客户安全评估
-python -m promptstrike.cli scan gpt-4 --format all --output client-report
+python -m redforge.cli scan gpt-4 --format all --output client-report
 
 # 高并发压力测试
-python -m promptstrike.cli scan gpt-3.5-turbo --max-requests 50 --format json
+python -m redforge.cli scan gpt-3.5-turbo --max-requests 50 --format json
 
 # 合规性审计
-python -m promptstrike.cli scan claude-3-sonnet --format pdf --output compliance-audit
+python -m redforge.cli scan claude-3-sonnet --format pdf --output compliance-audit
 ```
 
 ### 程序化API使用
 ```python
-from promptstrike.core.scanner import LLMScanner
-from promptstrike.core.report import ReportGenerator
+from redforge.core.scanner import LLMScanner
+from redforge.core.report import ReportGenerator
 
 # 生产级使用模式
 scanner = LLMScanner("gpt-3.5-turbo", config, max_requests=50)
@@ -104,7 +104,7 @@ reports = {
 
 ## 🏆 总结
 
-**PromptStrike CLI 现已达到生产就绪状态**
+**RedForge CLI 现已达到生产就绪状态**
 
 两个关键问题已彻底解决：
 1. **CLI 进度条挂起** → 简化为文本进度显示

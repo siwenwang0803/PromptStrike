@@ -13,7 +13,7 @@ make install
 make dev
 
 # Run CLI commands with current code (no poetry run needed)
-python -m promptstrike.cli --help
+python -m redforge.cli --help
 ```
 
 ### Building and Running
@@ -25,10 +25,10 @@ make build
 make cli-help
 
 # Run CLI commands directly
-poetry run promptstrike scan gpt-4 --dry-run
+poetry run redforge scan gpt-4 --dry-run
 
 # Alternative: run without Poetry prefix (useful during development)
-python -m promptstrike.cli scan gpt-4 --dry-run
+python -m redforge.cli scan gpt-4 --dry-run
 
 # Docker build
 make docker-build
@@ -68,7 +68,7 @@ make lint
 make lint-check
 
 # Run type checking
-poetry run mypy promptstrike/
+poetry run mypy redforge/
 
 # Run all checks (lint + test)
 make check
@@ -96,28 +96,28 @@ make s1-checklist
 
 ### Core Modules
 
-**CLI Entry Point** (`promptstrike/cli.py:39`)
+**CLI Entry Point** (`redforge/cli.py:39`)
 - Typer-based CLI with commands: scan, list-attacks, version, doctor
 - Rich terminal UI for progress and output formatting
 - Handles configuration loading and API key management
 - Includes fallback imports for development (lines 21-37)
 
-**Scanner Core** (`promptstrike/core/scanner.py`)
+**Scanner Core** (`redforge/core/scanner.py`)
 - `LLMScanner` class orchestrates attack execution against target LLMs
 - Manages rate limiting, timeouts, and parallel execution
 - Returns `AttackResult` objects with vulnerability assessments
 
-**Attack System** (`promptstrike/core/attacks.py`)
+**Attack System** (`redforge/core/attacks.py`)
 - `AttackPackLoader` loads OWASP LLM Top 10 attack patterns
 - 47 pre-defined attacks across 10 vulnerability categories
 - Extensible for custom attack packs (FinOps, Privacy, Bias modules planned)
 
-**Report Generation** (`promptstrike/core/report.py`)
+**Report Generation** (`redforge/core/report.py`)
 - `ReportGenerator` produces JSON, HTML, and PDF reports
 - Includes compliance mapping (NIST AI-RMF, EU AI Act, SOC 2)
 - Cryptographic audit trails for evidence preservation
 
-**Data Models** (`promptstrike/models/scan_result.py:138`)
+**Data Models** (`redforge/models/scan_result.py:138`)
 - Pydantic v2 models ensure type safety and validation
 - Key models:
   - `ScanResult`: Complete scan with all attack outcomes
@@ -126,7 +126,7 @@ make s1-checklist
   - `ComplianceReport`: Regulatory framework mapping (line 119)
 - Enums for standardization:
   - `SeverityLevel`: critical, high, medium, low, info (line 13)
-  - `AttackCategory`: OWASP LLM Top 10 + PromptStrike extensions (line 22)
+  - `AttackCategory`: OWASP LLM Top 10 + RedForge extensions (line 22)
 
 ### Key Design Patterns
 
@@ -140,7 +140,7 @@ make s1-checklist
 
 The system uses a layered configuration approach:
 1. Default values in code
-2. `promptstrike.yaml` configuration file (optional)
+2. `redforge.yaml` configuration file (optional)
 3. Environment variables (e.g., `OPENAI_API_KEY`)
 4. CLI arguments (highest precedence)
 

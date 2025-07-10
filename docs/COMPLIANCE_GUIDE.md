@@ -1,8 +1,8 @@
-# PromptStrike Compliance Guide
+# RedForge Compliance Guide
 
 **Enterprise-Grade Compliance Support for LLM Security Assessments**
 
-PromptStrike provides comprehensive compliance support for regulatory frameworks across industries including Financial Services, Healthcare, and Technology. This guide covers supported frameworks, compliance reporting, and enterprise RBAC features.
+RedForge provides comprehensive compliance support for regulatory frameworks across industries including Financial Services, Healthcare, and Technology. This guide covers supported frameworks, compliance reporting, and enterprise RBAC features.
 
 ## 🎯 Supported Compliance Frameworks
 
@@ -25,7 +25,7 @@ PromptStrike provides comprehensive compliance support for regulatory frameworks
 ## 🔍 Compliance Assessment Features
 
 ### **Automated Framework Mapping**
-Every PromptStrike attack maps to relevant compliance controls:
+Every RedForge attack maps to relevant compliance controls:
 
 ```python
 # Example: Prompt Injection → Multiple Frameworks
@@ -67,15 +67,15 @@ Generate compliance reports from scan results:
 
 ```bash
 # Multi-framework compliance report
-promptstrike report scan_results.json --framework multi --format comprehensive
+redforge report scan_results.json --framework multi --format comprehensive
 
 # Specific framework report
-promptstrike report scan_results.json --framework nist_ai_rmf --format audit
+redforge report scan_results.json --framework nist_ai_rmf --format audit
 
 # Export to different formats
-promptstrike report scan_results.json --framework eu_ai_act --output compliance_report.json --export json
-promptstrike report scan_results.json --framework iso_27001 --output audit_report.yaml --export yaml
-promptstrike report scan_results.json --framework soc2 --output findings.csv --export csv
+redforge report scan_results.json --framework eu_ai_act --output compliance_report.json --export json
+redforge report scan_results.json --framework iso_27001 --output audit_report.yaml --export yaml
+redforge report scan_results.json --framework soc2 --output findings.csv --export csv
 ```
 
 ### **Report Templates**
@@ -96,7 +96,7 @@ Choose from specialized templates for different audiences:
 
 **Financial Services (FinTech):**
 ```bash
-promptstrike report scan_results.json \\
+redforge report scan_results.json \\
   --framework multi \\
   --format fintech \\
   --output fintech_compliance_report.json
@@ -104,7 +104,7 @@ promptstrike report scan_results.json \\
 
 **Healthcare:**
 ```bash
-promptstrike report scan_results.json \\
+redforge report scan_results.json \\
   --framework hipaa \\
   --format healthcare \\
   --output hipaa_assessment.json
@@ -112,7 +112,7 @@ promptstrike report scan_results.json \\
 
 **EU Operations:**
 ```bash
-promptstrike report scan_results.json \\
+redforge report scan_results.json \\
   --framework eu_ai_act \\
   --format gdpr \\
   --output eu_ai_compliance.json
@@ -120,7 +120,7 @@ promptstrike report scan_results.json \\
 
 ## 🔐 Enterprise RBAC
 
-PromptStrike includes enterprise-grade Role-Based Access Control for compliance and audit requirements.
+RedForge includes enterprise-grade Role-Based Access Control for compliance and audit requirements.
 
 ### **Pre-Defined Roles**
 
@@ -175,7 +175,7 @@ rbac:
           - "view:audit-logs"
           - "access:pci-dss"
           - "access:ffiec"
-        namespaces: ["promptstrike-production"]
+        namespaces: ["redforge-production"]
 ```
 
 ## 🏢 Industry Use Cases
@@ -186,8 +186,8 @@ rbac:
 
 ```bash
 # Comprehensive FinTech assessment
-promptstrike scan gpt-4 --output fintech_q4_scan.json
-promptstrike report fintech_q4_scan.json \\
+redforge scan gpt-4 --output fintech_q4_scan.json
+redforge report fintech_q4_scan.json \\
   --framework multi \\
   --format fintech \\
   --output Q4_2024_Cybersecurity_Assessment.json
@@ -205,8 +205,8 @@ promptstrike report fintech_q4_scan.json \\
 
 ```bash
 # HIPAA compliance assessment
-promptstrike scan claude-3-sonnet --output healthcare_scan.json
-promptstrike report healthcare_scan.json \\
+redforge scan claude-3-sonnet --output healthcare_scan.json
+redforge report healthcare_scan.json \\
   --framework hipaa \\
   --format healthcare \\
   --output HIPAA_Security_Assessment.json
@@ -224,8 +224,8 @@ promptstrike report healthcare_scan.json \\
 
 ```bash
 # Comprehensive tech company assessment
-promptstrike scan your-llm-api --output tech_company_scan.json
-promptstrike report tech_company_scan.json \\
+redforge scan your-llm-api --output tech_company_scan.json
+redforge report tech_company_scan.json \\
   --framework multi \\
   --format comprehensive \\
   --output Security_Assessment_Report.json
@@ -243,8 +243,8 @@ promptstrike report tech_company_scan.json \\
 
 ```bash
 # EU AI Act compliance assessment
-promptstrike scan your-ai-system --output eu_ai_scan.json
-promptstrike report eu_ai_scan.json \\
+redforge scan your-ai-system --output eu_ai_scan.json
+redforge report eu_ai_scan.json \\
   --framework eu_ai_act \\
   --format regulatory_filing \\
   --output EU_AI_Act_Compliance_Report.json
@@ -284,10 +284,10 @@ promptstrike report eu_ai_scan.json \\
 ### 1. **Initial Assessment**
 ```bash
 # Run comprehensive scan
-promptstrike scan your-llm-endpoint --output initial_scan.json
+redforge scan your-llm-endpoint --output initial_scan.json
 
 # Generate multi-framework report
-promptstrike report initial_scan.json --framework multi --format executive
+redforge report initial_scan.json --framework multi --format executive
 ```
 
 ### 2. **Choose Your Framework**
@@ -324,15 +324,15 @@ For enterprise deployments requiring specialized compliance support:
 - **Audit Preparation**: Regulatory examination readiness
 - **Training Programs**: Team education on AI security compliance
 
-Contact: [enterprise@promptstrike.com](mailto:enterprise@promptstrike.com)
+Contact: [enterprise@redforge.com](mailto:enterprise@redforge.com)
 
 ## 📞 Support
 
-- **Documentation**: [https://docs.promptstrike.com/compliance](https://docs.promptstrike.com/compliance)
-- **Issues**: [GitHub Issues](https://github.com/siwenwang0803/PromptStrike/issues)
-- **Enterprise Support**: [enterprise@promptstrike.com](mailto:enterprise@promptstrike.com)
-- **Community**: [GitHub Discussions](https://github.com/siwenwang0803/PromptStrike/discussions)
+- **Documentation**: [https://docs.redforge.com/compliance](https://docs.redforge.com/compliance)
+- **Issues**: [GitHub Issues](https://github.com/siwenwang0803/RedForge/issues)
+- **Enterprise Support**: [enterprise@redforge.com](mailto:enterprise@redforge.com)
+- **Community**: [GitHub Discussions](https://github.com/siwenwang0803/RedForge/discussions)
 
 ---
 
-*This guide covers PromptStrike's compliance capabilities as of Sprint S-1. Additional frameworks and features are continuously being added based on enterprise customer requirements.*
+*This guide covers RedForge's compliance capabilities as of Sprint S-1. Additional frameworks and features are continuously being added based on enterprise customer requirements.*

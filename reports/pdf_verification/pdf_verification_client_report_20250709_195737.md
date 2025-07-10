@@ -1,4 +1,4 @@
-# PromptStrike PDF Generation Verification Report (Client Version)
+# RedForge PDF Generation Verification Report (Client Version)
 
 **Date**: Wed Jul  9 19:57:37 PDT 2025
 **Test Suite**: PDF Generation Verification (Client-Friendly)
@@ -20,8 +20,8 @@
 ## Client Setup Information
 
 - **Python Version**: Python 3.13.5
-- **Project Directory**: /Users/siwenwang/PromptStrike
-- **CLI Method**: promptstrike --help
+- **Project Directory**: /Users/siwenwang/RedForge
+- **CLI Method**: redforge --help
 
 ## Objectives Verification
 
@@ -35,23 +35,23 @@
 
 ## Client Instructions
 
-### To run PromptStrike CLI:
+### To run RedForge CLI:
 ```bash
 # Method 1: If installed system-wide
-promptstrike --help
+redforge --help
 
 # Method 2: Python module execution
-python3 -m promptstrike.cli --help
+python3 -m redforge.cli --help
 
 # Method 3: Development installation
 pip install -e .
-promptstrike --help
+redforge --help
 ```
 
 ### To generate a PDF report:
 ```bash
 export OPENAI_API_KEY="your-api-key"
-promptstrike scan gpt-4 --format pdf --output ./reports
+redforge scan gpt-4 --format pdf --output ./reports
 ```
 
 ## Recommendations
@@ -59,7 +59,7 @@ promptstrike scan gpt-4 --format pdf --output ./reports
 ⚠️ **Setup partially working** - Some issues to address
 
 Recommended actions:
-1. Install PromptStrike: pip install -e .
+1. Install RedForge: pip install -e .
 2. Install PDF dependencies: pip install reportlab
 3. Ensure you're in the project directory
 

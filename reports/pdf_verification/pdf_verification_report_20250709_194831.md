@@ -1,4 +1,4 @@
-# PromptStrike PDF Generation Verification Report
+# RedForge PDF Generation Verification Report
 
 **Date**: Wed Jul  9 19:48:31 PDT 2025
 **Test Suite**: PDF Generation Verification (Direct Python)
@@ -32,7 +32,7 @@
 - **OS**: Darwin
 - **Architecture**: x86_64
 - **Python**: Python 3.13.5
-- **PromptStrike**: Available via direct Python execution
+- **RedForge**: Available via direct Python execution
 
 ## Generated Test Files
 

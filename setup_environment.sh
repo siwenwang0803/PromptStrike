@@ -1,5 +1,5 @@
 #!/bin/bash
-# PromptStrike Environment Setup Script
+# RedForge Environment Setup Script
 # Ensures proper installation of all dependencies
 
 set -euo pipefail
@@ -27,7 +27,7 @@ print_warning() {
     echo -e "${YELLOW}⚠${NC} $1"
 }
 
-echo "PromptStrike Environment Setup"
+echo "RedForge Environment Setup"
 echo "=============================="
 echo ""
 
@@ -76,7 +76,7 @@ if command -v poetry &> /dev/null; then
         # Create a script to run with Poetry
         cat > run_with_poetry.sh << 'EOF'
 #!/bin/bash
-poetry run python -m promptstrike.cli "$@"
+poetry run python -m redforge.cli "$@"
 EOF
         chmod +x run_with_poetry.sh
         print_success "Created run_with_poetry.sh helper script"
@@ -92,7 +92,7 @@ else
 fi
 
 # Install in development mode
-print_status "Installing PromptStrike in development mode..."
+print_status "Installing RedForge in development mode..."
 pip install -e . > /dev/null 2>&1 || {
     print_warning "Could not install in editable mode, setting PYTHONPATH instead"
     export PYTHONPATH="${PYTHONPATH:-}:$(pwd)"
@@ -128,15 +128,15 @@ try:
     import reportlab
     print('  ✓ reportlab')
     
-    # Test PromptStrike imports
+    # Test RedForge imports
     sys.path.insert(0, '.')
-    import promptstrike
-    print('  ✓ promptstrike package')
-    from promptstrike.cli import app
+    import redforge
+    print('  ✓ redforge package')
+    from redforge.cli import app
     print('  ✓ CLI module')
-    from promptstrike.core.scanner import LLMScanner
+    from redforge.core.scanner import LLMScanner
     print('  ✓ Scanner module')
-    from promptstrike.core.attacks import AttackPackLoader
+    from redforge.core.attacks import AttackPackLoader
     print('  ✓ Attack module')
     
     print('')
@@ -159,31 +159,31 @@ print_status "Testing CLI..."
 echo ""
 
 # Test help command
-if python -m promptstrike.cli --help > /dev/null 2>&1; then
+if python -m redforge.cli --help > /dev/null 2>&1; then
     print_success "CLI help command works"
 else
     print_error "CLI help command failed"
 fi
 
 # Test version command
-if python -m promptstrike.cli version > /dev/null 2>&1; then
+if python -m redforge.cli version > /dev/null 2>&1; then
     print_success "CLI version command works"
 else
     print_error "CLI version command failed"
 fi
 
 # Test list-attacks command
-if python -m promptstrike.cli list-attacks > /dev/null 2>&1; then
-    ATTACK_COUNT=$(python -m promptstrike.cli list-attacks 2>/dev/null | grep -E "LLM[0-9]+-[0-9]+" | wc -l)
+if python -m redforge.cli list-attacks > /dev/null 2>&1; then
+    ATTACK_COUNT=$(python -m redforge.cli list-attacks 2>/dev/null | grep -E "LLM[0-9]+-[0-9]+" | wc -l)
     print_success "CLI list-attacks works (found $ATTACK_COUNT attacks)"
 else
     print_error "CLI list-attacks command failed"
 fi
 
 # Create run script
-cat > run_promptstrike.sh << 'EOF'
+cat > run_redforge.sh << 'EOF'
 #!/bin/bash
-# Helper script to run PromptStrike with proper environment
+# Helper script to run RedForge with proper environment
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd "$SCRIPT_DIR"
@@ -192,10 +192,10 @@ if [[ -d ".venv" ]]; then
     source .venv/bin/activate
 fi
 
-python -m promptstrike.cli "$@"
+python -m redforge.cli "$@"
 EOF
 
-chmod +x run_promptstrike.sh
+chmod +x run_redforge.sh
 
 # Summary
 echo ""
@@ -203,16 +203,16 @@ echo "Setup Summary"
 echo "============="
 print_success "Environment setup complete!"
 echo ""
-echo "To use PromptStrike:"
+echo "To use RedForge:"
 echo "1. Activate the virtual environment:"
 echo "   source .venv/bin/activate"
 echo ""
 echo "2. Run CLI commands:"
-echo "   python -m promptstrike.cli --help"
-echo "   python -m promptstrike.cli scan gpt-4 --dry-run"
+echo "   python -m redforge.cli --help"
+echo "   python -m redforge.cli scan gpt-4 --dry-run"
 echo ""
 echo "Or use the helper script:"
-echo "   ./run_promptstrike.sh --help"
+echo "   ./run_redforge.sh --help"
 echo ""
 
 # Check for API keys
@@ -225,4 +225,4 @@ echo ""
 echo "Next steps:"
 echo "1. Set your API keys (if not already done)"
 echo "2. Run the test suite: bash scripts/smoke/run_cli_matrix.sh --dry-run"
-echo "3. Check the doctor command: ./run_promptstrike.sh doctor"
+echo "3. Check the doctor command: ./run_redforge.sh doctor"

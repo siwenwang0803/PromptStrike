@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Dict, Any
 
 def create_sample_span() -> Dict[str, Any]:
-    """Create a sample OTEL span following PromptStrike schema"""
+    """Create a sample OTEL span following RedForge schema"""
     return {
         "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
         "span_id": "00f067aa0ba902b7",
@@ -23,10 +23,10 @@ def create_sample_span() -> Dict[str, Any]:
             "message": "Request completed successfully"
         },
         "resource": {
-            "service.name": "promptstrike-guardrail",
+            "service.name": "redforge-guardrail",
             "service.version": "0.1.0",
             "deployment.environment": "production",
-            "promptstrike.guardrail.version": "0.1.0"
+            "redforge.guardrail.version": "0.1.0"
         },
         "attributes": {
             # LLM Provider Information
@@ -52,10 +52,10 @@ def create_sample_span() -> Dict[str, Any]:
             "llm.latency.tokens_per_second": 36.0,
             
             # Security Analysis
-            "promptstrike.security.risk_score": 2.3,
-            "promptstrike.security.risk_level": "low",
-            "promptstrike.security.vulnerabilities_detected": 0,
-            "promptstrike.security.analysis_version": "v1.0",
+            "redforge.security.risk_score": 2.3,
+            "redforge.security.risk_level": "low",
+            "redforge.security.vulnerabilities_detected": 0,
+            "redforge.security.analysis_version": "v1.0",
             
             # HTTP Details
             "http.method": "POST",
@@ -75,11 +75,11 @@ def create_sample_span() -> Dict[str, Any]:
             },
             {
                 "timestamp": "2024-01-01T12:00:01.200Z",
-                "name": "promptstrike.security.analysis_complete",
+                "name": "redforge.security.analysis_complete",
                 "attributes": {
-                    "promptstrike.security.analysis_duration_ms": 15,
-                    "promptstrike.security.patterns_checked": 47,
-                    "promptstrike.security.risk_score": 2.3
+                    "redforge.security.analysis_duration_ms": 15,
+                    "redforge.security.patterns_checked": 47,
+                    "redforge.security.risk_score": 2.3
                 }
             }
         ]
@@ -97,7 +97,7 @@ def test_span_has_required_fields():
     assert "status" in span
     assert "attributes" in span
     
-    # PromptStrike extensions
+    # RedForge extensions
     assert "resource" in span
     assert "events" in span
 
@@ -135,19 +135,19 @@ def test_llm_attributes():
     assert attrs["llm.cost.total_usd"] >= 0
 
 def test_security_attributes():
-    """Test PromptStrike security attributes are valid"""
+    """Test RedForge security attributes are valid"""
     span = create_sample_span()
     attrs = span["attributes"]
     
     # Security attributes
-    assert "promptstrike.security.risk_score" in attrs
-    risk_score = attrs["promptstrike.security.risk_score"]
+    assert "redforge.security.risk_score" in attrs
+    risk_score = attrs["redforge.security.risk_score"]
     assert isinstance(risk_score, (int, float))
     assert 0 <= risk_score <= 10
     
-    assert "promptstrike.security.vulnerabilities_detected" in attrs
-    assert isinstance(attrs["promptstrike.security.vulnerabilities_detected"], int)
-    assert attrs["promptstrike.security.vulnerabilities_detected"] >= 0
+    assert "redforge.security.vulnerabilities_detected" in attrs
+    assert isinstance(attrs["redforge.security.vulnerabilities_detected"], int)
+    assert attrs["redforge.security.vulnerabilities_detected"] >= 0
 
 def test_performance_attributes():
     """Test performance metrics are valid"""
@@ -208,12 +208,12 @@ def test_vulnerability_span():
     span = create_sample_span()
     
     # Modify to include vulnerability
-    span["attributes"]["promptstrike.security.risk_score"] = 8.5
-    span["attributes"]["promptstrike.security.vulnerabilities_detected"] = 2
-    span["attributes"]["promptstrike.security.risk_level"] = "high"
+    span["attributes"]["redforge.security.risk_score"] = 8.5
+    span["attributes"]["redforge.security.vulnerabilities_detected"] = 2
+    span["attributes"]["redforge.security.risk_level"] = "high"
     
     # Add vulnerability details
-    span["attributes"]["promptstrike.security.vulnerabilities"] = [
+    span["attributes"]["redforge.security.vulnerabilities"] = [
         {
             "id": "vuln_001",
             "category": "prompt_injection",
@@ -224,9 +224,9 @@ def test_vulnerability_span():
     ]
     
     # Validate high-risk span
-    assert span["attributes"]["promptstrike.security.risk_score"] > 7.0
-    assert span["attributes"]["promptstrike.security.vulnerabilities_detected"] > 0
-    assert span["attributes"]["promptstrike.security.risk_level"] == "high"
+    assert span["attributes"]["redforge.security.risk_score"] > 7.0
+    assert span["attributes"]["redforge.security.vulnerabilities_detected"] > 0
+    assert span["attributes"]["redforge.security.risk_level"] == "high"
 
 def test_cost_tracking_span():
     """Test span with detailed cost tracking"""
@@ -250,16 +250,16 @@ def test_compliance_attributes():
     span = create_sample_span()
     
     # Add compliance attributes
-    span["attributes"]["promptstrike.compliance.nist_controls"] = ["GOVERN-1.1", "MAP-1.1"]
-    span["attributes"]["promptstrike.compliance.eu_ai_act_risk"] = "minimal"
-    span["attributes"]["promptstrike.compliance.audit_required"] = False
+    span["attributes"]["redforge.compliance.nist_controls"] = ["GOVERN-1.1", "MAP-1.1"]
+    span["attributes"]["redforge.compliance.eu_ai_act_risk"] = "minimal"
+    span["attributes"]["redforge.compliance.audit_required"] = False
     
     # Validate compliance attributes
-    nist_controls = span["attributes"]["promptstrike.compliance.nist_controls"]
+    nist_controls = span["attributes"]["redforge.compliance.nist_controls"]
     assert isinstance(nist_controls, list)
     assert len(nist_controls) > 0
     
-    eu_risk = span["attributes"]["promptstrike.compliance.eu_ai_act_risk"]
+    eu_risk = span["attributes"]["redforge.compliance.eu_ai_act_risk"]
     assert eu_risk in ["minimal", "limited", "high", "unacceptable"]
 
 if __name__ == "__main__":

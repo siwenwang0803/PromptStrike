@@ -6,7 +6,7 @@ Quick fix to remove ReportLab import issues
 import re
 
 # Read the report.py file
-with open('promptstrike/core/report.py', 'r') as f:
+with open('redforge/core/report.py', 'r') as f:
     content = f.read()
 
 # Replace problematic sections with simplified versions
@@ -25,7 +25,7 @@ for pattern, replacement in fixes:
     content = re.sub(pattern, replacement, content)
 
 # Write back
-with open('promptstrike/core/report.py', 'w') as f:
+with open('redforge/core/report.py', 'w') as f:
     f.write(content)
 
 print("Fixed ReportLab type hints")

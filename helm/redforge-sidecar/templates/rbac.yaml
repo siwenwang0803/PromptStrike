@@ -3,13 +3,13 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: {{ include "redforge-sidecar.fullname" . }}
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: rbac
   annotations:
-    description: "RBAC role for PromptStrike guardrail sidecar"
+    description: "RBAC role for RedForge guardrail sidecar"
     {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -17,20 +17,20 @@ rules:
 # Allow reading only specific ConfigMaps
 - apiGroups: [""]
   resources: ["configmaps"]
-  resourceNames: ["{{ include "promptstrike-sidecar.fullname" . }}-app", "{{ include "promptstrike-sidecar.fullname" . }}-sidecar"]
+  resourceNames: ["{{ include "redforge-sidecar.fullname" . }}-app", "{{ include "redforge-sidecar.fullname" . }}-sidecar"]
   verbs: ["get", "watch"]
   
 # Allow reading only specific Secrets (for API keys if needed)
 - apiGroups: [""]
   resources: ["secrets"]
-  resourceNames: ["{{ include "promptstrike-sidecar.fullname" . }}-secrets"]
+  resourceNames: ["{{ include "redforge-sidecar.fullname" . }}-secrets"]
   verbs: ["get"]
   
 # Allow reading own Pod information for self-discovery
 - apiGroups: [""]
   resources: ["pods"]
   verbs: ["get", "list", "watch"]
-  resourceNames: ["{{ include "promptstrike-sidecar.fullname" . }}-*"]
+  resourceNames: ["{{ include "redforge-sidecar.fullname" . }}-*"]
 
 # Allow creating Events for logging
 - apiGroups: [""]
@@ -41,23 +41,23 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: {{ include "redforge-sidecar.fullname" . }}
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: rbac
   annotations:
-    description: "RBAC role binding for PromptStrike guardrail sidecar"
+    description: "RBAC role binding for RedForge guardrail sidecar"
     {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 subjects:
 - kind: ServiceAccount
-  name: {{ include "promptstrike-sidecar.serviceAccountName" . }}
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: {{ include "redforge-sidecar.serviceAccountName" . }}
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
 roleRef:
   kind: Role
-  name: {{ include "promptstrike-sidecar.fullname" . }}
+  name: {{ include "redforge-sidecar.fullname" . }}
   apiGroup: rbac.authorization.k8s.io
 
 {{- if .Values.monitoring.enabled }}
@@ -66,12 +66,12 @@ roleRef:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}-monitoring
+  name: {{ include "redforge-sidecar.fullname" . }}-monitoring
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: rbac-monitoring
   annotations:
-    description: "ClusterRole for PromptStrike monitoring"
+    description: "ClusterRole for RedForge monitoring"
 rules:
 # Allow reading nodes for node-level metrics
 - apiGroups: [""]
@@ -87,17 +87,17 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}-monitoring
+  name: {{ include "redforge-sidecar.fullname" . }}-monitoring
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: rbac-monitoring
 subjects:
 - kind: ServiceAccount
-  name: {{ include "promptstrike-sidecar.serviceAccountName" . }}
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: {{ include "redforge-sidecar.serviceAccountName" . }}
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
 roleRef:
   kind: ClusterRole
-  name: {{ include "promptstrike-sidecar.fullname" . }}-monitoring
+  name: {{ include "redforge-sidecar.fullname" . }}-monitoring
   apiGroup: rbac.authorization.k8s.io
 {{- end }}
 {{- end }}

@@ -11,9 +11,9 @@ from pathlib import Path
 # Add the current directory to the Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from promptstrike.core.scanner import LLMScanner
-from promptstrike.core.attacks import AttackPackLoader
-from promptstrike.utils.config import Config
+from redforge.core.scanner import LLMScanner
+from redforge.core.attacks import AttackPackLoader
+from redforge.utils.config import Config
 
 async def test_scanner():
     """Test scanner directly"""

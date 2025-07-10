@@ -37,33 +37,33 @@
 #### New Helm Install
 ```bash
 # Add Helm repository
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+helm repo add redforge https://siwenwang0803.github.io/RedForge
 
 # Install guardrail sidecar
-helm install guardrail promptstrike/promptstrike-sidecar \
-  --namespace ps \
+helm install guardrail redforge/redforge-sidecar \
+  --namespace redforge \
   --set openai.apiKey=$OPENAI_API_KEY
 ```
 
 #### Community Tools
 ```bash
 # Collect feedback from last 30 days
-promptstrike community collect --days 30
+redforge community collect --days 30
 
 # Generate 4-quarter roadmap
-promptstrike community roadmap --quarters 4
+redforge community roadmap --quarters 4
 
 # Show feedback analytics
-promptstrike community stats
+redforge community stats
 ```
 
 #### Enhanced Compliance
 ```bash
 # Generate PCI DSS report
-promptstrike pci-dss scan-results.json --level level_1 --version 4.0
+redforge pci-dss scan-results.json --level level_1 --version 4.0
 
 # Multi-framework compliance report
-promptstrike report scan-results.json --framework multi --export pdf
+redforge report scan-results.json --framework multi --export pdf
 ```
 
 ### 📊 Sprint S-2 Metrics
@@ -90,17 +90,17 @@ promptstrike report scan-results.json --framework multi --export pdf
 #### From v0.1.0-alpha
 ```bash
 # pip upgrade
-pip install --upgrade promptstrike
+pip install --upgrade redforge
 
 # Docker upgrade
-docker pull promptstrike/cli:v0.2.0-alpha
+docker pull redforge/cli:v0.2.0-alpha
 
 # Helm upgrade
-helm upgrade guardrail promptstrike/promptstrike-sidecar
+helm upgrade guardrail redforge/redforge-sidecar
 ```
 
 #### New Configuration Options
-Add these sections to your `promptstrike.yaml`:
+Add these sections to your `redforge.yaml`:
 ```yaml
 chaos_testing:
   enabled: true

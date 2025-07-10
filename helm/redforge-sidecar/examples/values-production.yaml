@@ -1,4 +1,4 @@
-# Production values for promptstrike-sidecar
+# Production values for redforge-sidecar
 # This file demonstrates enterprise-grade production deployment
 
 # Global configuration for production
@@ -11,7 +11,7 @@ global:
 sidecar:
   enabled: true
   image:
-    repository: promptstrike/guardrail-sidecar
+    repository: redforge/guardrail-sidecar
     tag: "v1.0.0"  # Use specific version tags in production
     pullPolicy: IfNotPresent
   
@@ -160,19 +160,19 @@ rbac:
     
     # Automated service accounts
     serviceAccountBindings:
-      - serviceAccount: "promptstrike-ci-scanner"
+      - serviceAccount: "redforge-ci-scanner"
         role: "developer"
-        namespace: "promptstrike-production"
+        namespace: "redforge-production"
       - serviceAccount: "compliance-exporter"
         role: "compliance-officer"
-        namespace: "promptstrike-production"
+        namespace: "redforge-production"
 
 # Production namespace with enhanced security
 namespace:
   create: true
-  name: promptstrike-production
+  name: redforge-production
   labels:
-    name: promptstrike-production
+    name: redforge-production
     security-policy: restricted
     environment: production
   annotations:
@@ -189,7 +189,7 @@ affinity:
             - key: app.kubernetes.io/name
               operator: In
               values:
-                - promptstrike-sidecar
+                - redforge-sidecar
         topologyKey: topology.kubernetes.io/zone
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:

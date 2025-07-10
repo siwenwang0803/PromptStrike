@@ -7,8 +7,8 @@ metadata:
     purpose: isolated-chaos-testing
     security-level: testing
   annotations:
-    chaos.promptstrike.io/isolation-level: "high"
-    chaos.promptstrike.io/resource-monitoring: "enabled"
+    chaos.redforge.io/isolation-level: "high"
+    chaos.redforge.io/resource-monitoring: "enabled"
 ---
 apiVersion: v1
 kind: ResourceQuota

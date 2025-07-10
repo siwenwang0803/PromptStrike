@@ -2,10 +2,10 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}-pdb
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: {{ include "redforge-sidecar.fullname" . }}-pdb
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: availability
   annotations:
     description: "Ensures minimum availability during cluster maintenance"
@@ -21,5 +21,5 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "promptstrike-sidecar.selectorLabels" . | nindent 6 }}
+      {{- include "redforge-sidecar.selectorLabels" . | nindent 6 }}
 {{- end }}

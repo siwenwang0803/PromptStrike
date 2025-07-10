@@ -1,4 +1,4 @@
-PromptStrike CLI Matrix Test Summary
+RedForge CLI Matrix Test Summary
 ===================================
 Date: Mon Jul  7 19:37:25 PDT 2025
 Models tested: gpt-4

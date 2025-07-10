@@ -1,6 +1,6 @@
-# PromptStrike Guardrail PoC
+# RedForge Guardrail PoC
 
-This directory contains a Proof of Concept (PoC) for the PromptStrike Guardrail system, demonstrating sidecar-based security monitoring for LLM applications in Kubernetes.
+This directory contains a Proof of Concept (PoC) for the RedForge Guardrail system, demonstrating sidecar-based security monitoring for LLM applications in Kubernetes.
 
 ## 🏗️ Architecture
 
@@ -15,7 +15,7 @@ The PoC consists of two main components:
 ### 2. Guardrail Sidecar (`sidecar/`)
 - **Security monitoring** service running alongside demo app
 - Real-time traffic analysis and vulnerability detection
-- Generates JSON reports compatible with PromptStrike schema
+- Generates JSON reports compatible with RedForge schema
 - Endpoints: `/security/report`, `/security/analyze`, `/security/metrics`
 
 ## 🚀 Quick Start
@@ -53,11 +53,11 @@ kubectl apply -f k8s/deployment.yaml
 kubectl apply -f k8s/service.yaml
 
 # Check deployment
-kubectl get pods -n promptstrike-guardrail
-kubectl get services -n promptstrike-guardrail
+kubectl get pods -n redforge-guardrail
+kubectl get services -n redforge-guardrail
 
 # Access services (via NodePort)
-minikube service promptstrike-guardrail-demo-nodeport -n promptstrike-guardrail
+minikube service redforge-guardrail-demo-nodeport -n redforge-guardrail
 
 # Test demo app
 curl -X POST http://$(minikube ip):30000/chat \
@@ -229,23 +229,23 @@ guardrail_poc/
 2. **Kubernetes Deployment Issues**
    ```bash
    # Check pod status
-   kubectl describe pods -n promptstrike-guardrail
+   kubectl describe pods -n redforge-guardrail
    
    # View logs
-   kubectl logs -f deployment/promptstrike-guardrail-demo -n promptstrike-guardrail -c demo-app
-   kubectl logs -f deployment/promptstrike-guardrail-demo -n promptstrike-guardrail -c guardrail-sidecar
+   kubectl logs -f deployment/redforge-guardrail-demo -n redforge-guardrail -c demo-app
+   kubectl logs -f deployment/redforge-guardrail-demo -n redforge-guardrail -c guardrail-sidecar
    ```
 
 3. **Volume Mount Issues**
    ```bash
    # Check volume permissions
-   kubectl exec -it deployment/promptstrike-guardrail-demo -n promptstrike-guardrail -c demo-app -- ls -la /var/reports
+   kubectl exec -it deployment/redforge-guardrail-demo -n redforge-guardrail -c demo-app -- ls -la /var/reports
    ```
 
 4. **Service Connectivity**
    ```bash
    # Test internal communication
-   kubectl exec -it deployment/promptstrike-guardrail-demo -n promptstrike-guardrail -c guardrail-sidecar -- curl http://localhost:8000/health
+   kubectl exec -it deployment/redforge-guardrail-demo -n redforge-guardrail -c guardrail-sidecar -- curl http://localhost:8000/health
    ```
 
 ## 📞 Support

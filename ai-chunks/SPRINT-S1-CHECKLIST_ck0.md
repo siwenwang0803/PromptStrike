@@ -15,14 +15,14 @@
 - [x] `Dockerfile` - Multi-stage production build
 - [x] `docker-compose.yml` - Development environment  
 - [x] `pyproject.toml` - Poetry dependency management
-- [x] Complete CLI interface (`promptstrike/cli.py`)
+- [x] Complete CLI interface (`redforge/cli.py`)
 - [x] JSON report generation with full schema
 - [x] HTML report generation with rich formatting
 - [x] PDF report generation (text-based MVP)
 
 ### ✅ **2. OSS Lite Attack Pack**  
 - [x] OWASP LLM Top 10 complete coverage (22 attacks)
-- [x] PromptStrike extensions (Cost, PII attacks)
+- [x] RedForge extensions (Cost, PII attacks)
 - [x] Severity classification (Critical/High/Medium/Low/Info)
 - [x] NIST AI-RMF control mapping
 - [x] EU AI Act article references
@@ -41,7 +41,7 @@
 
 ### ✅ **Architecture**
 ```
-promptstrike/
+redforge/
 ├── cli.py              ✅ Complete CLI interface
 ├── core/
 │   ├── scanner.py      ✅ LLM scanning engine  
@@ -157,10 +157,10 @@ promptstrike/
 - [x] Development dependencies separation
 
 ### ✅ **Command Line Interface**
-- [x] `promptstrike scan` - Core scanning functionality
-- [x] `promptstrike list-attacks` - Attack pack management
-- [x] `promptstrike doctor` - Health diagnostics  
-- [x] `promptstrike version` - Version information
+- [x] `redforge scan` - Core scanning functionality
+- [x] `redforge list-attacks` - Attack pack management
+- [x] `redforge doctor` - Health diagnostics  
+- [x] `redforge version` - Version information
 - [x] Rich CLI with progress bars and colors
 
 ### ✅ **Report Generation**
@@ -222,8 +222,8 @@ promptstrike/
 
 3. **Create Docker Hub images**
    ```bash
-   docker build -t promptstrike/cli:0.1.0-alpha .
-   docker push promptstrike/cli:0.1.0-alpha
+   docker build -t redforge/cli:0.1.0-alpha .
+   docker push redforge/cli:0.1.0-alpha
    ```
 
 ### **Marketing & Community (Next Week)**

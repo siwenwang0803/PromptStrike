@@ -1,6 +1,6 @@
-Usage: python -m promptstrike.cli [OPTIONS] COMMAND [ARGS]...
+Usage: python -m redforge.cli [OPTIONS] COMMAND [ARGS]...
 
-  PromptStrike CLI - Developer-first LLM red-team platform
+  RedForge CLI - Developer-first LLM red-team platform
 
 Options:
   --help  Show this message and exit.
@@ -14,7 +14,7 @@ Commands:
   report        🔍 Generate compliance reports from scan results
   scan          🎯 Run automated LLM red-team scan
   version       📋 Show version information
-🎯 PromptStrike CLI
+🎯 RedForge CLI
 Developer-first automated LLM red-team platform
 
 Version: 0.1.0-alpha
@@ -25,7 +25,7 @@ Reference: cid-roadmap-v1
 
 ✨ Sprint S-1 Complete!
 Features: OWASP LLM Top 10, Docker deployment, Multi-format reports
-🩺 PromptStrike Health Check
+🩺 RedForge Health Check
 
 ✅ Python Version: Python 3.13.5
 ✅ API Key: OPENAI_API_KEY environment variable set
@@ -34,8 +34,8 @@ Features: OWASP LLM Top 10, Docker deployment, Multi-format reports
 ✅ Dependencies: All core dependencies available
 ✅ Configuration: Default config loaded (max_requests: 100)
 
-🎉 All checks passed! PromptStrike is ready to use.
-💡 Try: promptstrike scan gpt-3.5-turbo --dry-run
+🎉 All checks passed! RedForge is ready to use.
+💡 Try: redforge scan gpt-3.5-turbo --dry-run
 
 System: darwin | CLI: v0.1.0-alpha | Sprint: S-1
 

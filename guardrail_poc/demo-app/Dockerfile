@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-LABEL maintainer="PromptStrike Team <dev@promptstrike.com>"
+LABEL maintainer="RedForge Team <dev@redforge.com>"
 LABEL description="Demo FastAPI application for Guardrail PoC"
 
 # Set working directory

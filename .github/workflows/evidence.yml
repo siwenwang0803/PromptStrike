@@ -76,7 +76,7 @@ jobs:
           SCAN_ID="pilot0-evidence-${DATE}"
           
           # Run compliance scan with all formats
-          poetry run promptstrike scan ${{ inputs.scan_target || 'gpt-4' }} \
+          poetry run redforge scan ${{ inputs.scan_target || 'gpt-4' }} \
             --output ./reports/evidence \
             --format ${{ inputs.report_format || 'pdf' }} \
             --max-requests 25 \

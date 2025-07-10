@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PromptStrike PDF Content Validator
+RedForge PDF Content Validator
 验证 PDF 内容完整性，包括 Logo、威胁列表、合规性映射等
 Validates PDF content integrity including logos, threat lists, compliance mappings
 """
@@ -60,7 +60,7 @@ class ValidationResult:
 
 
 class PDFContentValidator:
-    """Comprehensive PDF content validation for PromptStrike compliance reports"""
+    """Comprehensive PDF content validation for RedForge compliance reports"""
     
     def __init__(self, pdf_path: str):
         self.pdf_path = Path(pdf_path)
@@ -345,7 +345,7 @@ class PDFContentValidator:
     def _validate_report_metadata(self):
         """Validate report metadata and branding"""
         metadata_items = [
-            ("PromptStrike branding", r"promptstrike"),
+            ("RedForge branding", r"redforge"),
             ("Date/timestamp", r"\d{4}[-/]\d{2}[-/]\d{2}|\d{2}[-/]\d{2}[-/]\d{4}"),
             ("Version info", r"version|v\d+\.\d+|alpha|beta|release"),
             ("Report ID", r"report.?id|scan.?id|ps[-_]\d+"),
@@ -462,7 +462,7 @@ class PDFContentValidator:
 def main():
     """Main entry point for PDF content validation"""
     parser = argparse.ArgumentParser(
-        description="Validate PDF content for PromptStrike compliance reports"
+        description="Validate PDF content for RedForge compliance reports"
     )
     parser.add_argument(
         "pdf_path",

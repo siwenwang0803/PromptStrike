@@ -81,10 +81,10 @@ ls -lh reports/evidence/Pilot0_compliance_pack.pdf
 ### 内容验证 / Content Verification
 ```bash
 # 验证 PDF 包含必要内容
-strings reports/evidence/Pilot0_compliance_pack.pdf | grep -i "promptstrike\|owasp\|compliance"
+strings reports/evidence/Pilot0_compliance_pack.pdf | grep -i "redforge\|owasp\|compliance"
 
 # 预期找到 / Expected to find:
-# - PromptStrike 品牌
+# - RedForge 品牌
 # - OWASP LLM Top 10 内容
 # - 合规性框架映射
 ```
@@ -171,11 +171,11 @@ strings reports/evidence/Pilot0_compliance_pack.pdf | grep -i "promptstrike\|owa
 
 ### 成功验证输出 / Successful Verification Output
 ```
-🎯 PromptStrike PDF 生成验证 / PDF Generation Verification
+🎯 RedForge PDF 生成验证 / PDF Generation Verification
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ✅ Python availability: PASSED
-✅ PromptStrike installation: PASSED  
+✅ RedForge installation: PASSED  
 ✅ ReportLab availability: PASSED
 ✅ GitHub Actions workflow: PASSED
 ✅ Nightly schedule configuration: PASSED

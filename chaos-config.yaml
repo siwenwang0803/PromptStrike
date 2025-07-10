@@ -1,5 +1,5 @@
 # Chaos Testing Configuration
-# This file configures all aspects of chaos testing for PromptStrike
+# This file configures all aspects of chaos testing for RedForge
 
 version: "1.0"
 

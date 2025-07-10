@@ -13,7 +13,7 @@ import json
 
 # Import the CostGuard implementation directly
 sys.path.insert(0, '.')
-from promptstrike.sidecar import CostGuard, load_prompts
+from redforge.sidecar import CostGuard, load_prompts
 
 
 def run_cost_guard_validation():

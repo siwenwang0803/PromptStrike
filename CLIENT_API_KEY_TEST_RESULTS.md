@@ -1,4 +1,4 @@
-# 🎉 PromptStrike PDF 生成测试结果 (客户 API 密钥) / PDF Generation Test Results (Client API Key)
+# 🎉 RedForge PDF 生成测试结果 (客户 API 密钥) / PDF Generation Test Results (Client API Key)
 
 ## ✅ 测试成功完成 / Test Successfully Completed
 
@@ -11,7 +11,7 @@
 ### ✅ 目标 1: PDF 生成成功率 100%
 - **实际成功率**: ✅ **100%**
 - **测试执行**: 19 个攻击测试全部完成
-- **PDF 文件生成**: ✅ 成功 (`promptstrike_scan_20250709_200513.pdf`)
+- **PDF 文件生成**: ✅ 成功 (`redforge_scan_20250709_200513.pdf`)
 - **生成时间**: 114.9 秒
 - **状态**: ✅ **目标达成**
 
@@ -32,7 +32,7 @@
 
 ### 扫描执行结果 / Scan Execution Results
 ```
-🎯 PromptStrike CLI v0.1.0
+🎯 RedForge CLI v0.1.0
 Target: gpt-4
 Attack Pack: owasp-llm-top10 (19 attacks)
 
@@ -76,7 +76,7 @@ Attack Pack: owasp-llm-top10 (19 attacks)
 - Compliance (合规性)
 
 **✅ 品牌和元数据**:
-- PromptStrike 品牌标识
+- RedForge 品牌标识
 - 生成时间戳
 - 版本信息
 - 报告 ID
@@ -129,7 +129,7 @@ Attack Pack: owasp-llm-top10 (19 attacks)
 export OPENAI_API_KEY="your-api-key"
 
 # 2. 生成完整 PDF 报告
-promptstrike scan gpt-4 --format pdf --max-requests 25
+redforge scan gpt-4 --format pdf --max-requests 25
 
 # 3. 检查文件大小
 ls -lh reports/*.pdf
@@ -154,7 +154,7 @@ ls -lh reports/*.pdf
 
 ### 🚀 生产部署状态 / Production Deployment Status
 
-**✅ 生产就绪**: PromptStrike PDF 生成系统已完全验证，可以立即部署到生产环境。
+**✅ 生产就绪**: RedForge PDF 生成系统已完全验证，可以立即部署到生产环境。
 
 **主要成就**:
 - ✅ 100% PDF 生成成功率
@@ -167,4 +167,4 @@ ls -lh reports/*.pdf
 
 ---
 
-**🎯 测试结论**: 客户 API 密钥测试成功，PromptStrike PDF 生成达到 100% 成功率目标，文件大小远低于 3MB 限制，系统生产就绪。
+**🎯 测试结论**: 客户 API 密钥测试成功，RedForge PDF 生成达到 100% 成功率目标，文件大小远低于 3MB 限制，系统生产就绪。

@@ -4,13 +4,13 @@
 
 ### 1. Test GitHub Pages
 ```bash
-curl -f https://siwenwang0803.github.io/PromptStrike
+curl -f https://siwenwang0803.github.io/RedForge
 ```
 **Expected**: Should return HTML page (not 404)
 
 ### 2. Test Helm Repository Index
 ```bash
-curl -f https://siwenwang0803.github.io/PromptStrike/index.yaml
+curl -f https://siwenwang0803.github.io/RedForge/index.yaml
 ```
 **Expected**: Should return YAML content (not 404)
 
@@ -25,16 +25,16 @@ curl -f https://siwenwang0803.github.io/PromptStrike/index.yaml
 ### 1. Manual Helm Commands
 ```bash
 # Add repository
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+helm repo add redforge https://siwenwang0803.github.io/RedForge
 
 # Update repository index
 helm repo update
 
 # Search for charts
-helm search repo promptstrike
+helm search repo redforge
 
 # Test installation (dry-run)
-helm install guardrail promptstrike/promptstrike-sidecar \
+helm install guardrail redforge/redforge-sidecar \
   -n ps \
   --set openai.apiKey="test-key" \
   --create-namespace \
@@ -50,7 +50,7 @@ helm install guardrail promptstrike/promptstrike-sidecar \
 cat helm_install_evidence.txt
 
 # Take screenshots of:
-# - helm search repo promptstrike (showing available charts)
+# - helm search repo redforge (showing available charts)
 # - helm install --dry-run output (showing successful validation)
 # - helm_install_evidence.txt content
 ```
@@ -58,17 +58,17 @@ cat helm_install_evidence.txt
 ## Alternative Validation Methods
 
 ### Option A: Check GitHub Actions
-1. Go to: https://github.com/siwenwang0803/PromptStrike/actions
+1. Go to: https://github.com/siwenwang0803/RedForge/actions
 2. Look for "Release Helm Chart" workflow
 3. Verify latest run shows "success" ✅
 
 ### Option B: Check GitHub Pages Settings
-1. Go to: https://github.com/siwenwang0803/PromptStrike/settings/pages
-2. Verify "Your site is live at: https://siwenwang0803.github.io/PromptStrike"
+1. Go to: https://github.com/siwenwang0803/RedForge/settings/pages
+2. Verify "Your site is live at: https://siwenwang0803.github.io/RedForge"
 3. Click the URL to test accessibility
 
 ### Option C: Check Repository Files
-1. Go to: https://github.com/siwenwang0803/PromptStrike/tree/gh-pages
+1. Go to: https://github.com/siwenwang0803/RedForge/tree/gh-pages
 2. Look for `index.yaml` and `.tgz` files
 3. Verify chart packages are present
 
@@ -81,7 +81,7 @@ cat helm_install_evidence.txt
 
 ### If helm commands fail:
 - Ensure Helm 3.x is installed: `helm version`
-- Clear Helm cache: `helm repo remove promptstrike; rm -rf ~/.cache/helm`
+- Clear Helm cache: `helm repo remove redforge; rm -rf ~/.cache/helm`
 - Try again with verbose output: `helm repo add --debug`
 
 ### If chart installation fails:
@@ -94,11 +94,11 @@ cat helm_install_evidence.txt
 **✅ DOD Complete when:**
 1. `curl` commands return content (not 404)
 2. `helm repo add` succeeds without errors
-3. `helm search repo promptstrike` shows charts
+3. `helm search repo redforge` shows charts
 4. `helm install --dry-run` validates successfully (even if it warns about CRDs)
 
 **📸 Screenshot Evidence:**
-- Terminal showing successful `helm search repo promptstrike`
+- Terminal showing successful `helm search repo redforge`
 - Contents of `helm_install_evidence.txt` file
 - Successful `helm install --dry-run` command
 

@@ -41,7 +41,7 @@ else
     exit 1
 fi
 
-if kubectl get pod -n psguard-test -l app=psguard | grep -q Running; then
+if kubectl get pod -n redforge-test -l app=redforge | grep -q Running; then
     print_msg $GREEN "✅ PSGuard Sidecar 运行中"
 else
     print_msg $RED "❌ PSGuard Sidecar 未运行"
@@ -54,7 +54,7 @@ kubectl port-forward svc/prometheus 9090:9090 -n monitoring &
 PROM_PID=$!
 kubectl port-forward svc/grafana 3000:3000 -n monitoring &
 GRAFANA_PID=$!
-kubectl port-forward svc/psguard 8080:8080 -n psguard-test &
+kubectl port-forward svc/redforge 8080:8080 -n redforge-test &
 PSGUARD_PID=$!
 
 sleep 10
@@ -244,32 +244,32 @@ for i in $(seq 1 $MONITOR_DURATION); do
     timestamp=$(date '+%Y-%m-%d %H:%M:%S')
     
     # CPU 使用率 (millicores)
-    cpu_query='rate(container_cpu_usage_seconds_total{namespace="psguard-test",container="psguard"}[1m]) * 1000'
+    cpu_query='rate(container_cpu_usage_seconds_total{namespace="redforge-test",container="redforge"}[1m]) * 1000'
     cpu_millicores=$(curl -s "${PROMETHEUS_URL}/api/v1/query?query=${cpu_query}" | jq -r '.data.result[0].value[1] // "0"' 2>/dev/null)
     
     # 内存使用 (bytes 和 Mi)
-    mem_query='container_memory_working_set_bytes{namespace="psguard-test",container="psguard"}'
+    mem_query='container_memory_working_set_bytes{namespace="redforge-test",container="redforge"}'
     memory_bytes=$(curl -s "${PROMETHEUS_URL}/api/v1/query?query=${mem_query}" | jq -r '.data.result[0].value[1] // "0"' 2>/dev/null)
     memory_mi=$(echo "scale=2; $memory_bytes / 1024 / 1024" | bc 2>/dev/null || echo "0")
     
     # 磁盘 I/O (bytes/sec)
-    disk_read_query='rate(container_fs_reads_bytes_total{namespace="psguard-test",container="psguard"}[1m])'
-    disk_write_query='rate(container_fs_writes_bytes_total{namespace="psguard-test",container="psguard"}[1m])'
+    disk_read_query='rate(container_fs_reads_bytes_total{namespace="redforge-test",container="redforge"}[1m])'
+    disk_write_query='rate(container_fs_writes_bytes_total{namespace="redforge-test",container="redforge"}[1m])'
     disk_read_bps=$(curl -s "${PROMETHEUS_URL}/api/v1/query?query=${disk_read_query}" | jq -r '.data.result[0].value[1] // "0"' 2>/dev/null)
     disk_write_bps=$(curl -s "${PROMETHEUS_URL}/api/v1/query?query=${disk_write_query}" | jq -r '.data.result[0].value[1] // "0"' 2>/dev/null)
     
     # 网络流量 (bytes/sec)
-    net_rx_query='rate(container_network_receive_bytes_total{namespace="psguard-test"}[1m])'
-    net_tx_query='rate(container_network_transmit_bytes_total{namespace="psguard-test"}[1m])'
+    net_rx_query='rate(container_network_receive_bytes_total{namespace="redforge-test"}[1m])'
+    net_tx_query='rate(container_network_transmit_bytes_total{namespace="redforge-test"}[1m])'
     network_rx_bps=$(curl -s "${PROMETHEUS_URL}/api/v1/query?query=${net_rx_query}" | jq -r '.data.result[0].value[1] // "0"' 2>/dev/null)
     network_tx_bps=$(curl -s "${PROMETHEUS_URL}/api/v1/query?query=${net_tx_query}" | jq -r '.data.result[0].value[1] // "0"' 2>/dev/null)
     
     # Pod 重启次数
-    restart_query='kube_pod_container_status_restarts_total{namespace="psguard-test",container="psguard"}'
+    restart_query='kube_pod_container_status_restarts_total{namespace="redforge-test",container="redforge"}'
     pod_restarts=$(curl -s "${PROMETHEUS_URL}/api/v1/query?query=${restart_query}" | jq -r '.data.result[0].value[1] // "0"' 2>/dev/null)
     
     # 检查告警状态
-    alerts=$(curl -s "${PROMETHEUS_URL}/api/v1/alerts" | jq -r '.data.alerts[] | select(.labels.component=="psguard-sidecar") | .state' 2>/dev/null | tr '\n' ',' | sed 's/,$//')
+    alerts=$(curl -s "${PROMETHEUS_URL}/api/v1/alerts" | jq -r '.data.alerts[] | select(.labels.component=="redforge-sidecar") | .state' 2>/dev/null | tr '\n' ',' | sed 's/,$//')
     alert_status=${alerts:-"none"}
     
     # 记录数据
@@ -329,8 +329,8 @@ wait $MONITOR_PID
 print_msg $BLUE "9. 分析测试结果..."
 
 # 检查 Pod 最终状态
-final_pod_status=$(kubectl get pod -n psguard-test -l app=psguard -o jsonpath='{.items[0].status.phase}')
-final_restart_count=$(kubectl get pod -n psguard-test -l app=psguard -o jsonpath='{.items[0].status.containerStatuses[0].restartCount}')
+final_pod_status=$(kubectl get pod -n redforge-test -l app=redforge -o jsonpath='{.items[0].status.phase}')
+final_restart_count=$(kubectl get pod -n redforge-test -l app=redforge -o jsonpath='{.items[0].status.containerStatuses[0].restartCount}')
 
 print_msg $BLUE "Pod 最终状态: $final_pod_status"
 print_msg $BLUE "Pod 重启次数: $final_restart_count"

@@ -2,77 +2,77 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}-alerts
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: {{ include "redforge-sidecar.fullname" . }}-alerts
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: monitoring-alerts
   annotations:
-    description: "Prometheus alerting rules for PromptStrike guardrail sidecar"
+    description: "Prometheus alerting rules for RedForge guardrail sidecar"
     {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
   groups:
-  - name: promptstrike.rules
+  - name: redforge.rules
     rules:
-    - alert: PromptStrikeHighCPUUsage
-      expr: rate(container_cpu_usage_seconds_total{namespace="{{ include "promptstrike-sidecar.namespaceName" . }}",container=~"app|sidecar"}[5m]) > {{ .Values.monitoring.prometheusRule.rules.highCPUThreshold }}
+    - alert: RedForgeHighCPUUsage
+      expr: rate(container_cpu_usage_seconds_total{namespace="{{ include "redforge-sidecar.namespaceName" . }}",container=~"app|sidecar"}[5m]) > {{ .Values.monitoring.prometheusRule.rules.highCPUThreshold }}
       for: {{ .Values.monitoring.prometheusRule.rules.evaluationInterval }}
       labels:
         severity: warning
-        service: {{ include "promptstrike-sidecar.fullname" . }}
+        service: {{ include "redforge-sidecar.fullname" . }}
       annotations:
-        summary: "High CPU usage in {{ include "promptstrike-sidecar.fullname" . }}"
+        summary: "High CPU usage in {{ include "redforge-sidecar.fullname" . }}"
         description: "CPU usage is above {{ .Values.monitoring.prometheusRule.rules.highCPUThreshold }} for more than {{ .Values.monitoring.prometheusRule.rules.evaluationInterval }}"
     
-    - alert: PromptStrikeHighMemoryUsage
-      expr: container_memory_working_set_bytes{namespace="{{ include "promptstrike-sidecar.namespaceName" . }}",container=~"app|sidecar"} / container_spec_memory_limit_bytes{namespace="{{ include "promptstrike-sidecar.namespaceName" . }}",container=~"app|sidecar"} > {{ .Values.monitoring.prometheusRule.rules.highMemoryThreshold }}
+    - alert: RedForgeHighMemoryUsage
+      expr: container_memory_working_set_bytes{namespace="{{ include "redforge-sidecar.namespaceName" . }}",container=~"app|sidecar"} / container_spec_memory_limit_bytes{namespace="{{ include "redforge-sidecar.namespaceName" . }}",container=~"app|sidecar"} > {{ .Values.monitoring.prometheusRule.rules.highMemoryThreshold }}
       for: {{ .Values.monitoring.prometheusRule.rules.evaluationInterval }}
       labels:
         severity: warning
-        service: {{ include "promptstrike-sidecar.fullname" . }}
+        service: {{ include "redforge-sidecar.fullname" . }}
       annotations:
-        summary: "High memory usage in {{ include "promptstrike-sidecar.fullname" . }}"
+        summary: "High memory usage in {{ include "redforge-sidecar.fullname" . }}"
         description: "Memory usage is above {{ .Values.monitoring.prometheusRule.rules.highMemoryThreshold }} for more than {{ .Values.monitoring.prometheusRule.rules.evaluationInterval }}"
     
-    - alert: PromptStrikePodRestartFrequent
-      expr: increase(kube_pod_container_status_restarts_total{namespace="{{ include "promptstrike-sidecar.namespaceName" . }}",container=~"app|sidecar"}[1h]) > {{ .Values.monitoring.prometheusRule.rules.podRestartThreshold }}
+    - alert: RedForgePodRestartFrequent
+      expr: increase(kube_pod_container_status_restarts_total{namespace="{{ include "redforge-sidecar.namespaceName" . }}",container=~"app|sidecar"}[1h]) > {{ .Values.monitoring.prometheusRule.rules.podRestartThreshold }}
       for: 0m
       labels:
         severity: warning
-        service: {{ include "promptstrike-sidecar.fullname" . }}
+        service: {{ include "redforge-sidecar.fullname" . }}
       annotations:
-        summary: "Frequent pod restarts in {{ include "promptstrike-sidecar.fullname" . }}"
+        summary: "Frequent pod restarts in {{ include "redforge-sidecar.fullname" . }}"
         description: "Pod has restarted more than {{ .Values.monitoring.prometheusRule.rules.podRestartThreshold }} times in the last hour"
     
-    - alert: PromptStrikePodNotReady
-      expr: kube_pod_status_ready{namespace="{{ include "promptstrike-sidecar.namespaceName" . }}",condition="false"} == 1
+    - alert: RedForgePodNotReady
+      expr: kube_pod_status_ready{namespace="{{ include "redforge-sidecar.namespaceName" . }}",condition="false"} == 1
       for: {{ .Values.monitoring.prometheusRule.rules.evaluationInterval }}
       labels:
         severity: critical
-        service: {{ include "promptstrike-sidecar.fullname" . }}
+        service: {{ include "redforge-sidecar.fullname" . }}
       annotations:
-        summary: "Pod not ready in {{ include "promptstrike-sidecar.fullname" . }}"
+        summary: "Pod not ready in {{ include "redforge-sidecar.fullname" . }}"
         description: "Pod has been not ready for more than {{ .Values.monitoring.prometheusRule.rules.evaluationInterval }}"
     
-    - alert: PromptStrikeSecurityViolation
-      expr: increase(guardrail_security_violations_total{namespace="{{ include "promptstrike-sidecar.namespaceName" . }}"}[5m]) > {{ .Values.monitoring.prometheusRule.rules.securityViolationThreshold }}
+    - alert: RedForgeSecurityViolation
+      expr: increase(guardrail_security_violations_total{namespace="{{ include "redforge-sidecar.namespaceName" . }}"}[5m]) > {{ .Values.monitoring.prometheusRule.rules.securityViolationThreshold }}
       for: 0m
       labels:
         severity: critical
-        service: {{ include "promptstrike-sidecar.fullname" . }}
+        service: {{ include "redforge-sidecar.fullname" . }}
       annotations:
-        summary: "Security violations detected in {{ include "promptstrike-sidecar.fullname" . }}"
+        summary: "Security violations detected in {{ include "redforge-sidecar.fullname" . }}"
         description: "More than {{ .Values.monitoring.prometheusRule.rules.securityViolationThreshold }} security violations detected in the last 5 minutes"
     
-    - alert: PromptStrikeCostBudgetExceeded
-      expr: guardrail_daily_cost_usd{namespace="{{ include "promptstrike-sidecar.namespaceName" . }}"} > {{ .Values.sidecar.env.GUARDRAIL_DAILY_BUDGET }}
+    - alert: RedForgeCostBudgetExceeded
+      expr: guardrail_daily_cost_usd{namespace="{{ include "redforge-sidecar.namespaceName" . }}"} > {{ .Values.sidecar.env.GUARDRAIL_DAILY_BUDGET }}
       for: 0m
       labels:
         severity: warning
-        service: {{ include "promptstrike-sidecar.fullname" . }}
+        service: {{ include "redforge-sidecar.fullname" . }}
       annotations:
-        summary: "Daily cost budget exceeded in {{ include "promptstrike-sidecar.fullname" . }}"
+        summary: "Daily cost budget exceeded in {{ include "redforge-sidecar.fullname" . }}"
         description: "Daily cost has exceeded the configured budget of ${{ .Values.sidecar.env.GUARDRAIL_DAILY_BUDGET }}"
 {{- end }}

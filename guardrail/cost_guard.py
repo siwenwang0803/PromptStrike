@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PromptStrike Cost Guard - Token Storm Protection & Budget Management
+RedForge Cost Guard - Token Storm Protection & Budget Management
 
 Production-ready cost protection system with configurable thresholds,
 rate limiting, and comprehensive monitoring for LLM applications.

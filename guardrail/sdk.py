@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PromptStrike Guardrail SDK - Runtime Security Monitoring
+RedForge Guardrail SDK - Runtime Security Monitoring
 
 Production-ready SDK for LLM traffic capture, analysis, and cost protection.
 Supports 1% sampling, async replay engine, and comprehensive security analysis.
@@ -72,7 +72,7 @@ class RiskLevel(str, Enum):
 
 
 class ThreatCategory(str, Enum):
-    """OWASP LLM Top 10 + PromptStrike extensions"""
+    """OWASP LLM Top 10 + RedForge extensions"""
     PROMPT_INJECTION = "prompt_injection"          # LLM01
     INSECURE_OUTPUT = "insecure_output"            # LLM02
     TRAINING_DATA_POISONING = "training_data_poisoning"  # LLM03
@@ -84,7 +84,7 @@ class ThreatCategory(str, Enum):
     OVERRELIANCE = "overreliance"                  # LLM09
     MODEL_THEFT = "model_theft"                    # LLM10
     
-    # PromptStrike Extensions
+    # RedForge Extensions
     COST_EXPLOITATION = "cost_exploitation"
     PII_LEAKAGE = "pii_leakage"
     TOKEN_STORM = "token_storm"

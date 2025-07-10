@@ -1,18 +1,18 @@
 <!-- source: docker-compose.yml idx:0 lines:68 -->
 
 ```yml
-# PromptStrike CLI Development Environment
+# RedForge CLI Development Environment
 # Reference: cid-roadmap-v1 Sprint S-1
 
 version: '3.8'
 
 services:
-  promptstrike-cli:
+  redforge-cli:
     build:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: promptstrike-cli
+    container_name: redforge-cli
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - PYTHONPATH=/app
@@ -24,12 +24,12 @@ services:
     command: ["--help"]
     
   # Development container with source code mounted
-  promptstrike-dev:
+  redforge-dev:
     build:
       context: .
       dockerfile: Dockerfile
       target: builder
-    container_name: promptstrike-dev
+    container_name: redforge-dev
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - PYTHONPATH=/app
@@ -44,7 +44,7 @@ services:
   # Future: Vector database for attack patterns
   chromadb:
     image: chromadb/chroma:latest
-    container_name: promptstrike-vectordb
+    container_name: redforge-vectordb
     ports:
       - "8000:8000"
     volumes:
@@ -58,7 +58,7 @@ services:
   # Future: Metrics and monitoring
   prometheus:
     image: prom/prometheus:latest
-    container_name: promptstrike-metrics
+    container_name: redforge-metrics
     ports:
       - "9090:9090"
     volumes:
@@ -68,5 +68,5 @@ services:
 
 networks:
   default:
-    name: promptstrike-network
+    name: redforge-network
 ```

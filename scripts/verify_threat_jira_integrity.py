@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PromptStrike Threat Model ↔ Jira 完整性验证
+RedForge Threat Model ↔ Jira 完整性验证
 目标：验证 17 条威胁均有 Jira 链接且状态 ≠ "Open"
 Target: Verify all 17 threats have Jira links and status ≠ "Open"
 """
@@ -75,13 +75,13 @@ class ThreatJiraValidator:
         
         # File paths
         self.project_root = pathlib.Path(__file__).parent.parent
-        self.threat_doc_path = self.project_root / "docs/PromptStrike/Security/Guardrail_Threat_Model.md"
+        self.threat_doc_path = self.project_root / "docs/RedForge/Security/Guardrail_Threat_Model.md"
         self.mapping_path = self.project_root / "scripts/threat_to_jira.yml"
         
     def _load_config(self, config_path: Optional[str]) -> Dict:
         """Load configuration for Jira integration"""
         default_config = {
-            'jira_base_url': os.environ.get('JIRA_BASE_URL', 'https://promptstrike.atlassian.net'),
+            'jira_base_url': os.environ.get('JIRA_BASE_URL', 'https://redforge.atlassian.net'),
             'jira_username': os.environ.get('JIRA_USERNAME'),
             'jira_api_token': os.environ.get('JIRA_API_TOKEN'),
             'jira_project': os.environ.get('JIRA_PROJECT', 'PS'),
@@ -606,7 +606,7 @@ class ThreatJiraValidator:
     
     def run_full_validation(self) -> bool:
         """运行完整验证流程"""
-        print("🎯 PromptStrike 威胁模型 ↔ Jira 完整性验证")
+        print("🎯 RedForge 威胁模型 ↔ Jira 完整性验证")
         print("   Threat Model ↔ Jira Integrity Validation")
         print("="*60)
         print(f"目标: 验证 17 条威胁均有 Jira 链接且状态 ≠ 'Open'")

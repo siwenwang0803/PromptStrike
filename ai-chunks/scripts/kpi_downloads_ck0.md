@@ -4,7 +4,7 @@
 #!/usr/bin/env python3
 """
 KPI Downloads Tracking Script
-Monitors PyPI, Docker Hub, and GitHub downloads for PromptStrike CLI
+Monitors PyPI, Docker Hub, and GitHub downloads for RedForge CLI
 Sends data to Notion dashboard for Sprint S-1 gate review
 """
 
@@ -21,9 +21,9 @@ logger = logging.getLogger(__name__)
 
 class KPITracker:
     def __init__(self):
-        self.github_repo = "siwenwang0803/PromptStrike"
-        self.pypi_package = "promptstrike"
-        self.docker_image = "promptstrike/cli"
+        self.github_repo = "siwenwang0803/RedForge"
+        self.pypi_package = "redforge"
+        self.docker_image = "redforge/cli"
         
         # Environment variables for API keys
         self.notion_token = os.getenv("NOTION_TOKEN")
@@ -179,7 +179,7 @@ class KPITracker:
     def generate_report(self, kpi_data: Dict[str, Any]) -> str:
         """Generate a formatted KPI report"""
         report = f"""
-📊 PromptStrike KPI Report - Sprint S-1
+📊 RedForge KPI Report - Sprint S-1
 Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
 🐍 PyPI Package ({self.pypi_package})
@@ -209,7 +209,7 @@ Reference: cid-roadmap-v1 Sprint S-1
     
     def run(self) -> Dict[str, Any]:
         """Main execution function"""
-        logger.info("Starting KPI tracking for PromptStrike CLI")
+        logger.info("Starting KPI tracking for RedForge CLI")
         
         # Collect all KPI data
         kpi_data = {

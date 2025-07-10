@@ -1,7 +1,7 @@
 """
 Chaos Replay Engine
 
-Implements chaos engineering for the PromptStrike replay engine,
+Implements chaos engineering for the RedForge replay engine,
 focusing on resilience testing under adverse conditions.
 """
 

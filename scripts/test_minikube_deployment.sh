@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# PromptStrike Minikube Deployment Test
+# RedForge Minikube Deployment Test
 # Extends test coverage to include Minikube environment
 # 建议: 测试 Minikube 环境，增加覆盖面
 
@@ -14,10 +14,10 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Configuration
-REPO_URL="https://siwenwang0803.github.io/PromptStrike"
-CHART_NAME="promptstrike-sidecar"
+REPO_URL="https://siwenwang0803.github.io/RedForge"
+CHART_NAME="redforge-sidecar"
 RELEASE_NAME="psguard"
-NAMESPACE="promptstrike-minikube-test"
+NAMESPACE="redforge-minikube-test"
 OPENAI_API_KEY="${OPENAI_API_KEY:-sk-test-key-for-minikube}"
 
 # Function to print section headers
@@ -90,12 +90,12 @@ start_minikube() {
 
 # Function to add Helm repository
 add_helm_repo() {
-    echo -e "${YELLOW}📦 Adding PromptStrike Helm repository...${NC}"
+    echo -e "${YELLOW}📦 Adding RedForge Helm repository...${NC}"
     
     # Remove if exists
-    helm repo remove promptstrike 2>/dev/null || true
+    helm repo remove redforge 2>/dev/null || true
     
-    if helm repo add promptstrike $REPO_URL; then
+    if helm repo add redforge $REPO_URL; then
         echo -e "${GREEN}✅ Repository added successfully${NC}"
     else
         echo -e "${RED}❌ Failed to add repository${NC}"
@@ -103,7 +103,7 @@ add_helm_repo() {
     fi
     
     helm repo update
-    helm search repo promptstrike --versions
+    helm search repo redforge --versions
 }
 
 # Function to deploy to Minikube
@@ -115,9 +115,9 @@ deploy_to_minikube() {
     kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
     
     # Deploy with Helm
-    echo -e "${YELLOW}🚀 Deploying PromptStrike Guardrail to Minikube...${NC}"
+    echo -e "${YELLOW}🚀 Deploying RedForge Guardrail to Minikube...${NC}"
     
-    helm install $RELEASE_NAME promptstrike/$CHART_NAME \
+    helm install $RELEASE_NAME redforge/$CHART_NAME \
         --namespace $NAMESPACE \
         --set openai.apiKey="$OPENAI_API_KEY" \
         --set image.tag="latest" \
@@ -158,7 +158,7 @@ verify_deployment() {
     
     # Verify pod is running
     echo -e "${YELLOW}⏳ Waiting for pods to be ready...${NC}"
-    kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=promptstrike-sidecar -n $NAMESPACE --timeout=120s
+    kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=redforge-sidecar -n $NAMESPACE --timeout=120s
     
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}✅ All pods are ready${NC}"
@@ -170,7 +170,7 @@ verify_deployment() {
     
     # Test service accessibility via Minikube
     echo -e "${YELLOW}🌐 Testing service accessibility...${NC}"
-    SERVICE_URL=$(minikube service $RELEASE_NAME-promptstrike-sidecar --url -n $NAMESPACE 2>/dev/null || echo "")
+    SERVICE_URL=$(minikube service $RELEASE_NAME-redforge-sidecar --url -n $NAMESPACE 2>/dev/null || echo "")
     
     if [ -n "$SERVICE_URL" ]; then
         echo "Service URL: $SERVICE_URL"
@@ -206,7 +206,7 @@ test_minikube_features() {
     
     # Test port forwarding
     echo -e "${YELLOW}🔗 Testing port forwarding...${NC}"
-    POD_NAME=$(kubectl get pods -n $NAMESPACE -l app.kubernetes.io/name=promptstrike-sidecar -o jsonpath='{.items[0].metadata.name}')
+    POD_NAME=$(kubectl get pods -n $NAMESPACE -l app.kubernetes.io/name=redforge-sidecar -o jsonpath='{.items[0].metadata.name}')
     
     if [ -n "$POD_NAME" ]; then
         echo "Testing port forward to pod: $POD_NAME"
@@ -233,19 +233,19 @@ test_load_balancing() {
     echo -e "${YELLOW}⚖️  Testing load balancing with multiple replicas...${NC}"
     
     # Scale up deployment
-    kubectl scale deployment $RELEASE_NAME-promptstrike-sidecar --replicas=3 -n $NAMESPACE
+    kubectl scale deployment $RELEASE_NAME-redforge-sidecar --replicas=3 -n $NAMESPACE
     
     # Wait for scaling
     echo -e "${YELLOW}⏳ Waiting for scale up...${NC}"
-    kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=promptstrike-sidecar -n $NAMESPACE --timeout=120s
+    kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=redforge-sidecar -n $NAMESPACE --timeout=120s
     
     # Check scaled pods
     echo "Scaled deployment status:"
-    kubectl get pods -n $NAMESPACE -l app.kubernetes.io/name=promptstrike-sidecar
+    kubectl get pods -n $NAMESPACE -l app.kubernetes.io/name=redforge-sidecar
     
     # Test service load balancing
     echo -e "${YELLOW}🔄 Testing service load balancing...${NC}"
-    SERVICE_IP=$(kubectl get service $RELEASE_NAME-promptstrike-sidecar -n $NAMESPACE -o jsonpath='{.spec.clusterIP}')
+    SERVICE_IP=$(kubectl get service $RELEASE_NAME-redforge-sidecar -n $NAMESPACE -o jsonpath='{.spec.clusterIP}')
     
     if [ -n "$SERVICE_IP" ]; then
         echo "Service ClusterIP: $SERVICE_IP"
@@ -259,7 +259,7 @@ test_load_balancing() {
     fi
     
     # Scale back down
-    kubectl scale deployment $RELEASE_NAME-promptstrike-sidecar --replicas=1 -n $NAMESPACE
+    kubectl scale deployment $RELEASE_NAME-redforge-sidecar --replicas=1 -n $NAMESPACE
     
     echo -e "${GREEN}✅ Load balancing test completed${NC}"
 }
@@ -279,7 +279,7 @@ cleanup_minikube() {
     kubectl delete namespace $NAMESPACE 2>/dev/null || true
     
     # Remove Helm repo
-    helm repo remove promptstrike 2>/dev/null || true
+    helm repo remove redforge 2>/dev/null || true
     
     if [ "$cleanup_cluster" = "true" ]; then
         echo -e "${YELLOW}🛑 Stopping Minikube cluster...${NC}"
@@ -294,7 +294,7 @@ cleanup_minikube() {
 main() {
     local cleanup_cluster=${CLEANUP_CLUSTER:-false}
     
-    print_section "PromptStrike Minikube 部署测试 / Minikube Deployment Test"
+    print_section "RedForge Minikube 部署测试 / Minikube Deployment Test"
     
     echo "Test Configuration:"
     echo "- Repository: $REPO_URL"

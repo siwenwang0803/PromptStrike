@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PromptStrike Guardrail SDK - Usage Examples
+RedForge Guardrail SDK - Usage Examples
 
 This file demonstrates how to integrate the Guardrail SDK into your LLM applications
 for real-time security monitoring, cost protection, and threat detection.
@@ -324,7 +324,7 @@ def example_pii_detection():
 
 def main():
     """Run all examples"""
-    print("PromptStrike Guardrail SDK - Usage Examples")
+    print("RedForge Guardrail SDK - Usage Examples")
     print("=" * 50)
     
     # Run synchronous examples

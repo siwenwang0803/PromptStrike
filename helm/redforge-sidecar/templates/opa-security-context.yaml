@@ -4,9 +4,9 @@ apiVersion: templates.gatekeeper.sh/v1beta1
 kind: ConstraintTemplate
 metadata:
   name: k8ssecuritycontext
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: opa-policy
   annotations:
     description: "Enforces security context requirements for containers"
@@ -88,10 +88,10 @@ spec:
 apiVersion: templates.gatekeeper.sh/v1beta1
 kind: K8sSecurityContext
 metadata:
-  name: promptstrike-security-context
-  namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+  name: redforge-security-context
+  namespace: {{ include "redforge-sidecar.namespaceName" . }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: opa-constraint
 spec:
   match:

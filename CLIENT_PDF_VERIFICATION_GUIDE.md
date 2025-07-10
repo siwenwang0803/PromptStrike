@@ -1,4 +1,4 @@
-# 📋 PromptStrike PDF 生成验证指南 (客户版) / Client PDF Generation Verification Guide
+# 📋 RedForge PDF 生成验证指南 (客户版) / Client PDF Generation Verification Guide
 
 ## ✅ 客户验证结果 / Client Verification Results
 
@@ -12,7 +12,7 @@
 | 验证项目 / Item | 状态 / Status | 详情 / Details |
 |-----------------|---------------|----------------|
 | **Python 环境** | ✅ 通过 | Python 3.13 正常工作 |
-| **PromptStrike 安装** | ✅ 通过 | CLI 命令可用 (`promptstrike --help`) |
+| **RedForge 安装** | ✅ 通过 | CLI 命令可用 (`redforge --help`) |
 | **ReportLab 依赖** | ✅ 通过 | PDF 生成库已安装 |
 | **GitHub Actions 工作流** | ✅ 通过 | 夜间任务配置正确 (每日 2AM UTC) |
 | **PDF 生成能力** | ✅ 通过 | CLI 执行成功率 100% |
@@ -40,7 +40,7 @@ echo $OPENAI_API_KEY
 ### 第二步：生成完整 PDF 报告 / Step 2: Generate Full PDF Report
 ```bash
 # 生成完整的合规性 PDF 报告
-promptstrike scan gpt-4 \
+redforge scan gpt-4 \
   --output ./reports/client_test \
   --format pdf \
   --max-requests 25 \
@@ -63,7 +63,7 @@ ls -lh ./reports/client_test/
 
 ### 基础设施验证 (Infrastructure) ✅ 100% 通过
 - [x] Python 环境可用
-- [x] PromptStrike CLI 安装
+- [x] RedForge CLI 安装
 - [x] PDF 生成依赖
 - [x] GitHub Actions 配置
 - [x] 文件大小监控
@@ -91,7 +91,7 @@ ls -lh ./reports/client_test/
 
 2. **运行完整扫描** / Run Full Scan
    ```bash
-   promptstrike scan gpt-4 --format pdf --max-requests 50
+   redforge scan gpt-4 --format pdf --max-requests 50
    ```
 
 3. **验证生成的报告** / Verify Generated Report
@@ -123,11 +123,11 @@ ls -lh ./reports/client_test/
 **问题**: CLI 命令找不到  
 **解决方案**: 
 ```bash
-# 安装 PromptStrike
+# 安装 RedForge
 pip install -e .
 
 # 或者使用 Python 模块方式
-python3 -m promptstrike.cli --help
+python3 -m redforge.cli --help
 ```
 
 **问题**: PDF 生成失败  
@@ -144,10 +144,10 @@ echo $OPENAI_API_KEY
 **解决方案**:
 ```bash
 # 使用 minimal 模板
-promptstrike scan gpt-4 --format pdf --template minimal
+redforge scan gpt-4 --format pdf --template minimal
 
 # 或减少攻击请求数量
-promptstrike scan gpt-4 --format pdf --max-requests 10
+redforge scan gpt-4 --format pdf --max-requests 10
 ```
 
 ## 📈 监控和维护 / Monitoring and Maintenance
@@ -188,7 +188,7 @@ find reports -name "*.pdf" -exec ls -lh {} \; | sort -k5
 
 ### 立即可以做的 / What You Can Do Now:
 1. ✅ 设置 OPENAI_API_KEY
-2. ✅ 运行 `promptstrike scan gpt-4 --format pdf`
+2. ✅ 运行 `redforge scan gpt-4 --format pdf`
 3. ✅ 检查生成的 PDF 文件
 4. ✅ 运行验证脚本确认内容
 
@@ -199,4 +199,4 @@ find reports -name "*.pdf" -exec ls -lh {} \; | sort -k5
 
 ---
 
-**📋 总结**: PromptStrike PDF 生成基础设施 100% 就绪，客户只需设置 API 密钥并运行完整扫描即可实现 100% 成功率目标。所有必要的验证工具和监控脚本已准备就绪。
+**📋 总结**: RedForge PDF 生成基础设施 100% 就绪，客户只需设置 API 密钥并运行完整扫描即可实现 100% 成功率目标。所有必要的验证工具和监控脚本已准备就绪。

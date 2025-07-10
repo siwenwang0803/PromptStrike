@@ -63,7 +63,7 @@ OTEL_SPAN_SCHEMA = {
                 "service.name": {"type": "string"},
                 "service.version": {"type": "string"},
                 "deployment.environment": {"type": "string"},
-                "promptstrike.guardrail.version": {"type": "string"}
+                "redforge.guardrail.version": {"type": "string"}
             }
         },
         "attributes": {
@@ -112,16 +112,16 @@ OTEL_SPAN_SCHEMA = {
                     "type": "integer",
                     "minimum": 0
                 },
-                "promptstrike.security.risk_score": {
+                "redforge.security.risk_score": {
                     "type": "number",
                     "minimum": 0,
                     "maximum": 10
                 },
-                "promptstrike.security.risk_level": {
+                "redforge.security.risk_level": {
                     "type": "string",
                     "enum": ["low", "medium", "high", "critical"]
                 },
-                "promptstrike.security.vulnerabilities_detected": {
+                "redforge.security.vulnerabilities_detected": {
                     "type": "integer",
                     "minimum": 0
                 },
@@ -172,7 +172,7 @@ class TestOTELSpanSchema:
                 "message": "Request completed successfully"
             },
             "tags": {
-                "service.name": "promptstrike-guardrail",
+                "service.name": "redforge-guardrail",
                 "service.version": "0.1.0",
                 "span.kind": "client"
             },
@@ -185,16 +185,16 @@ class TestOTELSpanSchema:
         # Should validate without errors
         validate(instance=base_span, schema=OTEL_SPAN_SCHEMA)
 
-    def test_promptstrike_extensions_valid(self):
-        """Test PromptStrike extensions to OTEL span"""
+    def test_redforge_extensions_valid(self):
+        """Test RedForge extensions to OTEL span"""
         extended_span = {
             "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
             "span_id": "00f067aa0ba902b7",
             "resource": {
-                "service.name": "promptstrike-guardrail",
+                "service.name": "redforge-guardrail",
                 "service.version": "0.1.0",
                 "deployment.environment": "production",
-                "promptstrike.guardrail.version": "0.1.0"
+                "redforge.guardrail.version": "0.1.0"
             },
             "attributes": {
                 "llm.provider": "openai",
@@ -209,9 +209,9 @@ class TestOTELSpanSchema:
                 "llm.cost.total_usd": 0.00014,
                 "llm.cost.currency": "USD",
                 "llm.latency.total_ms": 1250,
-                "promptstrike.security.risk_score": 2.3,
-                "promptstrike.security.risk_level": "low",
-                "promptstrike.security.vulnerabilities_detected": 0,
+                "redforge.security.risk_score": 2.3,
+                "redforge.security.risk_level": "low",
+                "redforge.security.vulnerabilities_detected": 0,
                 "http.method": "POST",
                 "http.status_code": 200
             },
@@ -225,11 +225,11 @@ class TestOTELSpanSchema:
                 },
                 {
                     "timestamp": "2024-01-01T12:00:01.200Z",
-                    "name": "promptstrike.security.analysis_complete",
+                    "name": "redforge.security.analysis_complete",
                     "attributes": {
-                        "promptstrike.security.analysis_duration_ms": 15,
-                        "promptstrike.security.patterns_checked": 47,
-                        "promptstrike.security.risk_score": 2.3
+                        "redforge.security.analysis_duration_ms": 15,
+                        "redforge.security.patterns_checked": 47,
+                        "redforge.security.risk_score": 2.3
                     }
                 }
             ]
@@ -246,10 +246,10 @@ class TestOTELSpanSchema:
             "attributes": {
                 "llm.provider": "openai",
                 "llm.tokens.total": 70,
-                "promptstrike.security.risk_score": 7.5,
-                "promptstrike.security.risk_level": "high",
-                "promptstrike.security.vulnerabilities_detected": 1,
-                "promptstrike.security.vulnerabilities": [
+                "redforge.security.risk_score": 7.5,
+                "redforge.security.risk_level": "high",
+                "redforge.security.vulnerabilities_detected": 1,
+                "redforge.security.vulnerabilities": [
                     {
                         "id": "vuln_001",
                         "category": "prompt_injection",
@@ -357,7 +357,7 @@ class TestOTELSpanSchema:
             "attributes": {
                 "llm.provider": "openai",
                 "llm.tokens.total": 50,
-                "promptstrike.security.risk_score": 15.0  # Outside 0-10 range
+                "redforge.security.risk_score": 15.0  # Outside 0-10 range
             }
         }
         
@@ -455,9 +455,9 @@ class TestOTELSpanSchema:
             "attributes": {
                 "llm.provider": "openai",
                 "llm.tokens.total": 70,
-                "promptstrike.compliance.nist_controls": ["GOVERN-1.1", "MAP-1.1"],
-                "promptstrike.compliance.eu_ai_act_risk": "minimal",
-                "promptstrike.compliance.audit_required": False
+                "redforge.compliance.nist_controls": ["GOVERN-1.1", "MAP-1.1"],
+                "redforge.compliance.eu_ai_act_risk": "minimal",
+                "redforge.compliance.audit_required": False
             }
         }
         
@@ -488,7 +488,7 @@ class TestSchemaExamples:
                     "message": "Request completed successfully"
                 },
                 "tags": {
-                    "service.name": "promptstrike-guardrail",
+                    "service.name": "redforge-guardrail",
                     "service.version": "0.1.0",
                     "span.kind": "client"
                 },

@@ -1,23 +1,23 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: promptstrike-guardrail
-  namespace: promptstrike-guardrail
+  name: redforge-guardrail
+  namespace: redforge-guardrail
   labels:
-    app.kubernetes.io/name: promptstrike-guardrail
+    app.kubernetes.io/name: redforge-guardrail
     app.kubernetes.io/component: security-monitoring
-    app.kubernetes.io/part-of: promptstrike
+    app.kubernetes.io/part-of: redforge
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: promptstrike-guardrail-role
-  namespace: promptstrike-guardrail
+  name: redforge-guardrail-role
+  namespace: redforge-guardrail
   labels:
-    app.kubernetes.io/name: promptstrike-guardrail
+    app.kubernetes.io/name: redforge-guardrail
     app.kubernetes.io/component: security-monitoring
-    app.kubernetes.io/part-of: promptstrike
+    app.kubernetes.io/part-of: redforge
 rules:
 - apiGroups: [""]
   resources: ["configmaps", "secrets"]
@@ -33,17 +33,17 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: promptstrike-guardrail-rolebinding
-  namespace: promptstrike-guardrail
+  name: redforge-guardrail-rolebinding
+  namespace: redforge-guardrail
   labels:
-    app.kubernetes.io/name: promptstrike-guardrail
+    app.kubernetes.io/name: redforge-guardrail
     app.kubernetes.io/component: security-monitoring
-    app.kubernetes.io/part-of: promptstrike
+    app.kubernetes.io/part-of: redforge
 subjects:
 - kind: ServiceAccount
-  name: promptstrike-guardrail
-  namespace: promptstrike-guardrail
+  name: redforge-guardrail
+  namespace: redforge-guardrail
 roleRef:
   kind: Role
-  name: promptstrike-guardrail-role
+  name: redforge-guardrail-role
   apiGroup: rbac.authorization.k8s.io

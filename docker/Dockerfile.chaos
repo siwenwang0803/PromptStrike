@@ -3,8 +3,8 @@
 
 FROM python:3.11-slim
 
-LABEL maintainer="PromptStrike Team"
-LABEL description="Chaos Testing Environment for PromptStrike"
+LABEL maintainer="RedForge Team"
+LABEL description="Chaos Testing Environment for RedForge"
 LABEL version="1.0"
 
 # Set environment variables
@@ -37,7 +37,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy chaos testing framework
 COPY tests/chaos/ ./tests/chaos/
 COPY chaos-config.yaml ./
-COPY promptstrike/ ./promptstrike/
+COPY redforge/ ./redforge/
 
 # Create directories for results and logs
 RUN mkdir -p /app/results /app/logs /app/artifacts && \

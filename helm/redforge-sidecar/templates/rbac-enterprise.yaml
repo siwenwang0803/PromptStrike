@@ -5,15 +5,15 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" $ }}-{{ .name }}
-  namespace: {{ include "promptstrike-sidecar.namespaceName" $ }}
+  name: {{ include "redforge-sidecar.fullname" $ }}-{{ .name }}
+  namespace: {{ include "redforge-sidecar.namespaceName" $ }}
   labels:
-    {{- include "promptstrike-sidecar.labels" $ | nindent 4 }}
+    {{- include "redforge-sidecar.labels" $ | nindent 4 }}
     app.kubernetes.io/component: rbac-enterprise
-    rbac.promptstrike.io/role: {{ .name }}
+    rbac.redforge.io/role: {{ .name }}
   annotations:
     description: {{ .description | quote }}
-    rbac.promptstrike.io/permissions: {{ .permissions | join "," | quote }}
+    rbac.redforge.io/permissions: {{ .permissions | join "," | quote }}
 spec:
   rules:
   {{- if has "read:reports" .permissions }}
@@ -21,8 +21,8 @@ spec:
   - apiGroups: [""]
     resources: ["configmaps"]
     resourceNames: 
-      - "{{ include "promptstrike-sidecar.fullname" $ }}-reports"
-      - "{{ include "promptstrike-sidecar.fullname" $ }}-compliance"
+      - "{{ include "redforge-sidecar.fullname" $ }}-reports"
+      - "{{ include "redforge-sidecar.fullname" $ }}-compliance"
     verbs: ["get", "list"]
   {{- end }}
   
@@ -31,8 +31,8 @@ spec:
   - apiGroups: [""]
     resources: ["configmaps"]
     resourceNames: 
-      - "{{ include "promptstrike-sidecar.fullname" $ }}-reports"
-      - "{{ include "promptstrike-sidecar.fullname" $ }}-compliance"
+      - "{{ include "redforge-sidecar.fullname" $ }}-reports"
+      - "{{ include "redforge-sidecar.fullname" $ }}-compliance"
     verbs: ["get", "list", "create", "update", "patch"]
   {{- end }}
   
@@ -40,19 +40,19 @@ spec:
   # Metrics access permissions
   - apiGroups: [""]
     resources: ["services", "endpoints"]
-    resourceNames: ["{{ include "promptstrike-sidecar.fullname" $ }}"]
+    resourceNames: ["{{ include "redforge-sidecar.fullname" $ }}"]
     verbs: ["get"]
   - apiGroups: [""]
     resources: ["pods"]
     verbs: ["get", "list"]
-    resourceNames: ["{{ include "promptstrike-sidecar.fullname" $ }}-*"]
+    resourceNames: ["{{ include "redforge-sidecar.fullname" $ }}-*"]
   {{- end }}
   
   {{- if has "access:health" .permissions }}
   # Health check permissions
   - apiGroups: [""]
     resources: ["services"]
-    resourceNames: ["{{ include "promptstrike-sidecar.fullname" $ }}"]
+    resourceNames: ["{{ include "redforge-sidecar.fullname" $ }}"]
     verbs: ["get"]
   {{- end }}
   
@@ -61,8 +61,8 @@ spec:
   - apiGroups: [""]
     resources: ["configmaps"]
     resourceNames: 
-      - "{{ include "promptstrike-sidecar.fullname" $ }}-app"
-      - "{{ include "promptstrike-sidecar.fullname" $ }}-sidecar"
+      - "{{ include "redforge-sidecar.fullname" $ }}-app"
+      - "{{ include "redforge-sidecar.fullname" $ }}-sidecar"
     verbs: ["get", "list", "create", "update", "patch"]
   {{- end }}
   
@@ -70,7 +70,7 @@ spec:
   # Secret management permissions
   - apiGroups: [""]
     resources: ["secrets"]
-    resourceNames: ["{{ include "promptstrike-sidecar.fullname" $ }}-secrets"]
+    resourceNames: ["{{ include "redforge-sidecar.fullname" $ }}-secrets"]
     verbs: ["get", "list", "create", "update", "patch"]
   {{- end }}
   
@@ -88,7 +88,7 @@ spec:
   # Compliance export permissions
   - apiGroups: [""]
     resources: ["persistentvolumeclaims"]
-    resourceNames: ["{{ include "promptstrike-sidecar.fullname" $ }}-exports"]
+    resourceNames: ["{{ include "redforge-sidecar.fullname" $ }}-exports"]
     verbs: ["get", "list", "create"]
   {{- end }}
   
@@ -96,7 +96,7 @@ spec:
   # Testing permissions
   - apiGroups: [""]
     resources: ["services/proxy"]
-    resourceNames: ["{{ include "promptstrike-sidecar.fullname" $ }}"]
+    resourceNames: ["{{ include "redforge-sidecar.fullname" $ }}"]
     verbs: ["get", "create"]
   {{- end }}
   
@@ -128,23 +128,23 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" $ }}-{{ .role }}-{{ .user | replace "@" "-at-" | replace "." "-" }}
-  namespace: {{ include "promptstrike-sidecar.namespaceName" $ }}
+  name: {{ include "redforge-sidecar.fullname" $ }}-{{ .role }}-{{ .user | replace "@" "-at-" | replace "." "-" }}
+  namespace: {{ include "redforge-sidecar.namespaceName" $ }}
   labels:
-    {{- include "promptstrike-sidecar.labels" $ | nindent 4 }}
+    {{- include "redforge-sidecar.labels" $ | nindent 4 }}
     app.kubernetes.io/component: rbac-enterprise
-    rbac.promptstrike.io/binding-type: user
-    rbac.promptstrike.io/role: {{ .role }}
+    rbac.redforge.io/binding-type: user
+    rbac.redforge.io/role: {{ .role }}
   annotations:
-    rbac.promptstrike.io/user: {{ .user | quote }}
-    rbac.promptstrike.io/managed-by: "helm"
+    rbac.redforge.io/user: {{ .user | quote }}
+    rbac.redforge.io/managed-by: "helm"
 subjects:
 - kind: User
   name: {{ .user }}
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: {{ include "promptstrike-sidecar.fullname" $ }}-{{ .role }}
+  name: {{ include "redforge-sidecar.fullname" $ }}-{{ .role }}
   apiGroup: rbac.authorization.k8s.io
 {{- end }}
 
@@ -154,23 +154,23 @@ roleRef:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" $ }}-{{ .role }}-{{ .serviceAccount }}
-  namespace: {{ .namespace | default (include "promptstrike-sidecar.namespaceName" $) }}
+  name: {{ include "redforge-sidecar.fullname" $ }}-{{ .role }}-{{ .serviceAccount }}
+  namespace: {{ .namespace | default (include "redforge-sidecar.namespaceName" $) }}
   labels:
-    {{- include "promptstrike-sidecar.labels" $ | nindent 4 }}
+    {{- include "redforge-sidecar.labels" $ | nindent 4 }}
     app.kubernetes.io/component: rbac-enterprise
-    rbac.promptstrike.io/binding-type: serviceaccount
-    rbac.promptstrike.io/role: {{ .role }}
+    rbac.redforge.io/binding-type: serviceaccount
+    rbac.redforge.io/role: {{ .role }}
   annotations:
-    rbac.promptstrike.io/service-account: {{ .serviceAccount | quote }}
-    rbac.promptstrike.io/managed-by: "helm"
+    rbac.redforge.io/service-account: {{ .serviceAccount | quote }}
+    rbac.redforge.io/managed-by: "helm"
 subjects:
 - kind: ServiceAccount
   name: {{ .serviceAccount }}
-  namespace: {{ .namespace | default (include "promptstrike-sidecar.namespaceName" $) }}
+  namespace: {{ .namespace | default (include "redforge-sidecar.namespaceName" $) }}
 roleRef:
   kind: Role
-  name: {{ include "promptstrike-sidecar.fullname" $ }}-{{ .role }}
+  name: {{ include "redforge-sidecar.fullname" $ }}-{{ .role }}
   apiGroup: rbac.authorization.k8s.io
 {{- end }}
 
@@ -182,14 +182,14 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ .serviceAccount }}
-  namespace: {{ .namespace | default (include "promptstrike-sidecar.namespaceName" $) }}
+  namespace: {{ .namespace | default (include "redforge-sidecar.namespaceName" $) }}
   labels:
-    {{- include "promptstrike-sidecar.labels" $ | nindent 4 }}
+    {{- include "redforge-sidecar.labels" $ | nindent 4 }}
     app.kubernetes.io/component: rbac-enterprise
-    rbac.promptstrike.io/service-account: {{ .serviceAccount }}
+    rbac.redforge.io/service-account: {{ .serviceAccount }}
   annotations:
-    rbac.promptstrike.io/role: {{ .role | quote }}
-    rbac.promptstrike.io/managed-by: "helm"
+    rbac.redforge.io/role: {{ .role | quote }}
+    rbac.redforge.io/managed-by: "helm"
 automountServiceAccountToken: true
 {{- end }}
 {{- end }}
@@ -203,10 +203,10 @@ automountServiceAccountToken: true
 # apiVersion: rbac.authorization.k8s.io/v1
 # kind: Role
 # metadata:
-#   name: {{ include "promptstrike-sidecar.fullname" . }}-custom-role
-#   namespace: {{ include "promptstrike-sidecar.namespaceName" . }}
+#   name: {{ include "redforge-sidecar.fullname" . }}-custom-role
+#   namespace: {{ include "redforge-sidecar.namespaceName" . }}
 #   labels:
-#     {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+#     {{- include "redforge-sidecar.labels" . | nindent 4 }}
 #     app.kubernetes.io/component: rbac-custom
 # spec:
 #   rules:

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# PromptStrike Enhanced Helm Deployment Verification
+# RedForge Enhanced Helm Deployment Verification
 # Handles environments with and without Docker daemon
 # Provides comprehensive testing with graceful fallbacks
 
@@ -15,11 +15,11 @@ PURPLE='\033[0;35m'
 NC='\033[0m'
 
 # Configuration
-REPO_URL="https://siwenwang0803.github.io/PromptStrike"
-CHART_NAME="promptstrike-sidecar"
+REPO_URL="https://siwenwang0803.github.io/RedForge"
+CHART_NAME="redforge-sidecar"
 CHART_VERSION="0.2.0"
 RELEASE_NAME="psguard"
-NAMESPACE="promptstrike-test"
+NAMESPACE="redforge-test"
 OPENAI_API_KEY="${OPENAI_API_KEY:-sk-test-key-for-deployment}"
 
 # Test results tracking
@@ -126,10 +126,10 @@ test_helm_repository() {
     print_section "Helm 仓库测试 / Helm Repository Test"
     
     # Remove existing repo
-    helm repo remove promptstrike 2>/dev/null || true
+    helm repo remove redforge 2>/dev/null || true
     
     # Add repository
-    if helm repo add promptstrike "$REPO_URL" >/dev/null 2>&1; then
+    if helm repo add redforge "$REPO_URL" >/dev/null 2>&1; then
         track_test "Helm repo add" "PASS" "Repository added successfully"
     else
         track_test "Helm repo add" "FAIL" "Failed to add repository"
@@ -153,7 +153,7 @@ test_helm_repository() {
     fi
     
     # Inspect chart
-    if helm show chart promptstrike/$CHART_NAME >/dev/null 2>&1; then
+    if helm show chart redforge/$CHART_NAME >/dev/null 2>&1; then
         track_test "Chart inspection" "PASS" "Chart metadata accessible"
     else
         track_test "Chart inspection" "FAIL" "Chart metadata not accessible"
@@ -161,7 +161,7 @@ test_helm_repository() {
     fi
     
     # Test template rendering (dry-run)
-    if helm template test promptstrike/$CHART_NAME \
+    if helm template test redforge/$CHART_NAME \
         --set openai.apiKey="test-key" \
         --namespace $NAMESPACE >/dev/null 2>&1; then
         track_test "Template rendering" "PASS" "Chart templates render correctly"
@@ -183,7 +183,7 @@ simulate_cluster_deployment() {
     
     # Simulate helm install with template rendering (client-side only)
     echo -e "${YELLOW}📋 Testing Helm template rendering (install simulation)...${NC}"
-    if helm template $RELEASE_NAME promptstrike/$CHART_NAME \
+    if helm template $RELEASE_NAME redforge/$CHART_NAME \
         --namespace $NAMESPACE \
         --set openai.apiKey="$OPENAI_API_KEY" \
         --set image.tag="latest" \
@@ -197,7 +197,7 @@ simulate_cluster_deployment() {
     
     # Simulate upgrade with template rendering
     echo -e "${YELLOW}📋 Testing Helm template rendering (upgrade simulation)...${NC}"
-    if helm template $RELEASE_NAME-upgrade promptstrike/$CHART_NAME \
+    if helm template $RELEASE_NAME-upgrade redforge/$CHART_NAME \
         --namespace $NAMESPACE \
         --set openai.apiKey="$OPENAI_API_KEY" \
         --set image.tag="latest" \
@@ -211,7 +211,7 @@ simulate_cluster_deployment() {
     
     # Test values validation
     echo -e "${YELLOW}📋 Testing values validation...${NC}"
-    if helm template test-validation promptstrike/$CHART_NAME \
+    if helm template test-validation redforge/$CHART_NAME \
         --set openai.apiKey="test-key" \
         --set image.tag="v1.0.0" \
         --set replicaCount=3 \
@@ -246,7 +246,7 @@ test_real_cluster_deployment() {
     
     # Deploy with Helm
     echo -e "${YELLOW}📦 Deploying to ${cluster_type}...${NC}"
-    if helm install $RELEASE_NAME promptstrike/$CHART_NAME \
+    if helm install $RELEASE_NAME redforge/$CHART_NAME \
         --namespace $NAMESPACE \
         --create-namespace \
         --set openai.apiKey="$OPENAI_API_KEY" \
@@ -267,7 +267,7 @@ test_real_cluster_deployment() {
     fi
     
     # Test upgrade
-    if helm upgrade $RELEASE_NAME promptstrike/$CHART_NAME \
+    if helm upgrade $RELEASE_NAME redforge/$CHART_NAME \
         --namespace $NAMESPACE \
         --set replicaCount=2 \
         --wait --timeout=180s >/dev/null 2>&1; then
@@ -338,10 +338,10 @@ test_helm_operations() {
     
     # Test various Helm commands with dry-run
     local operations=(
-        "helm show values promptstrike/$CHART_NAME"
-        "helm show readme promptstrike/$CHART_NAME"
-        "helm show all promptstrike/$CHART_NAME"
-        "helm pull promptstrike/$CHART_NAME --version $CHART_VERSION --untar"
+        "helm show values redforge/$CHART_NAME"
+        "helm show readme redforge/$CHART_NAME"
+        "helm show all redforge/$CHART_NAME"
+        "helm pull redforge/$CHART_NAME --version $CHART_VERSION --untar"
     )
     
     for operation in "${operations[@]}"; do
@@ -398,7 +398,7 @@ generate_report() {
 
 # Main execution function
 main() {
-    print_section "PromptStrike Helm 部署验证增强版 / Enhanced Helm Deployment Verification"
+    print_section "RedForge Helm 部署验证增强版 / Enhanced Helm Deployment Verification"
     
     echo "Configuration:"
     echo "- Repository: $REPO_URL"
@@ -421,7 +421,7 @@ main() {
     test_helm_operations
     
     # Clean up Helm repo
-    helm repo remove promptstrike 2>/dev/null || true
+    helm repo remove redforge 2>/dev/null || true
     
     # Generate final report
     generate_report

@@ -1,5 +1,5 @@
 """
-PromptStrike Guardrail Sidecar (Simplified for Testing)
+RedForge Guardrail Sidecar (Simplified for Testing)
 Monitors demo application traffic and performs security analysis
 """
 
@@ -15,7 +15,7 @@ from pydantic import BaseModel
 import uvicorn
 
 app = FastAPI(
-    title="PromptStrike Guardrail Sidecar",
+    title="RedForge Guardrail Sidecar",
     description="Security monitoring sidecar for LLM applications",
     version="0.1.0"
 )
@@ -64,7 +64,7 @@ async def startup_event():
 async def root():
     """Root endpoint"""
     return {
-        "service": "PromptStrike Guardrail Sidecar",
+        "service": "RedForge Guardrail Sidecar",
         "version": "0.1.0",
         "status": "monitoring",
         "monitored_spans": len(monitored_spans)

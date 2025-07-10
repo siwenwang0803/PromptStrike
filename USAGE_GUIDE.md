@@ -1,14 +1,14 @@
-# PromptStrike CLI Usage Guide
+# RedForge CLI Usage Guide
 
 ## ✅ Setup Complete!
 
-Your PromptStrike CLI is now fully functional and ready for production use.
+Your RedForge CLI is now fully functional and ready for production use.
 
 ## 🚀 Quick Start Commands
 
 ### 1. Activate Environment (Required for each session)
 ```bash
-cd /Users/siwenwang/PromptStrike
+cd /Users/siwenwang/RedForge
 source .venv/bin/activate
 export OPENAI_API_KEY="your-openai-api-key-here"
 ```
@@ -16,16 +16,16 @@ export OPENAI_API_KEY="your-openai-api-key-here"
 ### 2. Basic Commands
 ```bash
 # Check system health
-python -m promptstrike.cli doctor
+python -m redforge.cli doctor
 
 # Show version
-python -m promptstrike.cli version
+python -m redforge.cli version
 
 # List available attacks
-python -m promptstrike.cli list-attacks
+python -m redforge.cli list-attacks
 
 # Help
-python -m promptstrike.cli --help
+python -m redforge.cli --help
 ```
 
 ### 3. Scanning Commands
@@ -33,25 +33,25 @@ python -m promptstrike.cli --help
 #### Safe Testing (No API calls)
 ```bash
 # Dry run - shows what would be tested
-python -m promptstrike.cli scan gpt-4 --dry-run
+python -m redforge.cli scan gpt-4 --dry-run
 
 # Dry run with verbose output
-python -m promptstrike.cli scan gpt-4 --dry-run --verbose
+python -m redforge.cli scan gpt-4 --dry-run --verbose
 ```
 
 #### Real Scanning (Uses API)
 ```bash
 # Quick scan with limited attacks
-python -m promptstrike.cli scan gpt-3.5-turbo --max-requests 3 --format json
+python -m redforge.cli scan gpt-3.5-turbo --max-requests 3 --format json
 
 # Full scan with JSON output
-python -m promptstrike.cli scan gpt-4 --format json --output my-scan-results
+python -m redforge.cli scan gpt-4 --format json --output my-scan-results
 
 # Comprehensive scan with all output formats
-python -m promptstrike.cli scan gpt-4 --format all --output comprehensive-scan
+python -m redforge.cli scan gpt-4 --format all --output comprehensive-scan
 
 # Custom scan with specific settings
-python -m promptstrike.cli scan gpt-4 \
+python -m redforge.cli scan gpt-4 \
   --max-requests 10 \
   --timeout 30 \
   --format pdf \
@@ -87,7 +87,7 @@ bash scripts/smoke/run_cli_matrix.sh --models "gpt-4,gpt-3.5-turbo" --concurrenc
 
 ### All Formats
 ```bash
-python -m promptstrike.cli scan gpt-4 --format all
+python -m redforge.cli scan gpt-4 --format all
 ```
 
 ## 🎯 Available Models
@@ -123,7 +123,7 @@ python -m promptstrike.cli scan gpt-4 --format all
 ### 1. Client Security Assessment
 ```bash
 # Professional client scan
-python -m promptstrike.cli scan gpt-4 \
+python -m redforge.cli scan gpt-4 \
   --format pdf \
   --output "client-security-assessment-$(date +%Y%m%d)" \
   --verbose
@@ -132,7 +132,7 @@ python -m promptstrike.cli scan gpt-4 \
 ### 2. CI/CD Integration
 ```bash
 # Automated security testing
-python -m promptstrike.cli scan gpt-3.5-turbo \
+python -m redforge.cli scan gpt-3.5-turbo \
   --format json \
   --max-requests 20 \
   --output ci-security-scan
@@ -147,10 +147,10 @@ fi
 ### 3. Development Testing
 ```bash
 # Quick development test
-python -m promptstrike.cli scan gpt-4 --max-requests 5 --format json
+python -m redforge.cli scan gpt-4 --max-requests 5 --format json
 
 # Verbose debugging
-python -m promptstrike.cli scan gpt-4 --dry-run --verbose
+python -m redforge.cli scan gpt-4 --dry-run --verbose
 ```
 
 ## 🔧 Configuration
@@ -163,7 +163,7 @@ export ANTHROPIC_API_KEY="your-anthropic-key"  # For Claude models
 
 ### Custom Configuration File
 ```yaml
-# promptstrike.yaml
+# redforge.yaml
 target:
   model: "gpt-4"
   api_key_env: "OPENAI_API_KEY"
@@ -178,7 +178,7 @@ output:
   formats: ["json", "pdf"]
 ```
 
-Use with: `python -m promptstrike.cli scan gpt-4 --config promptstrike.yaml`
+Use with: `python -m redforge.cli scan gpt-4 --config redforge.yaml`
 
 ## 🚨 Troubleshooting
 
@@ -244,7 +244,7 @@ When running successfully, you should see:
 ## 📞 Support
 
 If you encounter issues:
-1. Check the doctor command: `python -m promptstrike.cli doctor`
+1. Check the doctor command: `python -m redforge.cli doctor`
 2. Review the logs in `./logs/` directory
 3. Test with dry run first: `--dry-run`
 4. Verify API key is set correctly
@@ -252,7 +252,7 @@ If you encounter issues:
 
 ## 🎯 Ready for Production!
 
-Your PromptStrike CLI is enterprise-ready and capable of:
+Your RedForge CLI is enterprise-ready and capable of:
 - Professional security assessments
 - Client-ready reporting
 - Concurrent operations

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# PromptStrike PDF Generation Verification Script (Direct Python)
+# RedForge PDF Generation Verification Script (Direct Python)
 # 目标：验证 Nightly Job 生成 PDF 的成功率 100%，文件大小 < 3MB
 # Target: Verify Nightly Job PDF generation with 100% success rate, file size < 3MB
 
@@ -76,10 +76,10 @@ check_prerequisites() {
     
     # Check if project is accessible
     cd "$PROJECT_ROOT"
-    if python3 -c "import promptstrike" &> /dev/null; then
-        track_test "PromptStrike installation" "PASS" "PromptStrike module can be imported"
+    if python3 -c "import redforge" &> /dev/null; then
+        track_test "RedForge installation" "PASS" "RedForge module can be imported"
     else
-        track_test "PromptStrike installation" "FAIL" "PromptStrike module not found"
+        track_test "RedForge installation" "FAIL" "RedForge module not found"
         return 1
     fi
     
@@ -155,7 +155,7 @@ test_pdf_generation() {
         # Generate PDF report using direct Python execution
         cd "$PROJECT_ROOT"
         if OPENAI_API_KEY="${OPENAI_API_KEY:-sk-test-key}" \
-           python3 -m promptstrike.cli scan "$model" \
+           python3 -m redforge.cli scan "$model" \
            --output "$output_dir" \
            --format pdf \
            --max-requests 5 \
@@ -225,7 +225,7 @@ verify_pdf_content() {
         local content=$(strings "$pdf_file" | head -100)
         
         # Check for key report elements
-        if echo "$content" | grep -q -i "promptstrike\|compliance\|vulnerability\|security"; then
+        if echo "$content" | grep -q -i "redforge\|compliance\|vulnerability\|security"; then
             track_test "PDF content keywords ($test_name)" "PASS" "PDF contains expected security/compliance keywords"
         else
             track_test "PDF content keywords ($test_name)" "FAIL" "PDF missing expected security/compliance keywords"
@@ -257,7 +257,7 @@ simulate_nightly_job() {
     
     cd "$PROJECT_ROOT"
     if OPENAI_API_KEY="${OPENAI_API_KEY:-sk-test-key}" \
-       python3 -m promptstrike.cli scan gpt-4 \
+       python3 -m redforge.cli scan gpt-4 \
        --output "$nightly_output_dir" \
        --format pdf \
        --max-requests 10 \
@@ -307,7 +307,7 @@ test_template_optimization() {
         
         cd "$PROJECT_ROOT"
         if OPENAI_API_KEY="${OPENAI_API_KEY:-sk-test-key}" \
-           python3 -m promptstrike.cli scan gpt-4 \
+           python3 -m redforge.cli scan gpt-4 \
            --output "$output_dir" \
            --format pdf \
            --max-requests 3 \
@@ -362,7 +362,7 @@ generate_test_report() {
     # Save detailed test report
     local report_file="$REPORTS_DIR/pdf_verification_report_$(date +%Y%m%d_%H%M%S).md"
     cat > "$report_file" << EOF
-# PromptStrike PDF Generation Verification Report
+# RedForge PDF Generation Verification Report
 
 **Date**: $(date)
 **Test Suite**: PDF Generation Verification (Direct Python)
@@ -396,7 +396,7 @@ generate_test_report() {
 - **OS**: $(uname -s)
 - **Architecture**: $(uname -m)
 - **Python**: $(python3 --version 2>/dev/null || echo "Not available")
-- **PromptStrike**: Available via direct Python execution
+- **RedForge**: Available via direct Python execution
 
 ## Generated Test Files
 
@@ -442,7 +442,7 @@ EOF
 
 # Main execution function
 main() {
-    print_section "PromptStrike PDF 生成验证 (Direct Python) / PromptStrike PDF Generation Verification"
+    print_section "RedForge PDF 生成验证 (Direct Python) / RedForge PDF Generation Verification"
     
     echo "Configuration:"
     echo "- Project root: $PROJECT_ROOT"
@@ -450,7 +450,7 @@ main() {
     echo "- Test output directory: $TEST_OUTPUT_DIR"
     echo "- Max file size: ${MAX_FILE_SIZE_MB} MB"
     echo "- Target success rate: 100%"
-    echo "- Execution method: Direct Python (python3 -m promptstrike.cli)"
+    echo "- Execution method: Direct Python (python3 -m redforge.cli)"
     echo ""
     
     # Execute test suite

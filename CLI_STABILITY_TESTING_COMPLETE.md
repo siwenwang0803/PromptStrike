@@ -125,8 +125,8 @@
 
 ```bash
 # 1. Environment Setup (One-time)
-git clone https://github.com/siwenwang0803/PromptStrike.git
-cd PromptStrike
+git clone https://github.com/siwenwang0803/RedForge.git
+cd RedForge
 ./setup_environment.sh
 
 # 2. API Configuration
@@ -134,13 +134,13 @@ export OPENAI_API_KEY="your-api-key-here"
 
 # 3. Health Check
 source .venv/bin/activate
-python -m promptstrike.cli doctor
+python -m redforge.cli doctor
 
 # 4. Test Run (Safe)
-python -m promptstrike.cli scan gpt-4 --dry-run
+python -m redforge.cli scan gpt-4 --dry-run
 
 # 5. Production Scan
-python -m promptstrike.cli scan gpt-4 --format all --output ./client-reports
+python -m redforge.cli scan gpt-4 --format all --output ./client-reports
 
 # 6. Stress Testing (When needed)
 bash scripts/smoke/run_cli_matrix.sh --concurrency 50

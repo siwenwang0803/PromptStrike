@@ -1,5 +1,5 @@
 #!/bin/bash
-# Comprehensive CLI Stability Test for PromptStrike
+# Comprehensive CLI Stability Test for RedForge
 # Tests concurrent attacks, multiple output formats, error handling, and performance
 
 set -euo pipefail
@@ -73,7 +73,7 @@ test_basic_cli() {
     local test_log="$LOGS_DIR/basic_cli_test.log"
     
     # Test help command
-    if python -m promptstrike.cli --help > "$test_log" 2>&1; then
+    if python -m redforge.cli --help > "$test_log" 2>&1; then
         print_success "CLI help command works"
     else
         print_error "CLI help command failed"
@@ -82,7 +82,7 @@ test_basic_cli() {
     fi
     
     # Test version command
-    if python -m promptstrike.cli version >> "$test_log" 2>&1; then
+    if python -m redforge.cli version >> "$test_log" 2>&1; then
         print_success "CLI version command works"
     else
         print_error "CLI version command failed"
@@ -90,17 +90,17 @@ test_basic_cli() {
     fi
     
     # Test doctor command
-    if python -m promptstrike.cli doctor >> "$test_log" 2>&1; then
+    if python -m redforge.cli doctor >> "$test_log" 2>&1; then
         print_success "CLI doctor command works"
     else
         print_warning "CLI doctor command failed (may be due to missing API key)"
     fi
     
     # Test list-attacks command
-    if python -m promptstrike.cli list-attacks >> "$test_log" 2>&1; then
+    if python -m redforge.cli list-attacks >> "$test_log" 2>&1; then
         print_success "CLI list-attacks command works"
         # Count attacks
-        local attack_count=$(python -m promptstrike.cli list-attacks 2>/dev/null | grep -E "LLM[0-9]+-[0-9]+" | wc -l)
+        local attack_count=$(python -m redforge.cli list-attacks 2>/dev/null | grep -E "LLM[0-9]+-[0-9]+" | wc -l)
         print_status "Found $attack_count attacks in OWASP pack"
     else
         print_error "CLI list-attacks command failed"
@@ -129,7 +129,7 @@ test_error_handling() {
         IFS='|' read -r cmd expected <<< "$test_case"
         
         print_status "Testing: $cmd"
-        if python -m promptstrike.cli $cmd > "$test_log" 2>&1; then
+        if python -m redforge.cli $cmd > "$test_log" 2>&1; then
             print_error "Command should have failed: $cmd"
             ((failed++))
         else
@@ -161,7 +161,7 @@ test_concurrent_dry_runs() {
             
             for ((i=1; i<=concurrency; i++)); do
                 (
-                    python -m promptstrike.cli scan "$model" \
+                    python -m redforge.cli scan "$model" \
                         --format "$format" \
                         --output "$RESULTS_DIR/${model}_${format}_${i}" \
                         --dry-run \
@@ -234,7 +234,7 @@ EOF
     print_status "Running scan with mock responses..."
     
     # Note: Since we can't easily mock the HTTP client, we'll test the dry-run extensively
-    python -m promptstrike.cli scan "gpt-4" \
+    python -m redforge.cli scan "gpt-4" \
         --format all \
         --output "$RESULTS_DIR/mock_test" \
         --dry-run \
@@ -294,9 +294,9 @@ EOF
     cat > "$RESULTS_DIR/validation_test/valid.html" << 'EOF'
 <!DOCTYPE html>
 <html>
-<head><title>PromptStrike Scan Report</title></head>
+<head><title>RedForge Scan Report</title></head>
 <body>
-    <h1>PromptStrike Security Scan Report</h1>
+    <h1>RedForge Security Scan Report</h1>
     <p>Target: gpt-4</p>
     <p>Risk Score: 6.5/10</p>
 </body>
@@ -326,7 +326,7 @@ test_performance_monitoring() {
         # Start performance monitoring in background
         scripts/smoke/monitor_performance.sh \
             -o "$LOGS_DIR/performance_metrics.csv" \
-            -p "promptstrike" \
+            -p "redforge" \
             -i 1 &
         
         local monitor_pid=$!
@@ -335,7 +335,7 @@ test_performance_monitoring() {
         # Run some concurrent operations
         print_status "Running concurrent operations for performance testing..."
         for i in {1..20}; do
-            python -m promptstrike.cli list-attacks > /dev/null 2>&1 &
+            python -m redforge.cli list-attacks > /dev/null 2>&1 &
         done
         
         # Wait a bit
@@ -362,7 +362,7 @@ generate_test_report() {
     local report_file="$TEST_DIR/test_report.txt"
     
     {
-        echo "PromptStrike CLI Stability Test Report"
+        echo "RedForge CLI Stability Test Report"
         echo "====================================="
         echo "Date: $(date)"
         echo "Test Directory: $TEST_DIR"
@@ -404,7 +404,7 @@ generate_test_report() {
 
 # Main test execution
 main() {
-    print_status "Starting PromptStrike CLI Stability Tests"
+    print_status "Starting RedForge CLI Stability Tests"
     echo "========================================="
     
     # Setup environment

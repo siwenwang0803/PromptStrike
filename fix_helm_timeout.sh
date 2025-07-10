@@ -21,8 +21,8 @@ print_msg $BLUE "🔧 修复 Helm 超时问题"
 
 # 1. 清理失败的部署
 print_msg $BLUE "1. 清理失败的部署..."
-helm uninstall psguard -n psguard-test 2>/dev/null || true
-kubectl delete namespace psguard-test --ignore-not-found=true
+helm uninstall redforge -n redforge-test 2>/dev/null || true
+kubectl delete namespace redforge-test --ignore-not-found=true
 kubectl delete namespace monitoring --ignore-not-found=true
 
 # 等待命名空间完全删除
@@ -31,7 +31,7 @@ sleep 10
 
 # 2. 重新创建命名空间
 print_msg $BLUE "2. 重新创建命名空间..."
-kubectl create namespace psguard-test
+kubectl create namespace redforge-test
 kubectl create namespace monitoring
 
 # 3. 检查集群资源
@@ -47,9 +47,9 @@ FROM nginx:alpine
 COPY <<'EOL' /usr/share/nginx/html/index.html
 <!DOCTYPE html>
 <html>
-<head><title>PSGuard Test</title></head>
+<head><title>RedForge Test</title></head>
 <body>
-<h1>PSGuard Sidecar Test Service</h1>
+<h1>RedForge Sidecar Test Service</h1>
 <p>Status: Running</p>
 </body>
 </html>
@@ -84,10 +84,10 @@ CMD ["nginx", "-g", "daemon off;"]
 EOF
 
 # 构建测试镜像
-docker build -t psguard-test:latest -f Dockerfile.test .
+docker build -t redforge-test:latest -f Dockerfile.test .
 
 # 将镜像加载到 Kind 集群
-kind load docker-image psguard-test:latest --name psguard-test
+kind load docker-image redforge-test:latest --name redforge-test
 
 # 5. 创建简化的 Values 文件
 print_msg $BLUE "5. 创建简化的 Values 文件..."
@@ -95,7 +95,7 @@ cat > values-simple.yaml << 'EOF'
 replicaCount: 1
 
 image:
-  repository: psguard-test
+  repository: redforge-test
   pullPolicy: Never
   tag: "latest"
 
@@ -140,10 +140,10 @@ monitoring:
     enabled: false
 EOF
 
-# 6. 部署简化版本的 PSGuard
-print_msg $BLUE "6. 部署简化版本的 PSGuard..."
-helm upgrade --install psguard ./charts/psguard \
-  --namespace psguard-test \
+# 6. 部署简化版本的 RedForge
+print_msg $BLUE "6. 部署简化版本的 RedForge..."
+helm upgrade --install redforge ./charts/redforge \
+  --namespace redforge-test \
   --values values-simple.yaml \
   --timeout 300s \
   --wait \
@@ -151,30 +151,30 @@ helm upgrade --install psguard ./charts/psguard \
 
 # 7. 验证部署
 print_msg $BLUE "7. 验证部署..."
-kubectl get pods -n psguard-test
-kubectl get svc -n psguard-test
+kubectl get pods -n redforge-test
+kubectl get svc -n redforge-test
 
 # 8. 等待 Pod 就绪
 print_msg $BLUE "8. 等待 Pod 就绪..."
-kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=psguard -n psguard-test --timeout=300s
+kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=redforge -n redforge-test --timeout=300s
 
 # 9. 测试服务
 print_msg $BLUE "9. 测试服务..."
-POD_NAME=$(kubectl get pods -n psguard-test -l app.kubernetes.io/name=psguard -o jsonpath='{.items[0].metadata.name}')
+POD_NAME=$(kubectl get pods -n redforge-test -l app.kubernetes.io/name=redforge -o jsonpath='{.items[0].metadata.name}')
 
 # 测试健康检查
-kubectl exec -n psguard-test $POD_NAME -- curl -s http://localhost:8080/health
+kubectl exec -n redforge-test $POD_NAME -- curl -s http://localhost:8080/health
 
 # 测试指标端点
-kubectl exec -n psguard-test $POD_NAME -- curl -s http://localhost:8080/metrics
+kubectl exec -n redforge-test $POD_NAME -- curl -s http://localhost:8080/metrics
 
 # 10. 检查资源使用情况
 print_msg $BLUE "10. 检查资源使用情况..."
-kubectl top pod -n psguard-test --containers 2>/dev/null || print_msg $YELLOW "⚠️ 无法获取 Pod 资源使用情况"
+kubectl top pod -n redforge-test --containers 2>/dev/null || print_msg $YELLOW "⚠️ 无法获取 Pod 资源使用情况"
 
 # 11. 设置端口转发
 print_msg $BLUE "11. 设置端口转发..."
-kubectl port-forward svc/psguard 8080:8080 -n psguard-test &
+kubectl port-forward svc/redforge 8080:8080 -n redforge-test &
 PORT_FORWARD_PID=$!
 
 # 等待端口转发启动
@@ -229,7 +229,7 @@ if command -v k6 &> /dev/null; then
     print_msg $BLUE "监控资源使用情况（60秒）..."
     for i in {1..12}; do
         echo "=== 监控轮次 $i/12 ==="
-        kubectl top pod -n psguard-test --containers 2>/dev/null || echo "无法获取资源使用情况"
+        kubectl top pod -n redforge-test --containers 2>/dev/null || echo "无法获取资源使用情况"
         sleep 5
     done
     
@@ -247,5 +247,5 @@ kill $PORT_FORWARD_PID 2>/dev/null || true
 rm -f Dockerfile.test values-simple.yaml k6-kubernetes-test.js
 
 print_msg $GREEN "🎉 Helm 部署修复完成！"
-print_msg $BLUE "PSGuard 服务现在运行在 Kubernetes 集群中"
+print_msg $BLUE "RedForge 服务现在运行在 Kubernetes 集群中"
 print_msg $BLUE "可以继续运行完整的资源测试或检查服务状态"

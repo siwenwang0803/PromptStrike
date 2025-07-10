@@ -16,7 +16,7 @@ fi
 
 # Package the chart manually
 echo "📦 Packaging Helm chart..."
-cd helm/promptstrike-sidecar
+cd helm/redforge-sidecar
 helm package . --destination ../../
 cd ../../
 
@@ -27,7 +27,7 @@ echo "✅ Manual packaging complete"
 
 # Test chart installation (dry-run)
 echo "🧪 Testing chart installation (dry-run)..."
-helm install test-guardrail ./promptstrike-sidecar-*.tgz \
+helm install test-guardrail ./redforge-sidecar-*.tgz \
     --namespace test \
     --set openai.apiKey="test-key" \
     --create-namespace \

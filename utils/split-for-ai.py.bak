@@ -37,11 +37,11 @@ def main():
     
     # 修复：正确的collection创建方式
     try:
-        coll = chroma_client.get_collection("promptstrike")
+        coll = chroma_client.get_collection("redforge")
         print("✅ 使用现有collection")
     except:
         coll = chroma_client.create_collection(
-            name="promptstrike", 
+            name="redforge", 
             embedding_function=embed_fn
         )
         print("✅ 创建新collection")

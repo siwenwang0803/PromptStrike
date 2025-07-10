@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Output validation script for PromptStrike CLI tests
+Output validation script for RedForge CLI tests
 Validates JSON schema, PDF content, and HTML structure
 """
 
@@ -35,7 +35,7 @@ except ImportError:
 
 
 class OutputValidator:
-    """Validates PromptStrike output files"""
+    """Validates RedForge output files"""
     
     # Expected JSON schema (simplified)
     JSON_SCHEMA = {
@@ -165,7 +165,7 @@ class OutputValidator:
                             text = first_page.extract_text()
                             
                             # Look for expected content
-                            expected_content = ["PromptStrike", "Security", "Report"]
+                            expected_content = ["RedForge", "Security", "Report"]
                             missing_content = []
                             
                             for content in expected_content:
@@ -216,7 +216,7 @@ class OutputValidator:
                 errors.append("Missing BODY tag")
                 
             # Content validation
-            expected_content = ["PromptStrike", "Scan Report", "Risk Score"]
+            expected_content = ["RedForge", "Scan Report", "Risk Score"]
             missing_content = []
             
             for exp in expected_content:
@@ -305,7 +305,7 @@ class OutputValidator:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Validate PromptStrike output files")
+    parser = argparse.ArgumentParser(description="Validate RedForge output files")
     parser.add_argument("path", help="File or directory to validate")
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
     parser.add_argument("-r", "--report", help="Generate validation report file")

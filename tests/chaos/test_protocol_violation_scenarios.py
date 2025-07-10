@@ -1,5 +1,5 @@
 """
-Protocol Violation Chaos Testing for PromptStrike
+Protocol Violation Chaos Testing for RedForge
 目标：验证 protocol_violation 场景下系统韧性
 """
 

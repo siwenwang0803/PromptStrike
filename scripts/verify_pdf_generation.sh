@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# PromptStrike PDF Generation Verification Script
+# RedForge PDF Generation Verification Script
 # 目标：验证 Nightly Job 生成 PDF 的成功率 100%，文件大小 < 3MB
 # Target: Verify Nightly Job PDF generation with 100% success rate, file size < 3MB
 
@@ -82,10 +82,10 @@ check_prerequisites() {
     fi
     
     # Check if project is properly installed
-    if poetry run python -c "import promptstrike" &> /dev/null; then
-        track_test "PromptStrike installation" "PASS" "PromptStrike module can be imported"
+    if poetry run python -c "import redforge" &> /dev/null; then
+        track_test "RedForge installation" "PASS" "RedForge module can be imported"
     else
-        track_test "PromptStrike installation" "FAIL" "PromptStrike module not found"
+        track_test "RedForge installation" "FAIL" "RedForge module not found"
         return 1
     fi
     
@@ -166,7 +166,7 @@ test_pdf_generation() {
         
         # Generate PDF report
         if OPENAI_API_KEY="${OPENAI_API_KEY:-sk-test-key}" \
-           poetry run promptstrike scan "$model" \
+           poetry run redforge scan "$model" \
            --output "$output_dir" \
            --format pdf \
            --max-requests 10 \
@@ -249,7 +249,7 @@ verify_pdf_content() {
         local content=$(strings "$pdf_file" | head -100)
         
         # Check for key report elements
-        if echo "$content" | grep -q -i "promptstrike\|compliance\|vulnerability\|security"; then
+        if echo "$content" | grep -q -i "redforge\|compliance\|vulnerability\|security"; then
             track_test "PDF content keywords ($test_name)" "PASS" "PDF contains expected security/compliance keywords"
         else
             track_test "PDF content keywords ($test_name)" "FAIL" "PDF missing expected security/compliance keywords"
@@ -280,7 +280,7 @@ simulate_nightly_job() {
     local scan_id="pilot0-evidence-${date_stamp}"
     
     if OPENAI_API_KEY="${OPENAI_API_KEY:-sk-test-key}" \
-       poetry run promptstrike scan gpt-4 \
+       poetry run redforge scan gpt-4 \
        --output "$nightly_output_dir" \
        --format pdf \
        --max-requests 25 \
@@ -330,7 +330,7 @@ test_template_optimization() {
         mkdir -p "$output_dir"
         
         if OPENAI_API_KEY="${OPENAI_API_KEY:-sk-test-key}" \
-           poetry run promptstrike scan gpt-4 \
+           poetry run redforge scan gpt-4 \
            --output "$output_dir" \
            --format pdf \
            --max-requests 5 \
@@ -386,7 +386,7 @@ generate_test_report() {
     # Save detailed test report
     local report_file="$REPORTS_DIR/pdf_verification_report_$(date +%Y%m%d_%H%M%S).md"
     cat > "$report_file" << EOF
-# PromptStrike PDF Generation Verification Report
+# RedForge PDF Generation Verification Report
 
 **Date**: $(date)
 **Test Suite**: PDF Generation Verification
@@ -466,7 +466,7 @@ EOF
 
 # Main execution function
 main() {
-    print_section "PromptStrike PDF 生成验证 / PromptStrike PDF Generation Verification"
+    print_section "RedForge PDF 生成验证 / RedForge PDF Generation Verification"
     
     echo "Configuration:"
     echo "- Project root: $PROJECT_ROOT"

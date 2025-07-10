@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "promptstrike-sidecar.fullname" . }}
+  name: {{ include "redforge-sidecar.fullname" . }}
   namespace: {{ .Values.namespace.name }}
   labels:
-    {{- include "promptstrike-sidecar.labels" . | nindent 4 }}
+    {{- include "redforge-sidecar.labels" . | nindent 4 }}
     app.kubernetes.io/component: guardrail-sidecar
   {{- with .Values.annotations }}
   annotations:
@@ -14,11 +14,11 @@ spec:
   replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
-      {{- include "promptstrike-sidecar.selectorLabels" . | nindent 6 }}
+      {{- include "redforge-sidecar.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "promptstrike-sidecar.selectorLabels" . | nindent 8 }}
+        {{- include "redforge-sidecar.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: guardrail-sidecar
         security-policy: restricted
         {{- with .Values.labels }}
@@ -58,7 +58,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "promptstrike-sidecar.serviceAccountName" . }}
+      serviceAccountName: {{ include "redforge-sidecar.serviceAccountName" . }}
       
       # Security Context at Pod level
       securityContext:
@@ -138,7 +138,7 @@ spec:
       {{- end }}
       
       {{- if .Values.sidecar.enabled }}
-      # PromptStrike Guardrail Sidecar Container
+      # RedForge Guardrail Sidecar Container
       - name: sidecar
         image: "{{ .Values.global.imageRegistry }}/{{ .Values.sidecar.image.repository }}:{{ .Values.sidecar.image.tag }}"
         imagePullPolicy: {{ .Values.sidecar.image.pullPolicy | default .Values.global.imagePullPolicy }}
@@ -216,7 +216,7 @@ spec:
       
       - name: config-volume
         configMap:
-          name: {{ .Values.volumes.config.name | default (include "promptstrike-sidecar.fullname" .) }}
+          name: {{ .Values.volumes.config.name | default (include "redforge-sidecar.fullname" .) }}
           defaultMode: 0644
       
       - name: tmp-volume

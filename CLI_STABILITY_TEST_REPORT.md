@@ -1,4 +1,4 @@
-# PromptStrike CLI Stability Test Report
+# RedForge CLI Stability Test Report
 
 **Date**: January 8, 2025  
 **Test Objective**: Validate CLI stability with 50 concurrent attacks and 3 output formats  
@@ -84,7 +84,7 @@ ModuleNotFoundError: No module named 'jinja2'
 ### Phase 4: Output Validation 📋
 - **JSON**: Schema compliance, required fields
 - **PDF**: File size > 1KB, proper structure
-- **HTML**: Valid tags, PromptStrike branding
+- **HTML**: Valid tags, RedForge branding
 
 ### Phase 5: Performance Monitoring 📋
 - **Metrics to Track**:
@@ -102,10 +102,10 @@ pip install -r requirements.txt
 poetry install
 
 # Verify installation
-poetry run promptstrike --help
+poetry run redforge --help
 
 # Run basic smoke test
-poetry run promptstrike scan gpt-4 --dry-run
+poetry run redforge scan gpt-4 --dry-run
 ```
 
 ### 2. **Enhanced Testing Protocol**
@@ -120,7 +120,7 @@ bash scripts/smoke/run_cli_matrix.sh \
 python scripts/smoke/validate_outputs.py ./test_outputs/
 
 # Monitor performance
-scripts/smoke/monitor_performance.sh -p promptstrike
+scripts/smoke/monitor_performance.sh -p redforge
 ```
 
 ### 3. **Production Deployment Checklist**
@@ -188,16 +188,16 @@ scripts/smoke/monitor_performance.sh -p promptstrike
 ### 5. **Docker Deployment Testing**
 ```bash
 # Build and test Docker image
-docker build -t promptstrike-test .
+docker build -t redforge-test .
 docker run --rm \
     -e OPENAI_API_KEY=$OPENAI_API_KEY \
-    promptstrike-test scan gpt-4 --dry-run
+    redforge-test scan gpt-4 --dry-run
 
 # Test with volume mounts
 docker run --rm \
     -e OPENAI_API_KEY=$OPENAI_API_KEY \
     -v $(pwd)/reports:/app/reports \
-    promptstrike-test scan gpt-4 --format all
+    redforge-test scan gpt-4 --format all
 ```
 
 ## Test Scripts Usage Guide
@@ -230,7 +230,7 @@ python scripts/smoke/validate_outputs.py ./test_outputs/reports/ \
 # Monitor during test
 ./scripts/smoke/monitor_performance.sh \
     -o performance.csv \
-    -p promptstrike \
+    -p redforge \
     -i 2
 
 # Analyze results

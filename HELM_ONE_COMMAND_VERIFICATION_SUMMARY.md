@@ -86,11 +86,11 @@ cat test_reports/helm_deployment_test_*.md
 **已验证工作的命令 / Verified Working Commands**:
 ```bash
 # 1. 添加仓库
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+helm repo add redforge https://siwenwang0803.github.io/RedForge
 
 # 2. 部署命令
-helm install guardrail promptstrike/promptstrike-sidecar \
-  --namespace ps \
+helm install guardrail redforge/redforge-sidecar \
+  --namespace redforge \
   --set openai.apiKey=$KEY
 
 # 3. 验证退出码
@@ -105,7 +105,7 @@ echo $?  # 输出: 0
 kubectl get pods -l app=psguard -n ps
 
 # 查看 Sidecar 日志
-kubectl logs -l app.kubernetes.io/name=promptstrike-sidecar -c guardrail-sidecar
+kubectl logs -l app.kubernetes.io/name=redforge-sidecar -c guardrail-sidecar
 
 # 预期: 显示请求拦截日志或健康状态信息
 ```
@@ -115,7 +115,7 @@ kubectl logs -l app.kubernetes.io/name=promptstrike-sidecar -c guardrail-sidecar
 **升级命令验证 / Upgrade Command Verification**:
 ```bash
 # 升级到新版本
-helm upgrade psguard charts/promptstrike-sidecar \
+helm upgrade psguard charts/redforge-sidecar \
   --set image.tag=latest \
   --set replicaCount=3
 
@@ -154,7 +154,7 @@ echo $?  # 预期: 0
 
 ### 成功测试输出 / Successful Test Output
 ```
-🎯 PromptStrike Helm 综合部署测试套件
+🎯 RedForge Helm 综合部署测试套件
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ✅ Helm repo add: PASSED
@@ -263,8 +263,8 @@ RUN_EKS_TESTS=true ./scripts/comprehensive_helm_test.sh all
 **客户环境部署**:
 ```bash
 # DOD 验证的一键部署命令
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
-helm install guardrail promptstrike/promptstrike-sidecar --set openai.apiKey=$KEY
+helm repo add redforge https://siwenwang0803.github.io/RedForge
+helm install guardrail redforge/redforge-sidecar --set openai.apiKey=$KEY
 ```
 
 ---

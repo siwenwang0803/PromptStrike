@@ -2,7 +2,7 @@
 
 ```py
 """
-Scan result data models for PromptStrike CLI
+Scan result data models for RedForge CLI
 Reference: cid-roadmap-v1 Sprint S-1, Issue PS-2
 """
 
@@ -23,7 +23,7 @@ class SeverityLevel(str, Enum):
 
 
 class AttackCategory(str, Enum):
-    """OWASP LLM Top 10 categories + custom PromptStrike categories"""
+    """OWASP LLM Top 10 categories + custom RedForge categories"""
     PROMPT_INJECTION = "prompt_injection"          # LLM01
     INSECURE_OUTPUT = "insecure_output"            # LLM02  
     TRAINING_DATA_POISONING = "training_data_poisoning"  # LLM03
@@ -35,7 +35,7 @@ class AttackCategory(str, Enum):
     OVERRELIANCE = "overreliance"                  # LLM09
     MODEL_THEFT = "model_theft"                    # LLM10
     
-    # PromptStrike Extensions
+    # RedForge Extensions
     COST_EXPLOITATION = "cost_exploitation"        # FinOps module
     PII_LEAKAGE = "pii_leakage"                   # Privacy module
     BIAS_AMPLIFICATION = "bias_amplification"      # Bias module
@@ -108,7 +108,7 @@ class ScanMetadata(BaseModel):
     total_cost_usd: Optional[float] = Field(None, ge=0, description="Total estimated cost")
     
     # Environment info
-    cli_version: str = Field(..., description="PromptStrike CLI version")
+    cli_version: str = Field(..., description="RedForge CLI version")
     python_version: str = Field(..., description="Python runtime version")
     platform: str = Field(..., description="Operating system platform")
     

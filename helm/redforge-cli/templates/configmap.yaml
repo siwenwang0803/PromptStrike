@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "promptstrike-cli.configMapName" . }}
+  name: {{ include "redforge-cli.configMapName" . }}
   labels:
-    {{- include "promptstrike-cli.labels" . | nindent 4 }}
+    {{- include "redforge-cli.labels" . | nindent 4 }}
 data:
-  promptstrike.yaml: |
-    max_requests: {{ .Values.config.promptstrike.max_requests }}
-    timeout: {{ .Values.config.promptstrike.timeout }}
-    output_format: {{ .Values.config.promptstrike.output_format }}
-    attack_pack: {{ .Values.config.promptstrike.attack_pack }}
+  redforge.yaml: |
+    max_requests: {{ .Values.config.redforge.max_requests }}
+    timeout: {{ .Values.config.redforge.timeout }}
+    output_format: {{ .Values.config.redforge.output_format }}
+    attack_pack: {{ .Values.config.redforge.attack_pack }}
 {{- end }}

@@ -1,6 +1,6 @@
-# PromptStrike Guardrail Sidecar Helm Chart
+# RedForge Guardrail Sidecar Helm Chart
 
-A production-ready Helm chart for deploying the PromptStrike Guardrail Sidecar in Kubernetes environments. This chart provides comprehensive security scanning capabilities for LLM applications with enterprise-grade features including adaptive sampling, auto-scaling, monitoring, and compliance controls.
+A production-ready Helm chart for deploying the RedForge Guardrail Sidecar in Kubernetes environments. This chart provides comprehensive security scanning capabilities for LLM applications with enterprise-grade features including adaptive sampling, auto-scaling, monitoring, and compliance controls.
 
 ## Features
 
@@ -45,21 +45,21 @@ A production-ready Helm chart for deploying the PromptStrike Guardrail Sidecar i
 
 1. **Add the Helm repository** (when available):
 ```bash
-helm repo add promptstrike https://charts.promptstrike.com
+helm repo add redforge https://charts.redforge.com
 helm repo update
 ```
 
 2. **Install with default values**:
 ```bash
-helm install promptstrike-sidecar promptstrike/promptstrike-sidecar \\
-  --namespace promptstrike-guardrail \\
+helm install redforge-sidecar redforge/redforge-sidecar \\
+  --namespace redforge-guardrail \\
   --create-namespace
 ```
 
 3. **Install with custom values**:
 ```bash
-helm install promptstrike-sidecar promptstrike/promptstrike-sidecar \\
-  --namespace promptstrike-guardrail \\
+helm install redforge-sidecar redforge/redforge-sidecar \\
+  --namespace redforge-guardrail \\
   --create-namespace \\
   --values values-production.yaml
 ```
@@ -68,12 +68,12 @@ helm install promptstrike-sidecar promptstrike/promptstrike-sidecar \\
 
 ```bash
 # Clone the repository
-git clone https://github.com/siwenwang0803/PromptStrike.git
-cd PromptStrike/helm/promptstrike-sidecar
+git clone https://github.com/siwenwang0803/RedForge.git
+cd RedForge/helm/redforge-sidecar
 
 # Install for development
-helm install promptstrike-dev . \\
-  --namespace promptstrike-dev \\
+helm install redforge-dev . \\
+  --namespace redforge-dev \\
   --create-namespace \\
   --values examples/values-development.yaml
 ```
@@ -108,7 +108,7 @@ sidecar:
 For production deployments, use the provided production values:
 
 ```bash
-helm install promptstrike-prod . \\
+helm install redforge-prod . \\
   --values examples/values-production.yaml \\
   --set ingress.hosts[0].host=guardrail-api.yourcompany.com \\
   --set secrets.apiKeys.openai=sk-your-openai-key
@@ -130,7 +130,7 @@ ingress:
   enabled: true
   className: "nginx"
   hosts:
-    - host: promptstrike.example.com
+    - host: redforge.example.com
       paths:
         - path: /
           pathType: Prefix
@@ -139,9 +139,9 @@ ingress:
         - path: /security/metrics
           pathType: Exact
   tls:
-    - secretName: promptstrike-tls
+    - secretName: redforge-tls
       hosts:
-        - promptstrike.example.com
+        - redforge.example.com
 ```
 
 ### Monitoring Configuration
@@ -297,20 +297,20 @@ performance_based_adjustment:
 
 1. **Pods not starting**:
 ```bash
-kubectl describe pod -n promptstrike-guardrail
-kubectl logs -n promptstrike-guardrail -l app.kubernetes.io/name=promptstrike-sidecar
+kubectl describe pod -n redforge-guardrail
+kubectl logs -n redforge-guardrail -l app.kubernetes.io/name=redforge-sidecar
 ```
 
 2. **Ingress not working**:
 ```bash
-kubectl describe ingress -n promptstrike-guardrail
-kubectl get events -n promptstrike-guardrail
+kubectl describe ingress -n redforge-guardrail
+kubectl get events -n redforge-guardrail
 ```
 
 3. **OPA policy violations**:
 ```bash
-kubectl get constraints -n promptstrike-guardrail
-kubectl describe constraints -n promptstrike-guardrail
+kubectl get constraints -n redforge-guardrail
+kubectl describe constraints -n redforge-guardrail
 ```
 
 ### Debug Mode
@@ -318,7 +318,7 @@ kubectl describe constraints -n promptstrike-guardrail
 Enable debug logging:
 
 ```bash
-helm upgrade promptstrike-sidecar . \\
+helm upgrade redforge-sidecar . \\
   --set sidecar.env.LOG_LEVEL=debug \\
   --reuse-values
 ```
@@ -329,11 +329,11 @@ Check sidecar health:
 
 ```bash
 # Via port-forward
-kubectl port-forward svc/promptstrike-sidecar 8001:8001
+kubectl port-forward svc/redforge-sidecar 8001:8001
 curl http://localhost:8001/health
 
 # Via Ingress (if enabled)
-curl https://promptstrike.example.com/health
+curl https://redforge.example.com/health
 ```
 
 ## Examples
@@ -342,11 +342,11 @@ curl https://promptstrike.example.com/health
 
 ```bash
 # Install with development values
-helm install promptstrike-dev . \\
+helm install redforge-dev . \\
   --values examples/values-development.yaml
 
 # Access via port-forward
-kubectl port-forward svc/promptstrike-dev 8001:8001
+kubectl port-forward svc/redforge-dev 8001:8001
 open http://localhost:8001/health
 ```
 
@@ -354,7 +354,7 @@ open http://localhost:8001/health
 
 ```bash
 # Production deployment with enhanced security
-helm install promptstrike-prod . \\
+helm install redforge-prod . \\
   --values examples/values-production.yaml \\
   --set ingress.annotations."nginx\\.ingress\\.kubernetes\\.io/whitelist-source-range"="203.0.113.0/24" \\
   --set hpa.minReplicas=5 \\
@@ -393,10 +393,10 @@ monitoring:
 
 ```bash
 # Check current values
-helm get values promptstrike-sidecar
+helm get values redforge-sidecar
 
 # Upgrade with new chart version
-helm upgrade promptstrike-sidecar . \\
+helm upgrade redforge-sidecar . \\
   --reuse-values \\
   --version 0.2.0
 ```
@@ -423,9 +423,9 @@ helm install test-release . --dry-run --debug
 
 ## Support
 
-- **Documentation**: [https://github.com/siwenwang0803/PromptStrike/docs](https://github.com/siwenwang0803/PromptStrike/docs)
-- **Issues**: [https://github.com/siwenwang0803/PromptStrike/issues](https://github.com/siwenwang0803/PromptStrike/issues)
-- **Discussions**: [https://github.com/siwenwang0803/PromptStrike/discussions](https://github.com/siwenwang0803/PromptStrike/discussions)
+- **Documentation**: [https://github.com/siwenwang0803/RedForge/docs](https://github.com/siwenwang0803/RedForge/docs)
+- **Issues**: [https://github.com/siwenwang0803/RedForge/issues](https://github.com/siwenwang0803/RedForge/issues)
+- **Discussions**: [https://github.com/siwenwang0803/RedForge/discussions](https://github.com/siwenwang0803/RedForge/discussions)
 
 ## License
 

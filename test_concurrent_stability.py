@@ -17,11 +17,11 @@ import time
 # Add the current directory to the Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from promptstrike.core.scanner import LLMScanner
-from promptstrike.core.attacks import AttackPackLoader
-from promptstrike.core.report import ReportGenerator
-from promptstrike.utils.config import Config
-from promptstrike.models.scan_result import ScanResult, ScanMetadata, ComplianceReport
+from redforge.core.scanner import LLMScanner
+from redforge.core.attacks import AttackPackLoader
+from redforge.core.report import ReportGenerator
+from redforge.utils.config import Config
+from redforge.models.scan_result import ScanResult, ScanMetadata, ComplianceReport
 
 async def run_single_attack(scanner, attack, attack_id):
     """Run a single attack"""
@@ -70,7 +70,7 @@ async def test_concurrent_stability():
         attack = all_attacks[i % len(all_attacks)]
         attack_jobs.append((attack, f"{attack.id}-{i+1}"))
     
-    print(f"🎯 PromptStrike Concurrent Stability Test")
+    print(f"🎯 RedForge Concurrent Stability Test")
     print(f"Target: {target}")
     print(f"Concurrent Attacks: {len(attack_jobs)}")
     print(f"Output: {output_dir}")
@@ -222,9 +222,9 @@ if __name__ == "__main__":
     success = asyncio.run(test_concurrent_stability())
     if success:
         print("\n🎉 CONCURRENT STABILITY TEST PASSED!")
-        print("✅ PromptStrike CLI is production-ready for concurrent operations")
+        print("✅ RedForge CLI is production-ready for concurrent operations")
         print("✅ All 3 output formats (JSON, HTML, PDF) working correctly")
         print("✅ 50 concurrent attacks executed successfully")
     else:
         print("\n❌ CONCURRENT STABILITY TEST FAILED!")
-        print("❌ PromptStrike CLI needs additional fixes before production use")
+        print("❌ RedForge CLI needs additional fixes before production use")

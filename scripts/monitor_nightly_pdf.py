@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PromptStrike Nightly PDF Generation Monitor
+RedForge Nightly PDF Generation Monitor
 监控夜间 PDF 生成任务的成功率和文件大小
 Monitors nightly PDF generation success rate and file sizes
 """
@@ -59,7 +59,7 @@ class NightlyPDFMonitor:
         default_config = {
             'github_token': os.environ.get('GITHUB_TOKEN'),
             'repo_owner': 'siwenwang0803',
-            'repo_name': 'PromptStrike',
+            'repo_name': 'RedForge',
             'workflow_name': 'evidence.yml',
             'data_file': 'pdf_generation_history.json',
             'max_file_size_mb': 3.0,

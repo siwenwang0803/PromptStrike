@@ -1,6 +1,6 @@
-# PromptStrike CLI Helm Chart
+# RedForge CLI Helm Chart
 
-This Helm chart deploys the PromptStrike CLI for running automated LLM red-team scans in Kubernetes.
+This Helm chart deploys the RedForge CLI for running automated LLM red-team scans in Kubernetes.
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@ This Helm chart deploys the PromptStrike CLI for running automated LLM red-team 
 ### Add Helm Repository
 
 ```bash
-helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+helm repo add redforge https://siwenwang0803.github.io/RedForge
 helm repo update
 ```
 
@@ -21,11 +21,11 @@ helm repo update
 
 ```bash
 # Install with API key
-helm install my-promptstrike promptstrike/promptstrike-cli \
+helm install my-redforge redforge/redforge-cli \
   --set secrets.openaiApiKey="your-openai-api-key"
 
 # Install with job enabled for automated scans
-helm install my-promptstrike promptstrike/promptstrike-cli \
+helm install my-redforge redforge/redforge-cli \
   --set secrets.openaiApiKey="your-openai-api-key" \
   --set job.enabled=true \
   --set job.target="gpt-4"
@@ -35,8 +35,8 @@ helm install my-promptstrike promptstrike/promptstrike-cli \
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `cli.enabled` | Enable PromptStrike CLI | `true` |
-| `cli.image.repository` | CLI image repository | `siwenwang0803/promptstrike` |
+| `cli.enabled` | Enable RedForge CLI | `true` |
+| `cli.image.repository` | CLI image repository | `siwenwang0803/redforge` |
 | `cli.image.tag` | CLI image tag | `v0.2.0-alpha` |
 | `secrets.openaiApiKey` | OpenAI API key | `""` |
 | `job.enabled` | Enable scheduled scan job | `false` |
@@ -50,17 +50,17 @@ helm install my-promptstrike promptstrike/promptstrike-cli \
 
 ```bash
 # Run a scan job
-kubectl create job --from=cronjob/my-promptstrike-scan manual-scan-$(date +%s)
+kubectl create job --from=cronjob/my-redforge-scan manual-scan-$(date +%s)
 ```
 
 ### View Results
 
 ```bash
 # Get pod logs
-kubectl logs job/my-promptstrike-scan
+kubectl logs job/my-redforge-scan
 
 # Access reports (if persistence enabled)
-kubectl exec -it deployment/my-promptstrike -- ls /app/reports
+kubectl exec -it deployment/my-redforge -- ls /app/reports
 ```
 
 ### Automated Scans
@@ -68,7 +68,7 @@ kubectl exec -it deployment/my-promptstrike -- ls /app/reports
 Enable the job scheduler:
 
 ```bash
-helm upgrade my-promptstrike promptstrike/promptstrike-cli \
+helm upgrade my-redforge redforge/redforge-cli \
   --set job.enabled=true \
   --set job.schedule="0 2 * * *"  # Daily at 2 AM
 ```
@@ -85,7 +85,7 @@ helm upgrade my-promptstrike promptstrike/promptstrike-cli \
 Enable ServiceMonitor for Prometheus:
 
 ```bash
-helm upgrade my-promptstrike promptstrike/promptstrike-cli \
+helm upgrade my-redforge redforge/redforge-cli \
   --set monitoring.enabled=true \
   --set monitoring.serviceMonitor.enabled=true
 ```
@@ -93,5 +93,5 @@ helm upgrade my-promptstrike promptstrike/promptstrike-cli \
 ## Uninstallation
 
 ```bash
-helm uninstall my-promptstrike
+helm uninstall my-redforge
 ```

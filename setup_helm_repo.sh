@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# PromptStrike Helm Repository Setup for v0.2.0-alpha
+# RedForge Helm Repository Setup for v0.2.0-alpha
 set -e
 
-echo "🚀 Setting up PromptStrike Helm Repository v0.2.0-alpha"
+echo "🚀 Setting up RedForge Helm Repository v0.2.0-alpha"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Colors for output
@@ -53,14 +53,14 @@ rm -f *.tgz index.yaml 2>/dev/null || true
 print_info "📦 Packaging Helm charts..."
 
 # Package CLI chart
-print_info "Packaging promptstrike-cli chart..."
-cd helm/promptstrike-cli
+print_info "Packaging redforge-cli chart..."
+cd helm/redforge-cli
 helm package . --destination ../../
 cd ../../
 
 # Package sidecar chart
-print_info "Packaging promptstrike-sidecar chart..."
-cd helm/promptstrike-sidecar
+print_info "Packaging redforge-sidecar chart..."
+cd helm/redforge-sidecar
 helm package . --destination ../../
 cd ../../
 
@@ -68,7 +68,7 @@ print_status "Charts packaged successfully"
 
 # Step 2: Create Helm repository index
 print_info "📋 Creating Helm repository index..."
-helm repo index . --url https://siwenwang0803.github.io/PromptStrike
+helm repo index . --url https://siwenwang0803.github.io/RedForge
 
 print_status "Repository index created"
 
@@ -81,7 +81,7 @@ else
     print_warning "Creating gh-pages branch..."
     git checkout --orphan gh-pages
     git rm -rf .
-    echo "# PromptStrike Helm Repository" > README.md
+    echo "# RedForge Helm Repository" > README.md
     git add README.md
     git commit -m "Initial gh-pages commit"
     git checkout main
@@ -106,7 +106,7 @@ cat > index.html << 'EOF'
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PromptStrike Helm Repository</title>
+    <title>RedForge Helm Repository</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
         .header { background: #f4f4f4; padding: 20px; border-radius: 5px; }
@@ -117,40 +117,40 @@ cat > index.html << 'EOF'
 </head>
 <body>
     <div class="header">
-        <h1>🎯 PromptStrike Helm Repository</h1>
+        <h1>🎯 RedForge Helm Repository</h1>
         <p>Developer-first automated LLM red-team platform</p>
     </div>
 
     <h2>📦 Available Charts</h2>
     
     <div class="chart">
-        <h3>promptstrike-cli</h3>
+        <h3>redforge-cli</h3>
         <p class="version">Version: 0.2.0 | App Version: 0.2.0-alpha</p>
-        <p>PromptStrike CLI for running automated LLM security scans</p>
+        <p>RedForge CLI for running automated LLM security scans</p>
     </div>
 
     <div class="chart">
-        <h3>promptstrike-sidecar</h3>
+        <h3>redforge-sidecar</h3>
         <p class="version">Version: 0.2.0 | App Version: 0.2.0-alpha</p>
-        <p>PromptStrike Guardrail Sidecar for runtime security monitoring</p>
+        <p>RedForge Guardrail Sidecar for runtime security monitoring</p>
     </div>
 
     <h2>🚀 Quick Start</h2>
     
     <h3>Add Repository</h3>
-    <pre><code>helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+    <pre><code>helm repo add redforge https://siwenwang0803.github.io/RedForge
 helm repo update</code></pre>
 
     <h3>Install CLI Chart</h3>
-    <pre><code>helm install my-cli promptstrike/promptstrike-cli \
+    <pre><code>helm install my-cli redforge/redforge-cli \
   --set secrets.openaiApiKey="your-api-key"</code></pre>
 
     <h3>Install Sidecar Chart</h3>
-    <pre><code>helm install my-sidecar promptstrike/promptstrike-sidecar \
+    <pre><code>helm install my-sidecar redforge/redforge-sidecar \
   --set openai.apiKey="your-api-key"</code></pre>
 
     <h2>📚 Documentation</h2>
-    <p>For detailed documentation, visit our <a href="https://github.com/siwenwang0803/PromptStrike">GitHub repository</a>.</p>
+    <p>For detailed documentation, visit our <a href="https://github.com/siwenwang0803/RedForge">GitHub repository</a>.</p>
 </body>
 </html>
 EOF
@@ -164,12 +164,12 @@ else
     git commit -m "Deploy Helm repository v0.2.0-alpha
 
 📦 Charts Updated:
-- promptstrike-cli: v0.2.0 (app: 0.2.0-alpha)
-- promptstrike-sidecar: v0.2.0 (app: 0.2.0-alpha)
+- redforge-cli: v0.2.0 (app: 0.2.0-alpha)
+- redforge-sidecar: v0.2.0 (app: 0.2.0-alpha)
 
 🐳 Docker Images:
-- CLI: siwenwang0803/promptstrike:v0.2.0-alpha
-- Sidecar: promptstrike/guardrail-sidecar:latest
+- CLI: siwenwang0803/redforge:v0.2.0-alpha
+- Sidecar: redforge/guardrail-sidecar:latest
 
 🎯 Features:
 - OWASP LLM Top 10 testing (19 attacks)
@@ -178,7 +178,7 @@ else
 - Security policies and RBAC
 - Monitoring with Prometheus
 
-Repository: https://siwenwang0803.github.io/PromptStrike"
+Repository: https://siwenwang0803.github.io/RedForge"
 
     print_status "Changes committed to gh-pages"
 fi
@@ -205,23 +205,23 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "${GREEN}🎉 Helm Repository Setup Complete!${NC}"
 echo ""
-echo -e "${BLUE}📍 Repository URL:${NC} https://siwenwang0803.github.io/PromptStrike"
+echo -e "${BLUE}📍 Repository URL:${NC} https://siwenwang0803.github.io/RedForge"
 echo ""
 echo -e "${YELLOW}⏰ Wait 2-3 minutes for GitHub Pages propagation, then test:${NC}"
 echo ""
 echo -e "${BLUE}# Add repository${NC}"
-echo "helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike"
+echo "helm repo add redforge https://siwenwang0803.github.io/RedForge"
 echo "helm repo update"
 echo ""
 echo -e "${BLUE}# List available charts${NC}"
-echo "helm search repo promptstrike"
+echo "helm search repo redforge"
 echo ""
 echo -e "${BLUE}# Install CLI chart${NC}"
-echo "helm install my-cli promptstrike/promptstrike-cli \\"
+echo "helm install my-cli redforge/redforge-cli \\"
 echo "  --set secrets.openaiApiKey=\"your-api-key\""
 echo ""
 echo -e "${BLUE}# Install sidecar chart${NC}"
-echo "helm install my-sidecar promptstrike/promptstrike-sidecar \\"
+echo "helm install my-sidecar redforge/redforge-sidecar \\"
 echo "  --set openai.apiKey=\"your-api-key\""
 echo ""
 echo -e "${GREEN}✅ Ready for v0.2.0-alpha release!${NC}"

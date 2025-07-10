@@ -4,7 +4,7 @@
 echo "🔧 修复环境变量并安装 kind 和 k6"
 
 # 重新设置环境变量
-export PWD="/Users/siwenwang/PromptStrike"
+export PWD="/Users/siwenwang/RedForge"
 cd "$PWD"
 
 # 验证环境

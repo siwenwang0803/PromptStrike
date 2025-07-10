@@ -16,8 +16,8 @@ echo -e "${BLUE}🎯 Final DOD Validation - Helm Install Success${NC}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-REPO_URL="https://siwenwang0803.github.io/PromptStrike"
-CHART_NAME="promptstrike-sidecar"
+REPO_URL="https://siwenwang0803.github.io/RedForge"
+CHART_NAME="redforge-sidecar"
 
 # Test 1: Check GitHub Pages accessibility
 echo -e "${YELLOW}Test 1: GitHub Pages Accessibility${NC}"
@@ -55,9 +55,9 @@ fi
 echo -e "${YELLOW}Test 3: Helm Repository Commands${NC}"
 
 # Clean any existing repo
-helm repo remove promptstrike 2>/dev/null || true
+helm repo remove redforge 2>/dev/null || true
 
-if helm repo add promptstrike "$REPO_URL" 2>/dev/null; then
+if helm repo add redforge "$REPO_URL" 2>/dev/null; then
     echo -e "${GREEN}✅ helm repo add successful${NC}"
 else
     echo -e "${RED}❌ helm repo add failed${NC}"
@@ -73,20 +73,20 @@ fi
 
 # Test 4: Search for our chart
 echo -e "${YELLOW}Test 4: Chart Discovery${NC}"
-if helm search repo promptstrike/$CHART_NAME >/dev/null 2>&1; then
+if helm search repo redforge/$CHART_NAME >/dev/null 2>&1; then
     echo -e "${GREEN}✅ Chart found in repository${NC}"
     echo "   Available versions:"
-    helm search repo promptstrike/$CHART_NAME --versions | head -5
+    helm search repo redforge/$CHART_NAME --versions | head -5
 else
     echo -e "${RED}❌ Chart not found in repository${NC}"
     echo "   Available charts:"
-    helm search repo promptstrike || echo "   No charts available"
+    helm search repo redforge || echo "   No charts available"
     exit 5
 fi
 
 # Test 5: Dry-run installation (the critical DOD command)
 echo -e "${YELLOW}Test 5: DOD Command Dry-Run${NC}"
-DOD_COMMAND="helm install guardrail promptstrike/$CHART_NAME -n ps --set openai.apiKey=test-key --create-namespace --dry-run"
+DOD_COMMAND="helm install guardrail redforge/$CHART_NAME -n ps --set openai.apiKey=test-key --create-namespace --dry-run"
 
 echo "   Testing: $DOD_COMMAND"
 if $DOD_COMMAND >/dev/null 2>&1; then
@@ -105,15 +105,15 @@ echo -e "${YELLOW}Test 6: Screenshot Evidence Generation${NC}"
 
 # Create a comprehensive output for screenshot
 cat > helm_install_evidence.txt << EOF
-PromptStrike DOD Final Validation - $(date)
+RedForge DOD Final Validation - $(date)
 ═══════════════════════════════════════════════
 
 SUCCESS: All DOD requirements validated ✅
 
 Command Sequence:
-1. helm repo add promptstrike $REPO_URL
+1. helm repo add redforge $REPO_URL
 2. helm repo update  
-3. helm install guardrail promptstrike/$CHART_NAME -n ps --set openai.apiKey=\$KEY
+3. helm install guardrail redforge/$CHART_NAME -n ps --set openai.apiKey=\$KEY
 
 Validation Results:
 ✅ GitHub Pages accessible
@@ -123,7 +123,7 @@ Validation Results:
 ✅ Installation command validated
 
 Chart Details:
-$(helm search repo promptstrike/$CHART_NAME --versions | head -3)
+$(helm search repo redforge/$CHART_NAME --versions | head -3)
 
 Repository Contents:
 $(curl -s "$REPO_URL/index.yaml" | grep -A 10 "entries:" | head -15)
@@ -136,7 +136,7 @@ echo -e "${GREEN}✅ Evidence file generated: helm_install_evidence.txt${NC}"
 
 # Test 7: Cleanup
 echo -e "${YELLOW}Test 7: Cleanup${NC}"
-helm repo remove promptstrike 2>/dev/null || true
+helm repo remove redforge 2>/dev/null || true
 echo -e "${GREEN}✅ Cleanup complete${NC}"
 
 echo ""
@@ -153,9 +153,9 @@ echo ""
 echo -e "${GREEN}🚀 Ready for screenshot and customer deployment!${NC}"
 echo ""
 echo -e "${BLUE}📸 For screenshot evidence:${NC}"
-echo "   - Run: helm search repo promptstrike"
+echo "   - Run: helm search repo redforge"
 echo "   - Show: helm_install_evidence.txt"
-echo "   - Demo: helm install guardrail promptstrike/$CHART_NAME --dry-run"
+echo "   - Demo: helm install guardrail redforge/$CHART_NAME --dry-run"
 echo ""
 
 exit 0

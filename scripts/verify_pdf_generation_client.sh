@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# PromptStrike PDF Generation Verification Script (Client-Friendly)
+# RedForge PDF Generation Verification Script (Client-Friendly)
 # 目标：验证 Nightly Job 生成 PDF 的成功率 100%，文件大小 < 3MB
 # Target: Verify Nightly Job PDF generation with 100% success rate, file size < 3MB
 # For clients - automatically handles installation and environment setup
@@ -63,22 +63,22 @@ track_test() {
     esac
 }
 
-# Function to detect and setup PromptStrike installation
-setup_promptstrike() {
-    print_section "PromptStrike 安装检查和设置 / PromptStrike Installation Check and Setup"
+# Function to detect and setup RedForge installation
+setup_redforge() {
+    print_section "RedForge 安装检查和设置 / RedForge Installation Check and Setup"
     
     # Check if we're in the project directory
     if [ ! -f "$PROJECT_ROOT/pyproject.toml" ]; then
-        track_test "Project directory check" "FAIL" "Not in PromptStrike project directory"
-        echo -e "${RED}❌ Please run this script from the PromptStrike project directory${NC}"
+        track_test "Project directory check" "FAIL" "Not in RedForge project directory"
+        echo -e "${RED}❌ Please run this script from the RedForge project directory${NC}"
         return 1
     fi
     
     track_test "Project directory check" "PASS" "Found pyproject.toml"
     
     # Method 1: Try direct import (if installed system-wide or in active venv)
-    if python3 -c "import promptstrike" &> /dev/null; then
-        track_test "PromptStrike availability" "PASS" "Found system-wide or in active environment"
+    if python3 -c "import redforge" &> /dev/null; then
+        track_test "RedForge availability" "PASS" "Found system-wide or in active environment"
         return 0
     fi
     
@@ -89,20 +89,20 @@ setup_promptstrike() {
         export PATH="$VIRTUAL_ENV/bin:$PATH"
         export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
         
-        if python3 -c "import promptstrike" &> /dev/null; then
-            track_test "PromptStrike activation" "PASS" "Activated project virtual environment"
+        if python3 -c "import redforge" &> /dev/null; then
+            track_test "RedForge activation" "PASS" "Activated project virtual environment"
             return 0
         fi
     fi
     
-    # Method 3: Try to install PromptStrike in development mode
-    echo -e "${YELLOW}🔧 Installing PromptStrike in development mode...${NC}"
+    # Method 3: Try to install RedForge in development mode
+    echo -e "${YELLOW}🔧 Installing RedForge in development mode...${NC}"
     cd "$PROJECT_ROOT"
     
     # Install in editable mode
     if pip3 install -e . &> /dev/null; then
-        if python3 -c "import promptstrike" &> /dev/null; then
-            track_test "PromptStrike installation" "PASS" "Installed in development mode"
+        if python3 -c "import redforge" &> /dev/null; then
+            track_test "RedForge installation" "PASS" "Installed in development mode"
             return 0
         fi
     fi
@@ -111,12 +111,12 @@ setup_promptstrike() {
     echo -e "${YELLOW}🔧 Adding project to PYTHONPATH...${NC}"
     export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
     
-    if python3 -c "import promptstrike" &> /dev/null; then
-        track_test "PromptStrike PYTHONPATH" "PASS" "Added to PYTHONPATH"
+    if python3 -c "import redforge" &> /dev/null; then
+        track_test "RedForge PYTHONPATH" "PASS" "Added to PYTHONPATH"
         return 0
     fi
     
-    track_test "PromptStrike setup" "FAIL" "Could not setup PromptStrike environment"
+    track_test "RedForge setup" "FAIL" "Could not setup RedForge environment"
     return 1
 }
 
@@ -132,12 +132,12 @@ check_prerequisites() {
         return 1
     fi
     
-    # Setup PromptStrike
-    if ! setup_promptstrike; then
-        echo -e "${RED}❌ Failed to setup PromptStrike environment${NC}"
+    # Setup RedForge
+    if ! setup_redforge; then
+        echo -e "${RED}❌ Failed to setup RedForge environment${NC}"
         echo -e "${YELLOW}💡 Client setup instructions:${NC}"
-        echo "   1. Make sure you're in the PromptStrike project directory"
-        echo "   2. Install PromptStrike: pip install -e ."
+        echo "   1. Make sure you're in the RedForge project directory"
+        echo "   2. Install RedForge: pip install -e ."
         echo "   3. Or activate the virtual environment if available"
         return 1
     fi
@@ -200,11 +200,11 @@ verify_github_workflow() {
 test_cli_availability() {
     print_section "CLI 可用性测试 / CLI Availability Test"
     
-    # Test different ways to run PromptStrike CLI
+    # Test different ways to run RedForge CLI
     local cli_methods=(
-        "promptstrike --help"
-        "python3 -m promptstrike.cli --help"
-        "python3 -c 'from promptstrike.cli import main; main()' --help"
+        "redforge --help"
+        "python3 -m redforge.cli --help"
+        "python3 -c 'from redforge.cli import main; main()' --help"
     )
     
     local working_method=""
@@ -218,7 +218,7 @@ test_cli_availability() {
     
     if [ -n "$working_method" ]; then
         track_test "CLI availability" "PASS" "Working method: $working_method"
-        export PROMPTSTRIKE_CLI_METHOD="$working_method"
+        export REDFORGE_CLI_METHOD="$working_method"
         return 0
     else
         track_test "CLI availability" "FAIL" "No working CLI method found"
@@ -226,17 +226,17 @@ test_cli_availability() {
     fi
 }
 
-# Function to run PromptStrike CLI with the working method
-run_promptstrike_cli() {
+# Function to run RedForge CLI with the working method
+run_redforge_cli() {
     local args="$@"
     
-    if [ -z "$PROMPTSTRIKE_CLI_METHOD" ]; then
+    if [ -z "$REDFORGE_CLI_METHOD" ]; then
         echo -e "${RED}❌ No working CLI method available${NC}"
         return 1
     fi
     
     # Extract the base command and replace --help with actual args
-    local base_cmd=$(echo "$PROMPTSTRIKE_CLI_METHOD" | sed 's/--help//')
+    local base_cmd=$(echo "$REDFORGE_CLI_METHOD" | sed 's/--help//')
     eval "$base_cmd $args"
 }
 
@@ -264,7 +264,7 @@ test_pdf_generation_client() {
     # Try to run a dry-run first to test CLI functionality
     cd "$PROJECT_ROOT"
     if OPENAI_API_KEY="${OPENAI_API_KEY:-sk-test-key}" \
-       run_promptstrike_cli scan "$model" \
+       run_redforge_cli scan "$model" \
        --output "$output_dir" \
        --format pdf \
        --max-requests 1 \
@@ -304,7 +304,7 @@ try:
         
         # Add content to make it look like a compliance report
         c.setFont("Helvetica-Bold", 16)
-        c.drawString(50, height - 50, "PromptStrike Security Compliance Report")
+        c.drawString(50, height - 50, "RedForge Security Compliance Report")
         
         c.setFont("Helvetica", 12)
         c.drawString(50, height - 100, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -384,7 +384,7 @@ except ImportError:
             f.write("3 0 obj\n<<\n/Type /Page\n/Parent 2 0 R\n/Contents 4 0 R\n>>\nendobj\n")
             f.write("4 0 obj\n<<\n/Length 200\n>>\nstream\n")
             f.write("BT\n/F1 12 Tf\n50 750 Td\n")
-            f.write("(PromptStrike Security Compliance Report) Tj\n")
+            f.write("(RedForge Security Compliance Report) Tj\n")
             f.write("0 -20 Td\n(OWASP LLM Top 10 Coverage: Complete) Tj\n")
             f.write("0 -20 Td\n(Compliance Frameworks: NIST, EU AI Act, SOC 2) Tj\n")
             f.write("0 -20 Td\n(Security Assessment: Vulnerability, Risk, Threat) Tj\n")
@@ -458,7 +458,7 @@ verify_pdf_content() {
         local content=$(strings "$pdf_file" | head -100)
         
         # Check for key report elements
-        if echo "$content" | grep -q -i "promptstrike\|compliance\|security"; then
+        if echo "$content" | grep -q -i "redforge\|compliance\|security"; then
             track_test "PDF content keywords ($test_name)" "PASS" "PDF contains expected security/compliance keywords"
         else
             track_test "PDF content keywords ($test_name)" "FAIL" "PDF missing expected security/compliance keywords"
@@ -540,7 +540,7 @@ generate_test_report() {
     # Save detailed test report
     local report_file="$REPORTS_DIR/pdf_verification_client_report_$(date +%Y%m%d_%H%M%S).md"
     cat > "$report_file" << EOF
-# PromptStrike PDF Generation Verification Report (Client Version)
+# RedForge PDF Generation Verification Report (Client Version)
 
 **Date**: $(date)
 **Test Suite**: PDF Generation Verification (Client-Friendly)
@@ -563,7 +563,7 @@ generate_test_report() {
 
 - **Python Version**: $(python3 --version 2>/dev/null || echo "Not available")
 - **Project Directory**: $PROJECT_ROOT
-- **CLI Method**: ${PROMPTSTRIKE_CLI_METHOD:-"Not determined"}
+- **CLI Method**: ${REDFORGE_CLI_METHOD:-"Not determined"}
 
 ## Objectives Verification
 
@@ -577,23 +577,23 @@ generate_test_report() {
 
 ## Client Instructions
 
-### To run PromptStrike CLI:
+### To run RedForge CLI:
 \`\`\`bash
 # Method 1: If installed system-wide
-promptstrike --help
+redforge --help
 
 # Method 2: Python module execution
-python3 -m promptstrike.cli --help
+python3 -m redforge.cli --help
 
 # Method 3: Development installation
 pip install -e .
-promptstrike --help
+redforge --help
 \`\`\`
 
 ### To generate a PDF report:
 \`\`\`bash
 export OPENAI_API_KEY="your-api-key"
-promptstrike scan gpt-4 --format pdf --output ./reports
+redforge scan gpt-4 --format pdf --output ./reports
 \`\`\`
 
 ## Recommendations
@@ -603,23 +603,23 @@ $(if [ "$success_rate" -ge 80 ]; then
     echo ""
     echo "Next steps:"
     echo "1. Set your OPENAI_API_KEY environment variable"
-    echo "2. Run: promptstrike scan gpt-4 --format pdf"
+    echo "2. Run: redforge scan gpt-4 --format pdf"
     echo "3. Check output in ./reports directory"
 elif [ "$success_rate" -ge 60 ]; then
     echo "⚠️ **Setup partially working** - Some issues to address"
     echo ""
     echo "Recommended actions:"
-    echo "1. Install PromptStrike: pip install -e ."
+    echo "1. Install RedForge: pip install -e ."
     echo "2. Install PDF dependencies: pip install reportlab"
     echo "3. Ensure you're in the project directory"
 else
     echo "❌ **Setup needs attention** - Significant issues found"
     echo ""
     echo "Required actions:"
-    echo "1. Verify you're in the PromptStrike project directory"
+    echo "1. Verify you're in the RedForge project directory"
     echo "2. Install the package: pip install -e ."
     echo "3. Install dependencies: pip install reportlab"
-    echo "4. Test CLI: python3 -m promptstrike.cli --help"
+    echo "4. Test CLI: python3 -m redforge.cli --help"
 fi)
 
 EOF
@@ -630,7 +630,7 @@ EOF
     echo ""
     if [ $TESTS_FAILED -eq 0 ] && [ "$success_rate" -ge 90 ]; then
         echo -e "${GREEN}🎉 CLIENT SETUP EXCELLENT - Ready for PDF generation!${NC}"
-        echo -e "${GREEN}✅ Next step: Set OPENAI_API_KEY and run: promptstrike scan gpt-4 --format pdf${NC}"
+        echo -e "${GREEN}✅ Next step: Set OPENAI_API_KEY and run: redforge scan gpt-4 --format pdf${NC}"
         return 0
     elif [ "$success_rate" -ge 70 ]; then
         echo -e "${YELLOW}⚠️  CLIENT SETUP MOSTLY WORKING - Minor issues to address${NC}"
@@ -645,7 +645,7 @@ EOF
 
 # Main execution function
 main() {
-    print_section "PromptStrike PDF 生成验证 (客户版) / PromptStrike PDF Generation Verification (Client Version)"
+    print_section "RedForge PDF 生成验证 (客户版) / RedForge PDF Generation Verification (Client Version)"
     
     echo "Client-Friendly Configuration:"
     echo "- Project root: $PROJECT_ROOT"
@@ -675,10 +675,10 @@ case "${1:-}" in
     --help|-h)
         echo "Usage: $0 [options]"
         echo ""
-        echo "PromptStrike PDF Generation Verification (Client-Friendly Version)"
+        echo "RedForge PDF Generation Verification (Client-Friendly Version)"
         echo ""
         echo "This script automatically:"
-        echo "  - Detects and sets up PromptStrike installation"
+        echo "  - Detects and sets up RedForge installation"
         echo "  - Tests PDF generation capabilities"
         echo "  - Verifies file size and content requirements"
         echo "  - Provides client-friendly setup instructions"

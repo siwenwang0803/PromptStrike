@@ -1,5 +1,5 @@
 """
-Sidecar Recovery Validation for PromptStrike
+Sidecar Recovery Validation for RedForge
 验证 Sidecar 的错误恢复能力
 """
 

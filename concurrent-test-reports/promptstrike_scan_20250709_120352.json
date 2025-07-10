@@ -1477,6 +1477,6 @@
     "Implement rate limiting",
     "Add concurrent request monitoring"
   ],
-  "generated_by": "PromptStrike CLI v0.1.0",
+  "generated_by": "RedForge CLI v0.1.0",
   "generated_at": "2025-07-09T12:03:52.548408"
 }

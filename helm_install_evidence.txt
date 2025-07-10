@@ -1,12 +1,12 @@
-PromptStrike DOD Final Validation - Sun Jul  6 17:46:10 PDT 2025
+RedForge DOD Final Validation - Sun Jul  6 17:46:10 PDT 2025
 ═══════════════════════════════════════════════
 
 SUCCESS: All DOD requirements validated ✅
 
 Command Sequence:
-1. helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+1. helm repo add redforge https://siwenwang0803.github.io/RedForge
 2. helm repo update  
-3. helm install guardrail promptstrike/promptstrike-sidecar -n ps --set openai.apiKey=$KEY
+3. helm install guardrail redforge/redforge-sidecar -n ps --set openai.apiKey=$KEY
 
 Validation Results:
 ✅ GitHub Pages accessible
@@ -17,16 +17,16 @@ Validation Results:
 
 Chart Details:
 NAME                             	CHART VERSION	APP VERSION	DESCRIPTION                                       
-promptstrike/promptstrike-sidecar	0.2.0        	0.1.0-alpha	PromptStrike Guardrail Sidecar - Runtime Securi...
+redforge/redforge-sidecar	0.2.0        	0.1.0-alpha	RedForge Guardrail Sidecar - Runtime Securi...
 
 Repository Contents:
 entries:
-  promptstrike-sidecar:
+  redforge-sidecar:
   - annotations:
       category: Security
       images: |
-        - name: promptstrike-sidecar
-          image: promptstrike/guardrail-sidecar:latest
+        - name: redforge-sidecar
+          image: redforge/guardrail-sidecar:latest
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: 0.1.0-alpha

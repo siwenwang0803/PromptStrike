@@ -7,15 +7,15 @@ from datetime import datetime
 from unittest.mock import Mock, patch
 import json
 
-from promptstrike.compliance.pci_dss_framework import (
+from redforge.compliance.pci_dss_framework import (
     PCIDSSFramework,
     PCIDSSLevel,
     PCIDSSVersion,
     create_pci_dss_report,
     get_pci_dss_requirements_summary
 )
-from promptstrike.compliance.report_generator import ComplianceReportGenerator
-from promptstrike.models.scan_result import ScanResult, AttackResult, SeverityLevel, AttackCategory
+from redforge.compliance.report_generator import ComplianceReportGenerator
+from redforge.models.scan_result import ScanResult, AttackResult, SeverityLevel, AttackCategory
 
 
 @pytest.fixture
@@ -66,7 +66,7 @@ def mock_scan_result():
         )
     ]
     
-    from promptstrike.models.scan_result import ScanMetadata, ComplianceReport
+    from redforge.models.scan_result import ScanMetadata, ComplianceReport
     
     # Create proper metadata and compliance objects
     scan_metadata = ScanMetadata(
@@ -157,8 +157,8 @@ class TestPCIDSSFramework:
             for control_id in control_ids:
                 assert control_id in framework.controls
     
-    def test_promptstrike_findings_mapping(self, mock_scan_result):
-        """Test mapping PromptStrike findings to PCI DSS controls"""
+    def test_redforge_findings_mapping(self, mock_scan_result):
+        """Test mapping RedForge findings to PCI DSS controls"""
         framework = PCIDSSFramework()
         
         # Convert scan result to expected format
@@ -174,7 +174,7 @@ class TestPCIDSSFramework:
             ]
         }
         
-        mappings = framework.map_promptstrike_findings(scan_data)
+        mappings = framework.map_redforge_findings(scan_data)
         
         assert len(mappings) > 0
         
@@ -208,7 +208,7 @@ class TestPCIDSSFramework:
             ]
         }
         
-        mappings = framework.map_promptstrike_findings(scan_data)
+        mappings = framework.map_redforge_findings(scan_data)
         report = framework.generate_compliance_report(mappings)
         
         # Check report structure
@@ -242,13 +242,13 @@ class TestPCIDSSReportGenerator:
         # Check report structure
         assert "framework" in report
         assert "merchant_level" in report
-        assert "promptstrike_metadata" in report
+        assert "redforge_metadata" in report
         assert "detailed_findings" in report
         assert "remediation_roadmap" in report
         assert "audit_evidence" in report
         
-        # Check PromptStrike metadata
-        metadata = report["promptstrike_metadata"]
+        # Check RedForge metadata
+        metadata = report["redforge_metadata"]
         assert metadata["scan_id"] == mock_scan_result.scan_id
         assert metadata["target_system"] == mock_scan_result.target
         assert len(metadata["attack_categories_tested"]) > 0
@@ -470,10 +470,10 @@ class TestPCIDSSMerchantLevels:
 
 
 class TestPCIDSSIntegration:
-    """Test PCI DSS integration with PromptStrike"""
+    """Test PCI DSS integration with RedForge"""
     
     def test_attack_category_mapping(self, mock_scan_result):
-        """Test mapping of PromptStrike attack categories to PCI DSS types"""
+        """Test mapping of RedForge attack categories to PCI DSS types"""
         generator = ComplianceReportGenerator(mock_scan_result)
         
         # Test all OWASP LLM Top 10 categories
@@ -509,7 +509,7 @@ class TestPCIDSSIntegration:
         required_sections = [
             "framework", "merchant_level", "assessment_date",
             "overall_compliance_status", "compliance_percentage",
-            "promptstrike_metadata", "detailed_findings",
+            "redforge_metadata", "detailed_findings",
             "remediation_roadmap", "audit_evidence"
         ]
         
@@ -517,7 +517,7 @@ class TestPCIDSSIntegration:
             assert section in report, f"Missing required section: {section}"
         
         # Verify data consistency
-        metadata = report["promptstrike_metadata"]
+        metadata = report["redforge_metadata"]
         assert metadata["scan_id"] == mock_scan_result.scan_id
         assert len(metadata["attack_categories_tested"]) > 0
         

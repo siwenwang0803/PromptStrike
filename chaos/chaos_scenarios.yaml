@@ -1,4 +1,4 @@
-# Chaos Mesh Scenarios for PromptStrike
+# Chaos Mesh Scenarios for RedForge
 # 目标：验证 data_corruption 和 protocol_violation 场景下系统韧性
 
 # Data Corruption Scenarios
@@ -7,7 +7,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: IOChaos
 metadata:
   name: data-corruption-logs
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Target the guardrail sidecar
   selector:
@@ -25,7 +25,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: IOChaos
 metadata:
   name: data-corruption-reports
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Target report generation
   selector:
@@ -42,7 +42,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: IOChaos
 metadata:
   name: data-corruption-latency
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Add latency to data operations
   selector:
@@ -60,7 +60,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
   name: protocol-violation-partition
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Network partition between sidecar and LLM API
   selector:
@@ -79,7 +79,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
   name: protocol-violation-corrupt
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Corrupt network packets
   selector:
@@ -95,7 +95,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
   name: protocol-violation-duplicate
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Duplicate network packets
   selector:
@@ -112,7 +112,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
   name: network-delay-high
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # High network latency
   selector:
@@ -130,7 +130,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: NetworkChaos
 metadata:
   name: network-delay-variable
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Variable network latency
   selector:
@@ -149,7 +149,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
   name: pod-failure-kill
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Kill pods randomly
   selector:
@@ -164,7 +164,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: PodChaos
 metadata:
   name: pod-failure-restart
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Restart containers
   selector:
@@ -181,7 +181,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: StressChaos
 metadata:
   name: memory-pressure-high
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # High memory pressure
   selector:
@@ -199,7 +199,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: StressChaos
 metadata:
   name: cpu-pressure-high
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # High CPU pressure
   selector:
@@ -218,7 +218,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: HTTPChaos
 metadata:
   name: http-chaos-abort
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Abort HTTP requests
   selector:
@@ -236,7 +236,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: HTTPChaos
 metadata:
   name: http-chaos-delay
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Delay HTTP responses
   selector:
@@ -255,7 +255,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: JVMChaos
 metadata:
   name: jvm-chaos-gc
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Force garbage collection
   selector:
@@ -270,7 +270,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: TimeChaos
 metadata:
   name: time-chaos-skew
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Clock skew simulation
   selector:
@@ -285,7 +285,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: KernelChaos
 metadata:
   name: kernel-chaos-io
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # Kernel-level I/O faults
   selector:
@@ -303,7 +303,7 @@ apiVersion: chaos-mesh.org/v1alpha1
 kind: DNSChaos
 metadata:
   name: dns-chaos-failure
-  namespace: promptstrike-test
+  namespace: redforge-test
 spec:
   # DNS resolution failures
   selector:
@@ -320,8 +320,8 @@ spec:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: Workflow
 metadata:
-  name: promptstrike-chaos-workflow
-  namespace: promptstrike-test
+  name: redforge-chaos-workflow
+  namespace: redforge-test
 spec:
   entry: data-corruption-phase
   templates:
@@ -351,8 +351,8 @@ spec:
 apiVersion: chaos-mesh.org/v1alpha1
 kind: Schedule
 metadata:
-  name: promptstrike-chaos-schedule
-  namespace: promptstrike-test
+  name: redforge-chaos-schedule
+  namespace: redforge-test
 spec:
   # Run chaos tests every 6 hours
   schedule: "0 */6 * * *"

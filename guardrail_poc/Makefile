@@ -1,10 +1,10 @@
-# PromptStrike Guardrail PoC Makefile
+# RedForge Guardrail PoC Makefile
 
 .PHONY: help build up down test clean minikube-start minikube-deploy minikube-test minikube-clean
 
 # Default target
 help:
-	@echo "PromptStrike Guardrail PoC Commands:"
+	@echo "RedForge Guardrail PoC Commands:"
 	@echo ""
 	@echo "Docker Compose (Development):"
 	@echo "  make build       - Build Docker images"
@@ -116,7 +116,7 @@ minikube-deploy:
 	kubectl apply -f k8s/deployment.yaml
 	kubectl apply -f k8s/service.yaml
 	@echo "⏳ Waiting for deployment..."
-	kubectl wait --for=condition=available --timeout=300s deployment/promptstrike-guardrail-demo -n promptstrike-guardrail
+	kubectl wait --for=condition=available --timeout=300s deployment/redforge-guardrail-demo -n redforge-guardrail
 	@echo "✅ Deployment ready!"
 
 minikube-test:
@@ -133,18 +133,18 @@ minikube-test:
 
 minikube-clean:
 	@echo "🧹 Cleaning K8s resources..."
-	kubectl delete namespace promptstrike-guardrail --ignore-not-found=true
+	kubectl delete namespace redforge-guardrail --ignore-not-found=true
 	@echo "✅ Cleaned up!"
 
 # Status Commands
 status:
-	@echo "📊 PromptStrike Guardrail Status:"
+	@echo "📊 RedForge Guardrail Status:"
 	@echo ""
 	@echo "Docker Compose:"
 	@docker-compose ps
 	@echo ""
 	@echo "Kubernetes (if running):"
-	@kubectl get pods -n promptstrike-guardrail 2>/dev/null || echo "  No K8s deployment found"
+	@kubectl get pods -n redforge-guardrail 2>/dev/null || echo "  No K8s deployment found"
 
 health:
 	@echo "🏥 Health Checks:"

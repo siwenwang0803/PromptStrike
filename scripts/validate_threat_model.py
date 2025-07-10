@@ -257,7 +257,7 @@ def main():
     parser.add_argument(
         "--doc",
         type=pathlib.Path,
-        default="docs/PromptStrike/Security/Guardrail_Threat_Model.md",
+        default="docs/RedForge/Security/Guardrail_Threat_Model.md",
         help="Path to threat model markdown file"
     )
     parser.add_argument(

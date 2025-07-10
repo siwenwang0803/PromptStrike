@@ -8,13 +8,13 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 
 # Step 1: Package the chart
 echo "📦 Packaging Helm chart..."
-cd helm/promptstrike-sidecar
+cd helm/redforge-sidecar
 helm package . --destination ../../
 cd ../../
 
 # Step 2: Create Helm repository index
 echo "📋 Creating Helm repository index..."
-helm repo index . --url https://siwenwang0803.github.io/PromptStrike
+helm repo index . --url https://siwenwang0803.github.io/RedForge
 
 # Step 3: Copy files to gh-pages branch
 echo "🔄 Deploying to gh-pages branch..."
@@ -28,9 +28,9 @@ cp index.yaml . 2>/dev/null || echo "No index.yaml to copy"
 git add *.tgz index.yaml 2>/dev/null || echo "Nothing to add"
 git commit -m "Manual Helm repository deployment for DOD completion
 
-- Package: promptstrike-sidecar chart
+- Package: redforge-sidecar chart
 - Index: Helm repository index.yaml
-- DOD: Enable helm repo add promptstrike command
+- DOD: Enable helm repo add redforge command
 
 This completes the final DOD requirement for client deployment." || echo "Nothing to commit"
 

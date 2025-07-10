@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 189, in _run_module_as_main
+  File "<frozen runpy>", line 112, in _get_module_details
+  File "/Users/siwenwang/PromptStrike/promptstrike/__init__.py", line 13, in <module>
+    from .core.report import ReportGenerator
+  File "/Users/siwenwang/PromptStrike/promptstrike/core/report.py", line 11, in <module>
+    from jinja2 import Template
+ModuleNotFoundError: No module named 'jinja2'

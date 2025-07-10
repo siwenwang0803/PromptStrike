@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import List, Dict, Any, Optional, Literal
 from enum import Enum
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class SeverityLevel(str, Enum):
@@ -71,13 +71,15 @@ class AttackResult(BaseModel):
     # Timestamps
     timestamp: datetime = Field(default_factory=datetime.now, description="Attack execution time")
     
-    @validator('confidence_score')
+    @field_validator('confidence_score')
+    @classmethod
     def validate_confidence(cls, v):
         if not 0.0 <= v <= 1.0:
             raise ValueError('Confidence score must be between 0.0 and 1.0')
         return v
     
-    @validator('risk_score') 
+    @field_validator('risk_score')
+    @classmethod
     def validate_risk_score(cls, v):
         if not 0.0 <= v <= 10.0:
             raise ValueError('Risk score must be between 0.0 and 10.0')
@@ -109,9 +111,10 @@ class ScanMetadata(BaseModel):
     python_version: str = Field(..., description="Python runtime version")
     platform: str = Field(..., description="Operating system platform")
     
-    @validator('successful_attacks', 'failed_attacks')
-    def validate_attack_counts(cls, v, values):
-        if 'total_attacks' in values and v > values['total_attacks']:
+    @field_validator('successful_attacks', 'failed_attacks')
+    @classmethod
+    def validate_attack_counts(cls, v, info):
+        if 'total_attacks' in info.data and v > info.data['total_attacks']:
             raise ValueError('Attack count cannot exceed total attacks')
         return v
 
@@ -195,9 +198,10 @@ class ScanResult(BaseModel):
     immediate_actions: List[str] = Field(default_factory=list, description="Critical fixes needed")
     recommended_controls: List[str] = Field(default_factory=list, description="Security controls to implement")
     
-    @validator('end_time')
-    def end_after_start(cls, v, values):
-        if 'start_time' in values and v < values['start_time']:
+    @field_validator('end_time')
+    @classmethod
+    def end_after_start(cls, v, info):
+        if 'start_time' in info.data and v < info.data['start_time']:
             raise ValueError('End time must be after start time')
         return v
     

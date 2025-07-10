@@ -10,16 +10,8 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 from jinja2 import Template
 
-try:
-    from reportlab.lib.pagesizes import letter, A4
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
-    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-    from reportlab.lib.units import inch
-    from reportlab.lib import colors
-    from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
-    REPORTLAB_AVAILABLE = True
-except ImportError:
-    REPORTLAB_AVAILABLE = False
+# ReportLab imports moved to PDF generation method to avoid startup issues
+REPORTLAB_AVAILABLE = True
 
 from ..models.scan_result import ScanResult, AttackResult, SeverityLevel
 
@@ -116,8 +108,16 @@ class ReportGenerator:
         filename = f"promptstrike_scan_{timestamp}.pdf"
         output_path = self.output_dir / filename
         
-        if not REPORTLAB_AVAILABLE:
-            # Fallback to text file if ReportLab not available
+        # Try to import ReportLab only when needed
+        try:
+            from reportlab.lib.pagesizes import letter, A4
+            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+            from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+            from reportlab.lib.units import inch
+            from reportlab.lib import colors
+            from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+        except (ImportError, Exception) as e:
+            # Fallback to text file if ReportLab not available or fails
             return self._generate_text_fallback_pdf(scan_result, output_path)
         
         # Create PDF document
@@ -143,9 +143,10 @@ class ReportGenerator:
             textColor=colors.darkblue
         )
         
-        # Title page
-        story.append(Paragraph("PromptStrike Security Scan Report", title_style))
-        story.append(Spacer(1, 0.5*inch))
+        # Title page with logo placeholder
+        story.append(Paragraph("🎯 PromptStrike Security Scan Report", title_style))
+        story.append(Paragraph("Enterprise LLM Security Assessment", styles['Heading3']))
+        story.append(Spacer(1, 0.3*inch))
         
         # Executive summary table
         summary_data = [
@@ -214,12 +215,34 @@ class ReportGenerator:
         
         # Detailed findings
         if scan_result.vulnerability_count > 0:
-            story.append(Paragraph("Detailed Vulnerability Findings", heading_style))
+            story.append(Paragraph("🚨 Detailed Vulnerability Findings", heading_style))
+            
+            # Create vulnerability table for better presentation
+            vuln_data = [['Attack ID', 'Category', 'Severity', 'Risk Score', 'Description']]
             
             for result in scan_result.results:
                 if result.is_vulnerable:
-                    story.append(self._create_vulnerability_section(result, styles))
-                    story.append(Spacer(1, 0.2*inch))
+                    vuln_data.append([
+                        result.attack_id,
+                        result.category.value.replace('_', ' ').title(),
+                        result.severity.value.upper(),
+                        f"{result.risk_score:.1f}/10",
+                        result.description[:50] + "..." if len(result.description) > 50 else result.description
+                    ])
+            
+            if len(vuln_data) > 1:
+                vuln_table = Table(vuln_data, colWidths=[1*inch, 1.5*inch, 1*inch, 1*inch, 2*inch])
+                vuln_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.darkred),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 10),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.lightgrey, colors.white])
+                ]))
+                story.append(vuln_table)
         
         # Compliance section
         story.append(PageBreak())
@@ -268,27 +291,31 @@ class ReportGenerator:
             f.write("NOTE: ReportLab not installed. Install with: pip install reportlab\n")
         return output_path
     
-    def _create_vulnerability_section(self, result: AttackResult, styles) -> Paragraph:
+    def _create_vulnerability_section(self, result: AttackResult, styles):
         """Create a vulnerability section for the PDF"""
-        severity_color = {
-            'critical': 'red',
-            'high': 'orange', 
-            'medium': 'goldenrod',
-            'low': 'green',
-            'info': 'gray'
-        }.get(result.severity.value, 'black')
-        
-        content = f"""
-        <b>Attack ID:</b> {result.attack_id}<br/>
-        <b>Category:</b> {result.category.value.replace('_', ' ').title()}<br/>
-        <b>Severity:</b> <font color="{severity_color}"><b>{result.severity.value.upper()}</b></font><br/>
-        <b>Risk Score:</b> {result.risk_score}/10<br/>
-        <b>Confidence:</b> {result.confidence_score:.2f}<br/>
-        <b>Description:</b> {result.description}<br/>
-        <b>Evidence:</b> {result.evidence or 'N/A'}
-        """
-        
-        return Paragraph(content, styles['Normal'])
+        # Import Paragraph locally to avoid import issues
+        try:
+            from reportlab.platypus import Paragraph
+            from reportlab.lib.utils import simpleSplit
+            
+            # Create clean text content without HTML tags to avoid parsing issues
+            content_lines = [
+                f"Attack ID: {result.attack_id}",
+                f"Category: {result.category.value.replace('_', ' ').title()}",
+                f"Severity: {result.severity.value.upper()}",
+                f"Risk Score: {result.risk_score}/10",
+                f"Confidence: {result.confidence_score:.2f}",
+                f"Description: {result.description}",
+                f"Evidence: {result.evidence or 'N/A'}"
+            ]
+            
+            # Join with line breaks
+            content = "<br/>".join(content_lines)
+            
+            return Paragraph(content, styles['Normal'])
+        except ImportError:
+            # Fallback to simple string
+            return f"Attack ID: {result.attack_id} | Severity: {result.severity.value.upper()}"
     
     def _get_risk_description(self, severity: str) -> str:
         """Get risk description for severity level"""

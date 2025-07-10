@@ -28,7 +28,21 @@ class LLMScanner:
         timeout: int = 30,
         verbose: bool = False
     ):
-        self.target = target
+        # Convert model names to API endpoints
+        if target in ["gpt-4", "gpt-3.5-turbo", "gpt-4-turbo"]:
+            self.target = "https://api.openai.com/v1/chat/completions"
+            self.model_name = target
+        elif target in ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku"]:
+            self.target = "https://api.anthropic.com/v1/messages"
+            self.model_name = target
+        elif target.startswith("http"):
+            self.target = target
+            self.model_name = None
+        else:
+            # Assume it's an OpenAI model
+            self.target = "https://api.openai.com/v1/chat/completions"
+            self.model_name = target
+            
         self.config = config
         self.max_requests = max_requests
         self.timeout = timeout
@@ -155,9 +169,9 @@ class LLMScanner:
             api_format = self._detect_api_format()
             
             if api_format == "openai":
-                payload = self._create_openai_payload(attack.payload)
+                payload = self._create_openai_payload(attack.payload, self.model_name or "gpt-3.5-turbo")
             elif api_format == "anthropic":
-                payload = self._create_anthropic_payload(attack.payload)
+                payload = self._create_anthropic_payload(attack.payload, self.model_name or "claude-3-sonnet-20240229")
             else:
                 payload = self._create_generic_payload(attack.payload)
             

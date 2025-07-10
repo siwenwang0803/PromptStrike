@@ -1,0 +1,24 @@
+PromptStrike CLI Matrix Test Summary
+===================================
+Date: Mon Jul  7 19:53:24 PDT 2025
+Models tested: gpt-3.5-turbo
+Formats tested: json
+Concurrency: 5
+
+Test Results:
+-------------
+gpt-3.5-turbo/json:        0 files generated
+
+Log files:
+----------
+-rw-r--r--  1 siwenwang  staff  34 Jul  7 19:53 ./logs/performance_gpt-3.5-turbo_json_1751943202.log
+-rw-r--r--  1 siwenwang  staff  34 Jul  7 19:37 ./logs/performance_gpt-4_html_1751942243.log
+-rw-r--r--  1 siwenwang  staff  34 Jul  7 19:37 ./logs/performance_gpt-4_json_1751942238.log
+-rw-r--r--  1 siwenwang  staff  34 Jul  7 19:37 ./logs/performance_gpt-4_pdf_1751942240.log
+
+Performance Metrics:
+-------------------
+performance_gpt-3.5-turbo_json_1751943202.log:
+performance_gpt-4_html_1751942243.log:
+performance_gpt-4_json_1751942238.log:
+performance_gpt-4_pdf_1751942240.log:

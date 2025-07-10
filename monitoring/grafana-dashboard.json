@@ -1,0 +1,255 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "PSGuard Sidecar 资源监控",
+    "tags": ["psguard", "sidecar", "monitoring"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "CPU 使用率 (目标: ≤ 200m)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(container_cpu_usage_seconds_total{container=\"psguard\"}[1m]) * 1000",
+            "legendFormat": "CPU Usage (m)",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 150},
+                {"color": "red", "value": 200}
+              ]
+            },
+            "unit": "short",
+            "min": 0,
+            "max": 300
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "内存使用率 (目标: ≤ 180Mi)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "container_memory_working_set_bytes{container=\"psguard\"} / 1024 / 1024",
+            "legendFormat": "Memory Usage (Mi)",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 150},
+                {"color": "red", "value": 180}
+              ]
+            },
+            "unit": "short",
+            "min": 0,
+            "max": 256
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "RPS (目标: 500)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{service=\"psguard\"}[1m])",
+            "legendFormat": "Requests/sec",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "yellow", "value": 400},
+                {"color": "green", "value": 500}
+              ]
+            },
+            "unit": "reqps",
+            "min": 0,
+            "max": 1000
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "响应时间 (95th %ile)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{service=\"psguard\"}[5m])) * 1000",
+            "legendFormat": "95th Percentile (ms)",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 500},
+                {"color": "red", "value": 1000}
+              ]
+            },
+            "unit": "ms",
+            "min": 0
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 8, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "错误率",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{service=\"psguard\",status=~\"5..\"}[5m]) / rate(http_requests_total{service=\"psguard\"}[5m]) * 100",
+            "legendFormat": "Error Rate (%)",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 1},
+                {"color": "red", "value": 5}
+              ]
+            },
+            "unit": "percent",
+            "min": 0,
+            "max": 10
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 16, "y": 8}
+      },
+      {
+        "id": 6,
+        "title": "CPU 使用率趋势",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(container_cpu_usage_seconds_total{container=\"psguard\"}[1m]) * 1000",
+            "legendFormat": "CPU Usage (m)",
+            "refId": "A"
+          }
+        ],
+        "yAxes": [
+          {
+            "max": 300,
+            "min": 0,
+            "unit": "short"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+      },
+      {
+        "id": 7,
+        "title": "内存使用率趋势",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "container_memory_working_set_bytes{container=\"psguard\"} / 1024 / 1024",
+            "legendFormat": "Memory Usage (Mi)",
+            "refId": "A"
+          }
+        ],
+        "yAxes": [
+          {
+            "max": 256,
+            "min": 0,
+            "unit": "short"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+      },
+      {
+        "id": 8,
+        "title": "网络流量",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(container_network_receive_bytes_total{container=\"psguard\"}[1m])",
+            "legendFormat": "Receive",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(container_network_transmit_bytes_total{container=\"psguard\"}[1m])",
+            "legendFormat": "Transmit",
+            "refId": "B"
+          }
+        ],
+        "yAxes": [
+          {
+            "unit": "Bps"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24}
+      },
+      {
+        "id": 9,
+        "title": "磁盘 I/O",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(container_fs_io_time_seconds_total{container=\"psguard\"}[1m])",
+            "legendFormat": "I/O Utilization",
+            "refId": "A"
+          }
+        ],
+        "yAxes": [
+          {
+            "max": 1,
+            "min": 0,
+            "unit": "percentunit"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24}
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "5s",
+    "annotations": {
+      "list": [
+        {
+          "name": "CPU 限制",
+          "type": "dashboard",
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "limit": 100,
+          "showIn": 0,
+          "tags": [],
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    }
+  }
+}

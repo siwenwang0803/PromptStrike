@@ -1,0 +1,183 @@
+# Prometheus 记录规则 - PSGuard Sidecar 性能指标
+# 预计算常用指标以提高查询性能
+
+groups:
+  - name: psguard-recording-rules
+    interval: 30s
+    rules:
+      # CPU 使用率 (毫核)
+      - record: psguard:cpu_usage_millicores
+        expr: rate(container_cpu_usage_seconds_total{container="psguard"}[1m]) * 1000
+        labels:
+          service: psguard
+          metric_type: resource
+
+      # 内存使用率 (Mi)
+      - record: psguard:memory_usage_mi
+        expr: container_memory_working_set_bytes{container="psguard"} / 1024 / 1024
+        labels:
+          service: psguard
+          metric_type: resource
+
+      # 网络接收速率 (Bps)
+      - record: psguard:network_receive_bps
+        expr: rate(container_network_receive_bytes_total{container="psguard"}[1m])
+        labels:
+          service: psguard
+          metric_type: network
+
+      # 网络发送速率 (Bps)
+      - record: psguard:network_transmit_bps
+        expr: rate(container_network_transmit_bytes_total{container="psguard"}[1m])
+        labels:
+          service: psguard
+          metric_type: network
+
+      # 磁盘 I/O 使用率
+      - record: psguard:disk_io_utilization
+        expr: rate(container_fs_io_time_seconds_total{container="psguard"}[1m])
+        labels:
+          service: psguard
+          metric_type: disk
+
+      # HTTP 请求速率
+      - record: psguard:http_requests_per_second
+        expr: rate(http_requests_total{service="psguard"}[1m])
+        labels:
+          service: psguard
+          metric_type: application
+
+      # HTTP 错误率
+      - record: psguard:http_error_rate
+        expr: rate(http_requests_total{service="psguard",status=~"5.."}[5m]) / rate(http_requests_total{service="psguard"}[5m])
+        labels:
+          service: psguard
+          metric_type: application
+
+      # 响应时间 95th 百分位
+      - record: psguard:http_response_time_95th
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{service="psguard"}[5m]))
+        labels:
+          service: psguard
+          metric_type: application
+
+      # 响应时间 99th 百分位
+      - record: psguard:http_response_time_99th
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{service="psguard"}[5m]))
+        labels:
+          service: psguard
+          metric_type: application
+
+      # 资源效率综合指标
+      - record: psguard:resource_efficiency
+        expr: |
+          (
+            psguard:cpu_usage_millicores / 200 +
+            psguard:memory_usage_mi / 180
+          ) / 2
+        labels:
+          service: psguard
+          metric_type: efficiency
+
+  - name: psguard-sla-rules
+    interval: 60s
+    rules:
+      # SLA: CPU 使用率合规性 (过去 5 分钟)
+      - record: psguard:sla_cpu_compliance_5m
+        expr: avg_over_time(psguard:cpu_usage_millicores[5m]) <= 200
+        labels:
+          service: psguard
+          sla_type: cpu
+          timeframe: 5m
+
+      # SLA: 内存使用率合规性 (过去 5 分钟)
+      - record: psguard:sla_memory_compliance_5m
+        expr: avg_over_time(psguard:memory_usage_mi[5m]) <= 180
+        labels:
+          service: psguard
+          sla_type: memory
+          timeframe: 5m
+
+      # SLA: 响应时间合规性 (过去 5 分钟)
+      - record: psguard:sla_response_time_compliance_5m
+        expr: avg_over_time(psguard:http_response_time_95th[5m]) <= 0.5
+        labels:
+          service: psguard
+          sla_type: response_time
+          timeframe: 5m
+
+      # SLA: 错误率合规性 (过去 5 分钟)
+      - record: psguard:sla_error_rate_compliance_5m
+        expr: avg_over_time(psguard:http_error_rate[5m]) <= 0.01
+        labels:
+          service: psguard
+          sla_type: error_rate
+          timeframe: 5m
+
+      # SLA: RPS 目标达成 (过去 5 分钟)
+      - record: psguard:sla_rps_target_5m
+        expr: avg_over_time(psguard:http_requests_per_second[5m]) >= 500
+        labels:
+          service: psguard
+          sla_type: throughput
+          timeframe: 5m
+
+      # 综合 SLA 合规性评分
+      - record: psguard:sla_compliance_score
+        expr: |
+          (
+            psguard:sla_cpu_compliance_5m +
+            psguard:sla_memory_compliance_5m +
+            psguard:sla_response_time_compliance_5m +
+            psguard:sla_error_rate_compliance_5m +
+            psguard:sla_rps_target_5m
+          ) / 5
+        labels:
+          service: psguard
+          sla_type: overall
+
+  - name: psguard-capacity-rules
+    interval: 300s  # 5 分钟
+    rules:
+      # 容量规划: CPU 使用率趋势 (过去 1 小时)
+      - record: psguard:cpu_usage_trend_1h
+        expr: deriv(psguard:cpu_usage_millicores[1h])
+        labels:
+          service: psguard
+          metric_type: capacity
+          timeframe: 1h
+
+      # 容量规划: 内存使用率趋势 (过去 1 小时)
+      - record: psguard:memory_usage_trend_1h
+        expr: deriv(psguard:memory_usage_mi[1h])
+        labels:
+          service: psguard
+          metric_type: capacity
+          timeframe: 1h
+
+      # 容量规划: 预测 CPU 使用率 (4 小时后)
+      - record: psguard:cpu_usage_predict_4h
+        expr: predict_linear(psguard:cpu_usage_millicores[1h], 4*3600)
+        labels:
+          service: psguard
+          metric_type: prediction
+          timeframe: 4h
+
+      # 容量规划: 预测内存使用率 (4 小时后)
+      - record: psguard:memory_usage_predict_4h
+        expr: predict_linear(psguard:memory_usage_mi[1h], 4*3600)
+        labels:
+          service: psguard
+          metric_type: prediction
+          timeframe: 4h
+
+      # 容量规划: 资源饱和度预警
+      - record: psguard:resource_saturation_risk
+        expr: |
+          max(
+            psguard:cpu_usage_predict_4h / 200,
+            psguard:memory_usage_predict_4h / 180
+          )
+        labels:
+          service: psguard
+          metric_type: saturation_risk

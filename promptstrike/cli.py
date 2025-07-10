@@ -168,7 +168,7 @@ def scan(
     if output is None:
         output = Path("./reports")
     else:
-        output = Path(output)
+        output = Path(output).resolve()
     
     # Load configuration
     config = load_config(Path(config_file)) if config_file else Config()
@@ -238,50 +238,51 @@ def scan(
         return
     
     # Run scan
-    output.mkdir(parents=True, exist_ok=True)
+    try:
+        output.mkdir(parents=True, exist_ok=True)
+    except Exception as e:
+        rprint(f"[red]❌ Error creating output directory '{output}': {e}[/red]")
+        rprint(f"[yellow]💡 Current directory: {Path.cwd()}[/yellow]")
+        raise typer.Exit(1)
     scan_start_time = datetime.now()
     
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        console=console,
-    ) as progress:
+    # Use simple progress tracking to avoid Rich + asyncio conflicts
+    results = []
+    successful_attacks = 0
+    failed_attacks = 0
+    
+    async def run_scan():
+        nonlocal successful_attacks, failed_attacks
         
-        task = progress.add_task("Running LLM red-team scan...", total=len(attacks))
-        
-        results = []
-        successful_attacks = 0
-        failed_attacks = 0
-        
-        async def run_scan():
-            nonlocal successful_attacks, failed_attacks
-            
-            async with scanner:
-                for attack in attacks:
-                    progress.update(task, description=f"Testing {attack.category.value}: {attack.id}")
+        async with scanner:
+            for i, attack in enumerate(attacks):
+                # Simple progress output
+                rprint(f"[{i+1}/{len(attacks)}] Testing {attack.category.value}: {attack.id}")
+                
+                try:
+                    result = await scanner.run_attack(attack)
+                    results.append(result)
+                    successful_attacks += 1
                     
-                    try:
-                        result = await scanner.run_attack(attack)
-                        results.append(result)
-                        successful_attacks += 1
+                    status = "🔴 VULNERABLE" if result.is_vulnerable else "🟢 SAFE"
+                    if verbose:
+                        rprint(f"  {attack.id}: {status}")
+                    else:
+                        rprint(f"  {status}")
                         
-                        if verbose:
-                            status = "🔴 VULNERABLE" if result.is_vulnerable else "🟢 SAFE"
-                            rprint(f"  {attack.id}: {status}")
-                            
-                    except Exception as e:
-                        failed_attacks += 1
-                        if verbose:
-                            rprint(f"  [red]❌ {attack.id}: Error - {str(e)}[/red]")
-                        
-                    progress.advance(task)
-        
-        # Run the async scan
-        try:
-            asyncio.run(run_scan())
-        except Exception as e:
-            rprint(f"[red]❌ Scan failed: {e}[/red]")
-            raise typer.Exit(1)
+                except Exception as e:
+                    failed_attacks += 1
+                    if verbose:
+                        rprint(f"  [red]❌ {attack.id}: Error - {str(e)}[/red]")
+                    else:
+                        rprint(f"  [red]❌ Error[/red]")
+    
+    # Run the async scan
+    try:
+        asyncio.run(run_scan())
+    except Exception as e:
+        rprint(f"[red]❌ Scan failed: {e}[/red]")
+        raise typer.Exit(1)
     
     scan_end_time = datetime.now()
     
@@ -877,7 +878,7 @@ def config(
             
             rprint("[bold blue]📋 Current Configuration[/bold blue]\n")
             
-            config_dict = config.dict()
+            config_dict = config.model_dump()
             for section, values in {
                 "Target": {
                     "model": config_dict.get("target_model"),

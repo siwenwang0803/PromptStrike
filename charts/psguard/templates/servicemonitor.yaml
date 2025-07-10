@@ -1,0 +1,20 @@
+{{- if .Values.monitoring.serviceMonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "psguard.fullname" . }}
+  labels:
+    {{- include "psguard.labels" . | nindent 4 }}
+    {{- with .Values.monitoring.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "psguard.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - port: {{ .Values.service.name }}
+    interval: {{ .Values.monitoring.serviceMonitor.interval }}
+    path: {{ .Values.monitoring.serviceMonitor.path }}
+    targetPort: {{ .Values.monitoring.serviceMonitor.targetPort }}
+{{- end }}

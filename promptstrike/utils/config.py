@@ -7,7 +7,7 @@ import os
 import yaml
 from pathlib import Path
 from typing import Dict, Any, Optional, List
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class Config(BaseModel):
@@ -45,38 +45,44 @@ class Config(BaseModel):
     jira_project: Optional[str] = None
     splunk_hec: Optional[str] = None
     
-    @validator('api_key')
+    @field_validator('api_key')
+    @classmethod
     def validate_api_key(cls, v):
         if not v:
             # Don't raise error here, let the scanner handle it
             pass
         return v
     
-    @validator('max_requests')
+    @field_validator('max_requests')
+    @classmethod
     def validate_max_requests(cls, v):
         if v <= 0:
             raise ValueError('max_requests must be positive')
         return v
     
-    @validator('timeout_seconds')
+    @field_validator('timeout_seconds')
+    @classmethod
     def validate_timeout(cls, v):
         if v <= 0:
             raise ValueError('timeout_seconds must be positive')
         return v
     
-    @validator('parallel_workers')
+    @field_validator('parallel_workers')
+    @classmethod
     def validate_workers(cls, v):
         if v <= 0:
             raise ValueError('parallel_workers must be positive')
         return v
     
-    @validator('rate_limit_rps')
+    @field_validator('rate_limit_rps')
+    @classmethod
     def validate_rate_limit(cls, v):
         if v <= 0:
             raise ValueError('rate_limit_rps must be positive')
         return v
     
-    @validator('output_formats')
+    @field_validator('output_formats')
+    @classmethod
     def validate_output_formats(cls, v):
         valid_formats = {'json', 'pdf', 'html', 'csv'}
         for fmt in v:

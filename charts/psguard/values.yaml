@@ -1,0 +1,146 @@
+# PromptStrike Guardrail Sidecar Helm Values
+# 目标：CPU ≤ 200m，内存 ≤ 180Mi，承受 500 RPS
+
+replicaCount: 1
+
+image:
+  repository: promptstrike/psguard
+  pullPolicy: IfNotPresent
+  tag: "dev"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  prometheus.io/path: "/metrics"
+
+podSecurityContext:
+  fsGroup: 2000
+  runAsNonRoot: true
+  runAsUser: 1000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+    - ALL
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+  name: http
+
+# 资源限制：针对 500 RPS 优化
+resources:
+  limits:
+    cpu: 200m        # 目标：≤ 200m
+    memory: 180Mi     # 目标：≤ 180Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# 自动扩缩容配置
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# 探针配置
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+# 环境变量
+env:
+  - name: LOG_LEVEL
+    value: "info"
+  - name: MAX_CONCURRENT_REQUESTS
+    value: "100"
+  - name: CACHE_SIZE
+    value: "1000"
+  - name: PERFORMANCE_MODE
+    value: "production"
+
+# 配置映射
+configMap:
+  data:
+    config.yaml: |
+      server:
+        port: 8080
+        max_concurrent: 100
+        timeout: 30s
+      
+      cache:
+        size: 1000
+        ttl: 300s
+      
+      monitoring:
+        metrics_enabled: true
+        metrics_path: "/metrics"
+        scrape_interval: 15s
+      
+      performance:
+        cpu_limit: "200m"
+        memory_limit: "180Mi"
+        target_rps: 500
+
+# 网络策略
+networkPolicy:
+  enabled: true
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: monitoring
+      ports:
+      - protocol: TCP
+        port: 8080
+
+# 持久化存储
+persistence:
+  enabled: false
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# 监控配置
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    labels:
+      app: psguard
+    interval: 15s
+    path: /metrics
+    targetPort: 8080

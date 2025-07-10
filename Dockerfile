@@ -14,28 +14,18 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry
-RUN pip install poetry==1.7.1
-
-# Configure Poetry
-ENV POETRY_NO_INTERACTION=1 \
-    POETRY_VENV_IN_PROJECT=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
-
 # Set work directory
 WORKDIR /app
 
-# Copy Poetry files
-COPY pyproject.toml poetry.lock* ./
+# Create virtual environment
+RUN python -m venv .venv
 
-# Install dependencies and ensure .venv is created
-RUN poetry install --without dev --no-root && rm -rf $POETRY_CACHE_DIR
-
-# Copy source code for the final poetry install
+# Copy requirements and source code
 COPY . .
 
-# Install the package itself
-RUN poetry install --without dev && rm -rf $POETRY_CACHE_DIR
+# Install package and dependencies using pip
+RUN .venv/bin/pip install --upgrade pip && \
+    .venv/bin/pip install .
 
 # Production stage
 FROM python:3.11-slim AS production

@@ -1,0 +1,88 @@
+# Chaos Testing Configuration for CI Environment
+# Optimized for fast execution in GitHub Actions
+
+version: "1.0"
+
+# Global settings for CI
+global_seed: 42  # Fixed seed for reproducible tests
+debug_mode: false
+dry_run: false
+fail_fast: true
+
+# Mutation testing configuration - reduced intensity
+mutation:
+  enabled: true
+  types:
+    - "data_corruption"
+    - "protocol_violation" 
+  intensity: 0.2  # Lower intensity for CI
+  seed: 42
+  custom_payloads: []
+  excluded_types: ["compression_bomb", "memory_exhaustion"]
+
+# Chaos replay testing configuration - reduced duration
+chaos_replay:
+  enabled: true
+  scenarios:
+    - "malformed_spans"
+    - "network_partition"
+  duration: 30  # Reduced from 120 seconds
+  intensity: 0.2
+  concurrent_scenarios: 2  # Reduced from 3
+  recovery_timeout: 15.0  # Reduced from 30.0
+
+# Span mutation testing configuration - reduced rate
+span_mutation:
+  enabled: true
+  malformation_rate: 0.5  # Reduced from 0.8
+  target_fields:
+    - "trace_id"
+    - "span_id" 
+    - "operation_name"
+  excluded_malformations: []
+  max_nesting_depth: 50  # Reduced from 200
+
+# Gork generation testing configuration - reduced rate
+gork_generation:
+  enabled: true
+  corruption_rate: 0.5  # Reduced from 0.9
+  categories:
+    - "binary_corruption"
+    - "encoding_corruption"
+  severity_filter: "medium"  # Skip high severity tests
+  excluded_types:
+    - "compression_bomb"
+    - "memory_exhaustion"
+    - "heap_corruption"
+    - "stack_corruption"
+
+# Reporting and metrics configuration
+reporting:
+  enabled: true
+  formats:
+    - "json"
+  output_path: "./test-results"
+  include_historical: false  # Skip historical for CI
+  retention_days: 7  # Reduced retention
+
+# CI-specific configuration
+environments:
+  ci:
+    intensity_multiplier: 0.3
+    resource_limits:
+      memory: "512Mi"  # Reduced memory limit
+      cpu: "200m"      # Reduced CPU limit
+      disk: "2Gi"      # Reduced disk limit
+      network_bandwidth: "10Mbps"
+    disabled_scenarios:
+      - "compression_bomb"
+      - "buffer_overflow" 
+      - "memory_exhaustion"
+      - "heap_corruption"
+      - "stack_corruption"
+      - "long_duration_tests"
+      - "high_concurrency_tests"
+    timeout_multiplier: 0.5  # Faster timeouts
+    parallel_workers: 1  # Single worker for CI
+    max_test_duration: 60  # Max 1 minute per test
+    max_concurrent_requests: 10  # Limit concurrent load

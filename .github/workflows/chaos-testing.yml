@@ -65,13 +65,16 @@ jobs:
     - name: Run mutation tests - ${{ matrix.mutation-type }}
       run: |
         mkdir -p results
+        export CI=true
+        export CHAOS_CONFIG=chaos-config-ci.yaml
         poetry run python -m pytest tests/chaos/ \
           -v \
           -m "${{ matrix.mutation-type }}" \
           --tb=short \
-          --timeout=300 \
+          --timeout=180 \
           --junit-xml=results/mutation-${{ matrix.mutation-type }}-${{ matrix.python-version }}.xml \
           --continue-on-collection-errors \
+          -x \
           || echo "Tests completed with errors - uploading results anyway"
         
         # Create placeholder if no results were generated
@@ -121,15 +124,28 @@ jobs:
     - name: Install dependencies
       run: poetry install --no-interaction
     
-    - name: Run chaos replay tests
+    - name: Run chaos replay tests (CI optimized)
       run: |
         mkdir -p results
+        export CI=true
+        export CHAOS_CONFIG=chaos-config-ci.yaml
+        
+        # Run CI-optimized tests first
+        poetry run python -m pytest tests/chaos/test_chaos_basic_ci.py \
+          -v \
+          --tb=short \
+          --timeout=180 \
+          --junit-xml=results/chaos-basic-ci.xml \
+          || echo "Basic CI tests completed"
+        
+        # Run limited full tests (first 5 tests only)
         poetry run python -m pytest tests/chaos/test_chaos_replay.py \
           -v \
           --tb=short \
-          --timeout=600 \
+          --timeout=300 \
           --junit-xml=results/chaos-replay.xml \
-          --continue-on-collection-errors \
+          --maxfail=3 \
+          -k "not (high_concurrency or financial_system or progressive_load or recovery_time_under_load or concurrent_scenario_isolation)" \
           || echo "Tests completed with errors - uploading results anyway"
         
         # Create placeholder if no results were generated

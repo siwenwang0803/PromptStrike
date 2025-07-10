@@ -1,5 +1,35 @@
 apiVersion: v1
 entries:
+  promptstrike-cli:
+  - annotations:
+      category: Security
+      images: |
+        - name: promptstrike-cli
+          image: siwenwang0803/promptstrike:v0.2.0-alpha
+      licenses: MIT
+    apiVersion: v2
+    appVersion: 0.2.0-alpha
+    created: "2025-07-10T11:48:58.551906-07:00"
+    description: PromptStrike CLI - Developer-first automated LLM red-team platform
+    digest: 1db8587487a58c4fd94826c817c5c90d8e61eec52c07a2f59095654d2b9ac23a
+    home: https://github.com/siwenwang0803/PromptStrike
+    keywords:
+    - llm
+    - security
+    - red-team
+    - testing
+    - owasp
+    - kubernetes
+    maintainers:
+    - email: dev@promptstrike.com
+      name: PromptStrike Team
+    name: promptstrike-cli
+    sources:
+    - https://github.com/siwenwang0803/PromptStrike
+    type: application
+    urls:
+    - https://siwenwang0803.github.io/PromptStrike/promptstrike-cli-0.2.0.tgz
+    version: 0.2.0
   promptstrike-sidecar:
   - annotations:
       category: Security
@@ -8,11 +38,11 @@ entries:
           image: promptstrike/guardrail-sidecar:latest
       licenses: Apache-2.0
     apiVersion: v2
-    appVersion: 0.1.0-alpha
-    created: "2025-07-04T23:47:12.971882-07:00"
+    appVersion: 0.2.0-alpha
+    created: "2025-07-10T11:48:58.553818-07:00"
     description: PromptStrike Guardrail Sidecar - Runtime Security Monitoring for
       LLM Applications
-    digest: f6a9be8fd1c52b35efa0e7876eac73d63529d1df4bdaf7e9901c43752b83f9a9
+    digest: 641316b93e4c3befb0b552d01a9ebc929fd6dd02865b2948d56956ee5621ad91
     home: https://github.com/siwenwang0803/PromptStrike
     keywords:
     - llm
@@ -31,4 +61,4 @@ entries:
     urls:
     - https://siwenwang0803.github.io/PromptStrike/promptstrike-sidecar-0.2.0.tgz
     version: 0.2.0
-generated: "2025-07-04T23:47:12.969102-07:00"
+generated: "2025-07-10T11:48:58.548311-07:00"

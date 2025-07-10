@@ -2,14 +2,14 @@
 
 **Developer-first automated LLM red-team platform**
 
-[![Version](https://img.shields.io/badge/version-0.1.0--alpha-blue.svg)](https://github.com/siwenwang0803/PromptStrike/releases)
+[![Version](https://img.shields.io/badge/version-0.2.0--alpha-blue.svg)](https://github.com/siwenwang0803/PromptStrike/releases)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://github.com/siwenwang0803/PromptStrike/blob/main/Dockerfile)
 [![PyPI](https://img.shields.io/pypi/v/promptstrike.svg)](https://pypi.org/project/promptstrike/)
 [![OWASP](https://img.shields.io/badge/OWASP-LLM%20Top%2010-red.svg)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 
-> **🚀 Status:** ✅ Sprint S-2/Pilot-0 Complete (July 2025) - Enterprise Ready  
+> **🚀 Status:** ✅ Sprint S-3 Preparation (July 2025) - S-2/Pilot-0 Complete, Enterprise Ready  
 > **📋 Reference:** [Product One-Pager](00-Product-OnePager.md) | [12M Roadmap](01-12M-Roadmap.md) | [Changelog](CHANGELOG-v0.1.0-alpha.md) | [DOD Summary](DOD_COMPLETION_SUMMARY.md)
 
 ## Problem We Solve
@@ -52,6 +52,8 @@ promptstrike scan gpt-4 --dry-run
 ```
 
 ## Core Features
+
+**New in v0.2.0**: Guardrail side-car for K8s, enhanced chaos testing (resilience scoring), community feedback system.
 
 - **Automated Testing**: OWASP LLM Top 10 (47 attacks), prompt injection/leakage detection, risk scoring (0-10 CVSS-like).
 - **Reporting**: JSON/PDF/HTML/CSV with compliance (NIST, EU AI Act, SOC2, PCI DSS).
@@ -130,8 +132,8 @@ scan:
 
 ## Roadmap & Status
 
-- **S-1** (Shipped): CLI, OWASP coverage, reports. Target: 500 downloads, 5 issues.
-- **S-2** (Complete): K8s sidecar, SDK, chaos enhancements.
+- **S-1** (Shipped): CLI, OWASP coverage, reports.
+- **S-2/Pilot-0** (Complete): K8s sidecar, chaos enhancements, PCI DSS. Target: Enterprise deployment.
 - **Upcoming**: S-3 (pilots/Stripe, $15k revenue), S-4 (SaaS dashboard).
 
 Full: [12M Roadmap](01-12M-Roadmap.md).

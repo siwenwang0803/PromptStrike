@@ -127,18 +127,46 @@ Generated reports include:
 - **Community Feedback**: Automated collection and prioritization
 - **Production Deployment**: Kubernetes sidecar with resource monitoring
 
-### 🎯 Next: Pilot-0 / Sprint S-3
+---
 
-Upcoming features:
-- Python SDK for programmatic access
-- Real-time monitoring dashboard
-- Custom attack pack creation
-- Enterprise pilot partnerships
+## [Unreleased]
+
+### 🚧 Sprint S-3 (Aug 05-18) - PLANNED
+
+**Exit Criteria**: ≥3 paid pilots signed  
+**Deliverable**: Pilot template, Stripe checkout, $15k revenue  
+**Owner**: o3 + Perplexity  
+**Status**: Requirements gathering
+
+#### Planned Features
+- Enterprise pilot onboarding templates
+- Stripe payment integration for pilot programs
+- Custom attack pack creation framework
+- Advanced compliance gap analysis
+- Real-time monitoring dashboard MVP
 
 ---
 
-**Build**: Sprint S-2/Pilot-0  
+## Sprint Delivery Tracking
+
+### ✅ Sprint S-2 (Jul 22-Aug 04) - COMPLETED
+
+**Exit Criteria**: Live in 1 design-partner staging env  
+**Deliverable**: Guardrail Side-car α (k8s, Python SDK)  
+**Owner**: GPT-4.5  
+**Status**: Deployed and verified
+
+### ✅ Sprint S-1 (Jul 08-21) - COMPLETED
+
+**Exit Criteria**: 500 downloads, 5 GitHub issues closed  
+**Deliverable**: Production CLI with OWASP LLM Top 10  
+**Owner**: Claude 4 Sonnet  
+**Status**: Production ready
+
+---
+
+**Build**: Sprint S-2/Pilot-0 Complete  
 **Reference**: cid-roadmap-v1  
 **Target**: Enterprise partnerships, pilot revenue  
 **Date**: July 10, 2025  
-**Status**: ✅ Enterprise Ready
+**Status**: ✅ Ready for S-3

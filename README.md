@@ -52,6 +52,22 @@ pip install promptstrike
 promptstrike scan gpt-4 --dry-run
 ```
 
+### ⚓ Helm (Kubernetes)
+
+```bash
+# Add repository
+helm repo add promptstrike https://siwenwang0803.github.io/PromptStrike
+helm repo update
+
+# Install CLI for job-based scanning
+helm install my-cli promptstrike/promptstrike-cli \
+  --set secrets.openaiApiKey="your-api-key"
+
+# Install sidecar for runtime monitoring
+helm install my-sidecar promptstrike/promptstrike-sidecar \
+  --set secrets.apiKeys.openai="your-api-key"
+```
+
 ## Core Features
 
 **New in v0.2.0**: Guardrail side-car for K8s, enhanced chaos testing (resilience scoring), community feedback system.

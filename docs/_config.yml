@@ -1,0 +1,30 @@
+# GitHub Pages Configuration for RedForge
+title: RedForge - AI Red-Teaming Fortress
+description: Developer-first LLM red-teaming platform. Detect jailbreaks, data leaks, and cost explosions with OWASP Top 10 precision.
+url: "https://siwenwang0803.github.io"
+baseurl: "/RedForge"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# SEO settings
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Social links
+github_username: siwenwang0803
+repository: "siwenwang0803/RedForge"
+
+# Exclude files from Jekyll build
+exclude:
+  - node_modules/
+  - vendor/
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - LICENSE
+  - "*.log"

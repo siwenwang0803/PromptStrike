@@ -1,16 +1,16 @@
 apiVersion: v1
 entries:
-  promptstrike-cli:
+  redforge-cli:
   - annotations:
       category: Security
       images: |
-        - name: promptstrike-cli
-          image: siwenwang0803/promptstrike:v0.2.0-alpha
+        - name: redforge-cli
+          image: siwenwang0803/redforge:v0.2.0-alpha
       licenses: MIT
     apiVersion: v2
     appVersion: 0.2.0-alpha
     created: "2025-07-10T11:48:58.551906-07:00"
-    description: PromptStrike CLI - Developer-first automated LLM red-team platform
+    description: RedForge CLI - Developer-first automated LLM red-team platform
     digest: 1db8587487a58c4fd94826c817c5c90d8e61eec52c07a2f59095654d2b9ac23a
     home: https://github.com/siwenwang0803/PromptStrike
     keywords:
@@ -23,24 +23,24 @@ entries:
     maintainers:
     - email: dev@promptstrike.com
       name: PromptStrike Team
-    name: promptstrike-cli
+    name: redforge-cli
     sources:
     - https://github.com/siwenwang0803/PromptStrike
     type: application
     urls:
-    - https://siwenwang0803.github.io/PromptStrike/promptstrike-cli-0.2.0.tgz
+    - https://siwenwang0803.github.io/PromptStrike/redforge-cli-0.2.0.tgz
     version: 0.2.0
-  promptstrike-sidecar:
+  redforge-sidecar:
   - annotations:
       category: Security
       images: |
-        - name: promptstrike-sidecar
-          image: promptstrike/guardrail-sidecar:latest
+        - name: redforge-sidecar
+          image: redforge/guardrail-sidecar:latest
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: 0.2.0-alpha
     created: "2025-07-10T11:48:58.553818-07:00"
-    description: PromptStrike Guardrail Sidecar - Runtime Security Monitoring for
+    description: RedForge Guardrail Sidecar - Runtime Security Monitoring for
       LLM Applications
     digest: 641316b93e4c3befb0b552d01a9ebc929fd6dd02865b2948d56956ee5621ad91
     home: https://github.com/siwenwang0803/PromptStrike
@@ -54,11 +54,11 @@ entries:
     maintainers:
     - email: support@promptstrike.com
       name: PromptStrike Team
-    name: promptstrike-sidecar
+    name: redforge-sidecar
     sources:
     - https://github.com/siwenwang0803/PromptStrike
     type: application
     urls:
-    - https://siwenwang0803.github.io/PromptStrike/promptstrike-sidecar-0.2.0.tgz
+    - https://siwenwang0803.github.io/PromptStrike/redforge-sidecar-0.2.0.tgz
     version: 0.2.0
 generated: "2025-07-10T11:48:58.548311-07:00"

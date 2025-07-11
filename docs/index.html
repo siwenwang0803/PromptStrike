@@ -420,14 +420,16 @@
 
         .email-form {
             display: flex;
+            flex-direction: column;
             gap: 15px;
             margin-bottom: 30px;
-            flex-wrap: wrap;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .email-input {
-            flex: 1;
-            min-width: 250px;
+            width: 100%;
             padding: 15px;
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid rgba(0, 255, 255, 0.3);
@@ -435,6 +437,8 @@
             color: var(--light-text);
             font-size: 1em;
             transition: all 0.3s;
+            font-family: inherit;
+            resize: vertical;
         }
 
         .email-input:focus {
@@ -720,9 +724,12 @@
         <div class="cta-container">
             <h2>Join the RedForge Alliance</h2>
             <p>Secure your AI fortress today. Enterprise pilots starting at $4-7k. SaaS platform coming soon.</p>
-            <form class="email-form" action="https://formspree.io/f/your-form-id" method="POST">
-                <input type="email" name="email" class="email-input" placeholder="Enter your email for early access" required>
-                <button type="submit" class="btn btn-primary">Join Waitlist</button>
+            <form class="email-form" action="https://formspree.io/f/xvgreypl" method="POST">
+                <input type="text" name="name" class="email-input" placeholder="Your name" required>
+                <input type="email" name="email" class="email-input" placeholder="Your email" required>
+                <textarea name="message" class="email-input" placeholder="Tell us about your LLM needs (e.g., compliance, pilots)" rows="4"></textarea>
+                <input type="hidden" name="_subject" value="RedForge Waitlist Signup">
+                <button type="submit" class="btn btn-primary">Join Waitlist / Contact</button>
             </form>
             <p>Enterprise Pilots: <a href="mailto:dev@solvas.ai" style="color: var(--primary-cyan);">dev@solvas.ai</a></p>
         </div>
@@ -786,28 +793,12 @@
             observer.observe(el);
         });
 
-        // Form submission handling
+        // Form submission handling - just show loading state
         const form = document.querySelector('.email-form');
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = this.querySelector('input[type="email"]').value;
             const button = this.querySelector('button');
-            const originalText = button.textContent;
-            
-            button.textContent = 'Joining...';
+            button.textContent = 'Submitting...';
             button.disabled = true;
-            
-            // Simulate form submission
-            setTimeout(() => {
-                button.textContent = '✓ Added to Waitlist';
-                button.style.background = 'var(--success-green)';
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.disabled = false;
-                    button.style.background = '';
-                    this.reset();
-                }, 3000);
-            }, 1500);
         });
 
         // Add dynamic stats counter

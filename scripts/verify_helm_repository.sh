@@ -17,7 +17,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 # Test repository URL
-REPO_URL="https://redforge.solvas.ai"
+REPO_URL="https://siwenwang0803.github.io/RedForge"
 CHART_NAME="redforge-sidecar"
 CHART_VERSION="0.2.0"
 

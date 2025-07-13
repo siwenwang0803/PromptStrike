@@ -36,7 +36,7 @@ jobs:
       - name: Test DOD Command Exactly
         run: |
           # Test the exact DOD command sequence
-          helm repo add redforge https://redforge.solvas.ai
+          helm repo add redforge https://siwenwang0803.github.io/RedForge
           helm repo update
           
           # Verify chart is available
@@ -61,13 +61,13 @@ jobs:
 
       - name: Verify index.yaml accessibility
         run: |
-          curl -f https://redforge.solvas.ai/index.yaml
+          curl -f https://siwenwang0803.github.io/RedForge/index.yaml
           echo "✅ index.yaml is accessible"
 
       - name: Check for chart package
         run: |
           # Check if the chart package exists
-          if curl -f https://redforge.solvas.ai/redforge-sidecar-0.2.0.tgz; then
+          if curl -f https://siwenwang0803.github.io/RedForge/redforge-sidecar-0.2.0.tgz; then
             echo "✅ Chart package is accessible"
           else
             echo "⚠️ Chart package not yet available (may need release workflow)"

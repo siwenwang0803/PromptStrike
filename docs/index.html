@@ -171,6 +171,79 @@
             justify-content: center;
             flex-wrap: wrap;
             margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        
+        /* Hero Email Capture */
+        .hero-email-capture {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .email-signup-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        
+        .email-signup-text i {
+            color: var(--primary-cyan);
+            margin-right: 8px;
+        }
+        
+        .hero-email-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .email-capture-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1em;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .email-capture-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .email-capture-input:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .btn-email-capture {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, var(--primary-cyan), var(--accent-purple));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .btn-email-capture:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.4);
+        }
+        
+        .email-privacy {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
         }
 
         .btn {
@@ -658,6 +731,15 @@
                 align-items: center;
             }
             
+            .hero-email-form {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn-email-capture {
+                padding: 12px 20px;
+            }
+            
             .btn {
                 width: 100%;
                 max-width: 300px;
@@ -752,6 +834,24 @@
                 <a href="https://github.com/siwenwang0803/RedForge" class="btn btn-secondary" target="_blank">
                     <i class="fab fa-github"></i> Try Free (1 scan)
                 </a>
+            </div>
+            
+            <div class="hero-email-capture">
+                <p class="email-signup-text">
+                    <i class="fas fa-envelope"></i> 
+                    Get security tips + early access to new features
+                </p>
+                <form class="hero-email-form" onsubmit="handleEmailSignup(event)">
+                    <input type="email" 
+                           name="email" 
+                           placeholder="Enter your email" 
+                           required 
+                           class="email-capture-input">
+                    <button type="submit" class="btn btn-email-capture">
+                        <i class="fas fa-paper-plane"></i> Get Updates
+                    </button>
+                </form>
+                <p class="email-privacy">No spam. Unsubscribe anytime. <a href="#" style="color: var(--primary-cyan);">Privacy Policy</a></p>
             </div>
         </div>
     </section>
@@ -982,9 +1082,136 @@
     <script>
         // Payment handling
         const PAYMENT_LINKS = {
-            starter: 'https://checkout.stripe.com/c/pay/cs_live_b1TnUcNAlE848XM2OwrWZK4NG6eYsJvgKR9MUAlqizQw7lJJcYOBC8jWBQ#fidkdWxOYHwnPyd1blppbHNgWjA0V0lTZFJES1xkbHQ2R1VAUExucnFqNjxATGcxNU1xaHVGalFWfzBBSXdvdmN1Sm5yRn1rVkFdUncyQWhQd09hZEFyYFRrdm9dZldtZlRwSzZMVHx8fXFrNTU8b1AwYVd%2FYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPydocGlxbFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl',
-            pro: 'https://checkout.stripe.com/c/pay/cs_live_b1Xe4VSxiEXqflHBMIKgqSEp7tRtIrMNLsHQmq0Xv1OTGATAgjERx3ui5B#fidkdWxOYHwnPyd1blppbHNgWjA0V0lTZFJES1xkbHQ2R1VAUExucnFqNjxATGcxNU1xaHVGalFWfzBBSXdvdmN1Sm5yRn1rVkFdUncyQWhQd09hZEFyYFRrdm9dZldtZlRwSzZMVHx8fXFrNTU8b1AwYVd%2FYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPydocGlxbFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl'
+            starter: 'https://checkout.stripe.com/c/pay/cs_live_b1TnUcNAlE848XM2OwrWZK4NG6eYsJvgKR9MUAlqizQw7lJJcYOBC8jWBQ#fidkdWxOYHwnPyd1blppbHNgWjA0V0lTZFJES1xkbHQ2R1VAUExucnFqNjxATGcxNU1xaHVGalFWfzBBSXdvdmN1Sm5yRn1rVkFdUncyQWhQd09hZEFyYFRrdm9dZldtZlRwSzZMVHx8fXFrNTU8b1AwYVd%2FYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPydocGlxbFpscWBoJyknYGtkZ2lgVWlkZmJtamlhYHd2Jz9xd3BgeCUl',
+            pro: 'https://checkout.stripe.com/c/pay/cs_live_b1Xe4VSxiEXqflHBMIKgqSEp7tRtIrMNLsHQmq0Xv1OTGATAgjERx3ui5B#fidkdWxOYHwnPyd1blppbHNnWjA0V0lTZFJES1xkbHQ2R1VAUExucnFqNjxATGcxNU1xaHVGalFWfzBBSXdvdmN1Sm5yRn1rVkFdUncyQWhQd09hZEFyYFRrdm9dZldtZlRwSzZMVHx8fXFrNTU8b1AwYVd%2FYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPydocGlxbFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl'
         };
+        
+        // ConvertKit Configuration
+        const CONVERTKIT_CONFIG = {
+            // You'll need to replace these with your actual ConvertKit form IDs
+            formId: 'YOUR_CONVERTKIT_FORM_ID', // Replace with your form ID
+            apiKey: 'YOUR_CONVERTKIT_PUBLIC_API_KEY' // Replace with your public API key
+        };
+
+        // Email capture handling
+        async function handleEmailSignup(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const emailInput = form.querySelector('input[name="email"]');
+            const submitButton = form.querySelector('button[type="submit"]');
+            const email = emailInput.value.trim();
+            
+            if (!email) return;
+            
+            // Add loading state
+            const originalContent = submitButton.innerHTML;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subscribing...';
+            submitButton.disabled = true;
+            
+            try {
+                // Track analytics
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'email_signup', {
+                        'event_category': 'lead',
+                        'event_label': 'hero_form'
+                    });
+                }
+                
+                // Submit to ConvertKit (using public API)
+                const response = await fetch(`https://api.convertkit.com/v3/forms/${CONVERTKIT_CONFIG.formId}/subscribe`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        api_key: CONVERTKIT_CONFIG.apiKey,
+                        email: email,
+                        tags: ['redforge-landing', 'product-hunt-2025']
+                    })
+                });
+                
+                if (response.ok) {
+                    // Success state
+                    submitButton.innerHTML = '<i class="fas fa-check"></i> Subscribed!';
+                    submitButton.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                    emailInput.value = '';
+                    
+                    // Show success message
+                    showEmailSuccessMessage();
+                    
+                    // Reset button after 3 seconds
+                    setTimeout(() => {
+                        submitButton.innerHTML = originalContent;
+                        submitButton.style.background = '';
+                        submitButton.disabled = false;
+                    }, 3000);
+                    
+                } else {
+                    throw new Error('Subscription failed');
+                }
+                
+            } catch (error) {
+                console.error('Email signup error:', error);
+                
+                // Fallback to mailto or formspree
+                const fallbackForm = document.createElement('form');
+                fallbackForm.action = 'https://formspree.io/f/xvgreypl';
+                fallbackForm.method = 'POST';
+                fallbackForm.style.display = 'none';
+                
+                const emailField = document.createElement('input');
+                emailField.name = 'email';
+                emailField.value = email;
+                
+                const messageField = document.createElement('input');
+                messageField.name = 'message';
+                messageField.value = 'Email signup from landing page';
+                
+                fallbackForm.appendChild(emailField);
+                fallbackForm.appendChild(messageField);
+                document.body.appendChild(fallbackForm);
+                fallbackForm.submit();
+                
+                // Show success message anyway
+                submitButton.innerHTML = '<i class="fas fa-check"></i> Signed up!';
+            }
+        }
+        
+        function showEmailSuccessMessage() {
+            // Create and show a temporary success message
+            const message = document.createElement('div');
+            message.className = 'email-success-message';
+            message.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                <strong>Thanks for joining!</strong> Check your email for a welcome message.
+            `;
+            message.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #28a745, #20c997);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+                z-index: 10000;
+                animation: slideInRight 0.5s ease;
+                font-weight: 600;
+            `;
+            
+            document.body.appendChild(message);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                message.style.animation = 'slideOutRight 0.5s ease';
+                setTimeout(() => {
+                    if (message.parentNode) {
+                        message.parentNode.removeChild(message);
+                    }
+                }, 500);
+            }, 5000);
+        }
 
         function handlePaymentClick(plan) {
             // Get the button that was clicked

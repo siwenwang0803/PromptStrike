@@ -1,0 +1,23 @@
+RedForge Landing Page Payment Links
+===================================
+
+STARTER PLAN ($29/month)
+------------------------
+Session ID: cs_live_b1TnUcNAlE848XM2OwrWZK4NG6eYsJvgKR9MUAlqizQw7lJJcYOBC8jWBQ
+URL: https://checkout.stripe.com/c/pay/cs_live_b1TnUcNAlE848XM2OwrWZK4NG6eYsJvgKR9MUAlqizQw7lJJcYOBC8jWBQ#fidkdWxOYHwnPyd1blppbHNgWjA0V0lTZFJES1xkbHQ2R1VAUExucnFqNjxATGcxNU1xaHVGalFWfzBBSXdvdmN1Sm5yRn1rVkFdUncyQWhQd09hZEFyYFRrdm9dZldtZlRwSzZMVHx8fXFrNTU8b1AwYVd%2FYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPydocGlxbFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl
+Created: 2025-07-16 15:42:40.501192
+Expires: 2025-07-17 14:42:39
+
+PRO PLAN ($99/month)
+-------------------
+Session ID: cs_live_b1Xe4VSxiEXqflHBMIKgqSEp7tRtIrMNLsHQmq0Xv1OTGATAgjERx3ui5B
+URL: https://checkout.stripe.com/c/pay/cs_live_b1Xe4VSxiEXqflHBMIKgqSEp7tRtIrMNLsHQmq0Xv1OTGATAgjERx3ui5B#fidkdWxOYHwnPyd1blppbHNgWjA0V0lTZFJES1xkbHQ2R1VAUExucnFqNjxATGcxNU1xaHVGalFWfzBBSXdvdmN1Sm5yRn1rVkFdUncyQWhQd09hZEFyYFRrdm9dZldtZlRwSzZMVHx8fXFrNTU8b1AwYVd%2FYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPydocGlxbFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl
+Created: 2025-07-16 15:42:40.501220
+Expires: 2025-07-17 14:42:40
+
+INTEGRATION NOTES:
+-----------------
+1. Replace GitHub button with Starter plan link
+2. Add pricing section with both plans
+3. Include success/cancel redirect handling
+4. Links expire in 30 days

@@ -1,0 +1,8 @@
+Payment Flow Test
+================
+Session ID: cs_live_a1xTUhk6gW5GFwUYHgxGbC2sYbMweiZNg9vneIhlBAS1gmgyNyRbtZZFag
+URL: https://checkout.stripe.com/c/pay/cs_live_a1xTUhk6gW5GFwUYHgxGbC2sYbMweiZNg9vneIhlBAS1gmgyNyRbtZZFag#fidkdWxOYHwnPyd1blppbHNgWjA0V0lTZFJES1xkbHQ2R1VAUExucnFqNjxATGcxNU1xaHVGalFWfzBBSXdvdmN1Sm5yRn1rVkFdUncyQWhQd09hZEFyYFRrdm9dZldtZlRwSzZMVHx8fXFrNTU8b1AwYVd%2FYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl
+Created: 2025-07-16 15:34:08.039050
+Test Email: test-flow@redforge.ai
+Amount: $29.00/month
+Webhook: https://redforge.onrender.com/webhook

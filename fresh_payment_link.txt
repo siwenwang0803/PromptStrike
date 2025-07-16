@@ -1,0 +1,5 @@
+Test Email: test-1752703189@redforge.ai
+Session ID: cs_live_a1c5I2Hw72N4UhdKplZYkmFSNAEDT0TDbkUqLTgSGTN6HErhYolUrAacmC
+Payment URL: https://checkout.stripe.com/c/pay/cs_live_a1c5I2Hw72N4UhdKplZYkmFSNAEDT0TDbkUqLTgSGTN6HErhYolUrAacmC#fidkdWxOYHwnPyd1blppbHNgWjA0V0lTZFJES1xkbHQ2R1VAUExucnFqNjxATGcxNU1xaHVGalFWfzBBSXdvdmN1Sm5yRn1rVkFdUncyQWhQd09hZEFyYFRrdm9dZldtZlRwSzZMVHx8fXFrNTU8b1AwYVd%2FYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl
+Created: 2025-07-16 14:59:50.294235
+Tier: starter ($29/month)

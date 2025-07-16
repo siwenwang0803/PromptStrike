@@ -8,6 +8,14 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, Optional
 
+# Import ConvertKit integration
+try:
+    from ..integrations.convertkit import EmailCaptureManager, notify_payment_completed
+except ImportError:
+    # Fallback if integrations not available
+    EmailCaptureManager = None
+    notify_payment_completed = None
+
 
 class UserManager:
     """Manage user tiers and usage tracking"""
@@ -20,6 +28,9 @@ class UserManager:
         self.config_dir.mkdir(parents=True, exist_ok=True)
         self.user_file = self.config_dir / "user.json"
         self.usage_file = self.config_dir / "usage.json"
+        
+        # Initialize email capture manager if available
+        self.email_manager = EmailCaptureManager() if EmailCaptureManager else None
         
     def get_user_tier(self) -> str:
         """Get current user tier"""
@@ -113,6 +124,10 @@ class UserManager:
         """Activate paid tier after successful payment"""
         self.set_user_tier(tier, email)
         
+        # Notify ConvertKit of payment completion
+        if self.email_manager and notify_payment_completed:
+            notify_payment_completed(email, tier)
+        
         # Log activation
         activation_data = {
             "email": email,
@@ -126,3 +141,24 @@ class UserManager:
             json.dump(activation_data, f, indent=2)
             
         print(f"✅ Activated {tier} tier for {email}")
+    
+    def capture_user_email(self, email: str, source: str = "cli", name: Optional[str] = None) -> bool:
+        """Capture user email for marketing"""
+        if self.email_manager:
+            tier = self.get_user_tier()
+            return self.email_manager.capture_email(email, source, tier, name)
+        return False
+    
+    def notify_free_limit_reached(self):
+        """Notify ConvertKit when user hits free limit"""
+        if self.email_manager:
+            email = self.email_manager.get_user_email()
+            if email:
+                from ..integrations.convertkit import notify_free_limit_reached
+                notify_free_limit_reached(email)
+    
+    def get_user_email(self) -> Optional[str]:
+        """Get stored user email"""
+        if self.email_manager:
+            return self.email_manager.get_user_email()
+        return None

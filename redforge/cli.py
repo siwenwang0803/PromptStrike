@@ -184,6 +184,10 @@ def scan(
         rprint(f"[yellow]You have used {usage_status['free_used']}/1 free scans[/yellow]")
         rprint("[cyan]💳 Upgrade to continue scanning:[/cyan]")
         rprint("   https://redforge.solvas.ai/pricing")
+        
+        # Notify ConvertKit about free limit reached
+        user_manager.notify_free_limit_reached()
+        
         raise typer.Exit(1)
     
     # Override with CLI arguments
@@ -827,6 +831,31 @@ def activate(
     except Exception as e:
         rprint(f"[red]❌ Activation failed: {e}[/red]")
         raise typer.Exit(1)
+
+
+@app.command()
+def signup(
+    email: str = typer.Argument(..., help="Your email address"),
+    name: str = typer.Option(None, "--name", "-n", help="Your name (optional)")
+) -> None:
+    """📧 Sign up for RedForge updates and tips"""
+    
+    user_manager = UserManager()
+    
+    try:
+        success = user_manager.capture_user_email(email, "cli_signup", name)
+        
+        if success:
+            rprint(f"[green]✅ Thanks for signing up, {name or 'there'}![/green]")
+            rprint("[cyan]📧 You'll receive security tips and RedForge updates[/cyan]")
+            rprint("[yellow]💡 Run 'redforge scan' to try your free security scan[/yellow]")
+        else:
+            rprint("[yellow]⚠️ Email signup temporarily unavailable[/yellow]")
+            rprint("[cyan]💡 You can still use RedForge - run 'redforge scan' to start[/cyan]")
+            
+    except Exception as e:
+        rprint(f"[red]❌ Signup failed: {e}[/red]")
+        rprint("[cyan]💡 You can still use RedForge - run 'redforge scan' to start[/cyan]")
 
 
 @app.command()

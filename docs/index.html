@@ -377,6 +377,140 @@
             font-size: 1.2em;
         }
 
+        /* Pricing Section */
+        .pricing {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 50, 50, 0.6) 100%);
+        }
+
+        .pricing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .pricing h2 {
+            color: var(--primary-cyan);
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .pricing > p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2em;
+            margin-bottom: 60px;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-cyan);
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.2);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary-cyan), var(--accent-purple));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .pricing-header h3 {
+            color: var(--primary-cyan);
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .price {
+            margin-bottom: 30px;
+        }
+
+        .price .amount {
+            color: white;
+            font-size: 3em;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .price .period {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1em;
+        }
+
+        .pricing-features ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 30px 0;
+        }
+
+        .pricing-features li {
+            color: rgba(255, 255, 255, 0.9);
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .pricing-features li i {
+            color: var(--success-green);
+            margin-right: 10px;
+            width: 16px;
+        }
+
+        .pricing-guarantee {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95em;
+            margin-top: 40px;
+        }
+
+        .pricing-guarantee i {
+            color: var(--success-green);
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .pricing-cards {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .pricing-card.featured {
+                transform: none;
+            }
+            
+            .pricing h2 {
+                font-size: 2em;
+            }
+        }
+
         /* CTA Section */
         .cta-section {
             padding: 100px 20px;
@@ -595,6 +729,7 @@
             <div class="logo">🔥 RedForge</div>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
+                <li><a href="#pricing">Pricing</a></li>
                 <li><a href="#comparison">Compare</a></li>
                 <li><a href="https://github.com/siwenwang0803/RedForge" target="_blank">GitHub</a></li>
                 <li><a href="#contact">Contact</a></li>
@@ -611,11 +746,11 @@
                 Built for developers who demand security without compromising innovation.
             </p>
             <div class="cta-buttons">
-                <a href="https://github.com/siwenwang0803/RedForge" class="btn btn-primary" target="_blank">
-                    <i class="fab fa-github"></i> Start Free on GitHub
-                </a>
-                <a href="#demo" class="btn btn-secondary">
-                    <i class="fas fa-play"></i> Watch Demo
+                <button class="btn btn-primary" data-payment="starter" onclick="handlePaymentClick('starter')">
+                    <i class="fas fa-rocket"></i> Start Paid Plan - $29/mo
+                </button>
+                <a href="https://github.com/siwenwang0803/RedForge" class="btn btn-secondary" target="_blank">
+                    <i class="fab fa-github"></i> Try Free (1 scan)
                 </a>
             </div>
         </div>
@@ -720,6 +855,92 @@
         </div>
     </section>
 
+    <section class="pricing" id="pricing">
+        <div class="pricing-container">
+            <h2>Choose Your Security Plan</h2>
+            <p>Start securing your LLM applications today</p>
+            
+            <div class="pricing-cards">
+                <div class="pricing-card free">
+                    <div class="pricing-header">
+                        <h3>Free</h3>
+                        <div class="price">
+                            <span class="amount">$0</span>
+                            <span class="period">forever</span>
+                        </div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> 1 security scan</li>
+                            <li><i class="fas fa-check"></i> OWASP LLM Top 10 tests</li>
+                            <li><i class="fas fa-check"></i> Basic reports (watermarked)</li>
+                            <li><i class="fas fa-check"></i> GitHub access</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-action">
+                        <a href="https://github.com/siwenwang0803/RedForge" class="btn btn-secondary" target="_blank">
+                            <i class="fab fa-github"></i> Start Free
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="pricing-card starter featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3>Starter</h3>
+                        <div class="price">
+                            <span class="amount">$29</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> Unlimited security scans</li>
+                            <li><i class="fas fa-check"></i> All OWASP attack patterns</li>
+                            <li><i class="fas fa-check"></i> Clean reports (no watermarks)</li>
+                            <li><i class="fas fa-check"></i> JSON, HTML & PDF exports</li>
+                            <li><i class="fas fa-check"></i> Email support</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-action">
+                        <button class="btn btn-primary" data-payment="starter" onclick="handlePaymentClick('starter')">
+                            <i class="fas fa-rocket"></i> Start Now
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="pricing-card pro">
+                    <div class="pricing-header">
+                        <h3>Pro</h3>
+                        <div class="price">
+                            <span class="amount">$99</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> Everything in Starter</li>
+                            <li><i class="fas fa-check"></i> Priority support</li>
+                            <li><i class="fas fa-check"></i> Custom attack patterns</li>
+                            <li><i class="fas fa-check"></i> Compliance reporting</li>
+                            <li><i class="fas fa-check"></i> API access</li>
+                            <li><i class="fas fa-check"></i> Team collaboration</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-action">
+                        <button class="btn btn-primary" data-payment="pro" onclick="handlePaymentClick('pro')">
+                            <i class="fas fa-crown"></i> Upgrade to Pro
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pricing-guarantee">
+                <p><i class="fas fa-shield-alt"></i> 30-day money-back guarantee • Cancel anytime • Secure payment by Stripe</p>
+            </div>
+        </div>
+    </section>
+
     <section class="cta-section" id="contact">
         <div class="cta-container">
             <h2>Join the RedForge Alliance</h2>
@@ -759,6 +980,45 @@
     </footer>
 
     <script>
+        // Payment handling
+        const PAYMENT_LINKS = {
+            starter: 'https://checkout.stripe.com/c/pay/cs_live_b1TnUcNAlE848XM2OwrWZK4NG6eYsJvgKR9MUAlqizQw7lJJcYOBC8jWBQ#fidkdWxOYHwnPyd1blppbHNgWjA0V0lTZFJES1xkbHQ2R1VAUExucnFqNjxATGcxNU1xaHVGalFWfzBBSXdvdmN1Sm5yRn1rVkFdUncyQWhQd09hZEFyYFRrdm9dZldtZlRwSzZMVHx8fXFrNTU8b1AwYVd%2FYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPydocGlxbFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl',
+            pro: 'https://checkout.stripe.com/c/pay/cs_live_b1Xe4VSxiEXqflHBMIKgqSEp7tRtIrMNLsHQmq0Xv1OTGATAgjERx3ui5B#fidkdWxOYHwnPyd1blppbHNgWjA0V0lTZFJES1xkbHQ2R1VAUExucnFqNjxATGcxNU1xaHVGalFWfzBBSXdvdmN1Sm5yRn1rVkFdUncyQWhQd09hZEFyYFRrdm9dZldtZlRwSzZMVHx8fXFrNTU8b1AwYVd%2FYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPydocGlxbFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl'
+        };
+
+        function handlePaymentClick(plan) {
+            // Get the button that was clicked
+            const button = event.target.closest('button');
+            if (!button) return;
+            
+            // Add loading state
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            button.disabled = true;
+            
+            // Track analytics if available
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'payment_click', {
+                    'event_category': 'conversion',
+                    'event_label': plan,
+                    'value': plan === 'starter' ? 29 : 99
+                });
+            }
+            
+            // Get payment URL
+            const paymentUrl = PAYMENT_LINKS[plan];
+            
+            if (paymentUrl) {
+                // Redirect to payment
+                window.location.href = paymentUrl;
+            } else {
+                // Restore button state on error
+                button.innerHTML = originalContent;
+                button.disabled = false;
+                alert('Payment link temporarily unavailable. Please try again or contact support.');
+            }
+        }
+
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {

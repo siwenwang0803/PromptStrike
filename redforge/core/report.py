@@ -21,9 +21,10 @@ class ReportGenerator:
     Generate security scan reports in multiple formats
     """
     
-    def __init__(self, output_dir: Path):
+    def __init__(self, output_dir: Path, user_tier: str = "free"):
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.user_tier = user_tier  # "free", "starter", "pro", etc.
         
     def generate_json(self, scan_result: ScanResult) -> Path:
         """Generate JSON report"""
@@ -94,7 +95,9 @@ class ReportGenerator:
             scan_result=scan_result,
             vulnerabilities_by_severity=vulnerabilities_by_severity,
             generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            severity_colors=self._get_severity_colors()
+            severity_colors=self._get_severity_colors(),
+            user_tier=self.user_tier,
+            is_free_tier=(self.user_tier == "free")
         )
         
         with open(output_path, 'w', encoding='utf-8') as f:
@@ -120,8 +123,31 @@ class ReportGenerator:
             # Fallback to text file if ReportLab not available or fails
             return self._generate_text_fallback_pdf(scan_result, output_path)
         
-        # Create PDF document
-        doc = SimpleDocTemplate(str(output_path), pagesize=A4)
+        # Create PDF document with watermark if free tier
+        if self.user_tier == "free":
+            doc = SimpleDocTemplate(str(output_path), pagesize=A4)
+            # Add watermark canvas
+            from reportlab.pdfgen import canvas
+            from reportlab.lib.colors import red
+            
+            class WatermarkCanvas(canvas.Canvas):
+                def __init__(self, *args, **kwargs):
+                    canvas.Canvas.__init__(self, *args, **kwargs)
+                    
+                def showPage(self):
+                    self.saveState()
+                    self.setFont("Helvetica-Bold", 100)
+                    self.setFillColor(red, alpha=0.1)
+                    self.translate(A4[0]/2, A4[1]/2)
+                    self.rotate(45)
+                    self.drawCentredText(0, 0, "FREE")
+                    self.restoreState()
+                    canvas.Canvas.showPage(self)
+                    
+            doc = SimpleDocTemplate(str(output_path), pagesize=A4, canvasmaker=WatermarkCanvas)
+        else:
+            doc = SimpleDocTemplate(str(output_path), pagesize=A4)
+            
         styles = getSampleStyleSheet()
         story = []
         
@@ -412,9 +438,15 @@ class ReportGenerator:
         .code-block { background: #f8f9fa; border-radius: 4px; padding: 15px; margin: 10px 0; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9rem; overflow-x: auto; }
         .compliance-section { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 30px; }
         .footer { text-align: center; padding: 20px; color: #6c757d; border-top: 1px solid #dee2e6; }
+        .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 8rem; font-weight: bold; color: rgba(220, 53, 69, 0.1); z-index: 9999; pointer-events: none; user-select: none; }
+        .watermark.free { display: block; }
+        .watermark.paid { display: none; }
     </style>
 </head>
 <body>
+    {% if is_free_tier %}
+    <div class="watermark free">FREE</div>
+    {% endif %}
     <div class="container">
         <div class="header">
             <h1>🔥 RedForge Security Report</h1>

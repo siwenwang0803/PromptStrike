@@ -24,6 +24,7 @@ try:
     from .core.scanner import LLMScanner
     from .core.report import ReportGenerator
     from .core.attacks import AttackPackLoader
+    from .core.user_manager import UserManager
     from .models.scan_result import ScanResult, AttackResult, ScanMetadata, ComplianceReport, SeverityLevel
     from .utils.config import load_config, Config
 except ImportError:
@@ -34,6 +35,7 @@ except ImportError:
     from core.scanner import LLMScanner
     from core.report import ReportGenerator
     from core.attacks import AttackPackLoader
+    from core.user_manager import UserManager
     from models.scan_result import ScanResult, AttackResult, ScanMetadata, ComplianceReport, SeverityLevel
     from utils.config import load_config, Config
 
@@ -172,6 +174,17 @@ def scan(
     
     # Load configuration
     config = load_config(Path(config_file)) if config_file else Config()
+    
+    # Check user tier and usage limits
+    user_manager = UserManager()
+    usage_status = user_manager.get_usage_status()
+    
+    if not usage_status["can_use_free"] and not dry_run:
+        rprint("[red]❌ Free tier limit exceeded![/red]")
+        rprint(f"[yellow]You have used {usage_status['free_used']}/1 free scans[/yellow]")
+        rprint("[cyan]💳 Upgrade to continue scanning:[/cyan]")
+        rprint("   https://redforge.solvas.ai/pricing")
+        raise typer.Exit(1)
     
     # Override with CLI arguments
     if api_key:
@@ -388,7 +401,7 @@ def scan(
     )
     
     # Generate reports
-    report_gen = ReportGenerator(output_dir=output)
+    report_gen = ReportGenerator(output_dir=output, user_tier=usage_status["tier"])
     
     if format in ["json", "all"]:
         json_path = report_gen.generate_json(scan_result)
@@ -401,6 +414,13 @@ def scan(
     if format in ["pdf", "all"]:
         pdf_path = report_gen.generate_pdf(scan_result)
         rprint(f"[green]📋 PDF report saved:[/green] {pdf_path}")
+    
+    # Track usage for free tier users
+    if usage_status["tier"] == "free" and not dry_run:
+        new_usage = user_manager.increment_free_usage()
+        rprint(f"[yellow]📊 Free tier usage: {new_usage}/1 scans used[/yellow]")
+        if new_usage >= 1:
+            rprint("[cyan]💳 Upgrade to continue scanning: https://redforge.solvas.ai/pricing[/cyan]")
     
     # Summary
     vulnerabilities_count = sum(1 for r in results if r.is_vulnerable)
@@ -760,6 +780,53 @@ def version() -> None:
     
     rprint(f"\n[green]✨ Sprint S-1 Complete![/green]")
     rprint("Features: OWASP LLM Top 10, Docker deployment, Multi-format reports")
+
+
+@app.command()
+def status() -> None:
+    """📊 Show user account status and usage"""
+    
+    user_manager = UserManager()
+    usage_status = user_manager.get_usage_status()
+    
+    rprint("[bold blue]📊 Account Status[/bold blue]\n")
+    
+    # Tier information
+    tier_color = "green" if usage_status["is_paid"] else "yellow"
+    rprint(f"[cyan]Tier:[/cyan] [{tier_color}]{usage_status['tier'].upper()}[/{tier_color}]")
+    
+    # Usage information
+    if usage_status["tier"] == "free":
+        remaining = usage_status["remaining_free"]
+        used = usage_status["free_used"]
+        rprint(f"[cyan]Usage:[/cyan] {used}/1 free scans used")
+        rprint(f"[cyan]Remaining:[/cyan] {remaining} free scans")
+        
+        if remaining == 0:
+            rprint(f"\n[red]⚠️  Free tier limit reached![/red]")
+            rprint("[cyan]💳 Upgrade to continue:[/cyan] https://redforge.solvas.ai/pricing")
+    else:
+        rprint(f"[cyan]Usage:[/cyan] Unlimited scans")
+    
+    rprint(f"\n[dim]Config location: {user_manager.config_dir}[/dim]")
+
+
+@app.command()
+def activate(
+    email: str = typer.Argument(..., help="Email address used for payment"),
+    tier: str = typer.Option("starter", help="Tier to activate (starter, pro)")
+) -> None:
+    """🔑 Activate paid tier after successful payment"""
+    
+    user_manager = UserManager()
+    
+    try:
+        user_manager.activate_paid_tier(email, tier)
+        rprint(f"[green]✅ Successfully activated {tier} tier for {email}[/green]")
+        rprint("[cyan]💡 You can now run unlimited scans![/cyan]")
+    except Exception as e:
+        rprint(f"[red]❌ Activation failed: {e}[/red]")
+        raise typer.Exit(1)
 
 
 @app.command()

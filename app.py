@@ -54,10 +54,11 @@ try:
             # Add to Kit (formerly ConvertKit)
             if CONVERTKIT_API_KEY and CONVERTKIT_API_SECRET:
                 print(f"Attempting to add {email} to Kit...")
+                # Use form subscription endpoint (form ID: 8320300 - Oxford landing page)
                 ck_response = requests.post(
-                    'https://api.convertkit.com/v3/subscribers',
+                    'https://api.convertkit.com/v3/forms/8320300/subscribe',
                     json={
-                        'api_secret': CONVERTKIT_API_SECRET,
+                        'api_key': CONVERTKIT_API_KEY,
                         'email': email
                     }
                 )

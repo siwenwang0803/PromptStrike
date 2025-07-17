@@ -26,7 +26,7 @@ try:
     @app.route('/')
     def health():
         return jsonify({
-            "service": "RedForge Payment API",
+            "service": "RedForge Payment API v2",
             "status": "healthy",
             "timestamp": datetime.now().isoformat(),
             "kit_configured": bool(CONVERTKIT_API_KEY and CONVERTKIT_API_SECRET)

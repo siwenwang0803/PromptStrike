@@ -58,8 +58,7 @@ try:
                     'https://api.convertkit.com/v3/subscribers',
                     json={
                         'api_secret': CONVERTKIT_API_SECRET,
-                        'email': email,
-                        'tags': tags
+                        'email': email
                     }
                 )
                 

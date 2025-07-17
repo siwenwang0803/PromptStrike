@@ -14,9 +14,9 @@ from pathlib import Path
 stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
 
-# Configure Kit (formerly ConvertKit)
-CONVERTKIT_API_KEY = os.getenv('KIT_API_KEY')
-CONVERTKIT_API_SECRET = os.getenv('KIT_API_SECRET')
+# Configure Kit
+KIT_API_KEY = os.getenv('KIT_API_KEY')
+KIT_API_SECRET = os.getenv('KIT_API_SECRET')
 
 # Simple Flask app (more compatible with Render)
 try:
@@ -29,7 +29,7 @@ try:
             "service": "RedForge Payment API v2",
             "status": "healthy",
             "timestamp": datetime.now().isoformat(),
-            "kit_configured": bool(CONVERTKIT_API_KEY)
+            "kit_configured": bool(KIT_API_KEY)
         })
     
     @app.route('/webhook/email-capture', methods=['POST', 'OPTIONS'])
@@ -52,14 +52,14 @@ try:
             if not email:
                 return jsonify({"error": "Email required"}), 400
             
-            # Add to Kit (formerly ConvertKit) - only need API key for form submissions
-            if CONVERTKIT_API_KEY:
+            # Add to Kit - only need API key for form submissions
+            if KIT_API_KEY:
                 print(f"Attempting to add {email} to Kit...")
                 # Use form subscription endpoint (form ID: 8320300 - Oxford form that was working)
                 ck_response = requests.post(
                     'https://api.convertkit.com/v3/forms/8320300/subscribe',
                     json={
-                        'api_key': CONVERTKIT_API_KEY,
+                        'api_key': KIT_API_KEY,
                         'email': email
                     }
                 )
@@ -73,7 +73,7 @@ try:
                     response = jsonify({"status": "success", "message": f"Kit error: {ck_response.status_code}"})
             else:
                 # Save locally as fallback
-                print(f"Kit not configured - API_KEY: {bool(CONVERTKIT_API_KEY)}")
+                print(f"Kit not configured - API_KEY: {bool(KIT_API_KEY)}")
                 response = jsonify({"status": "success", "message": "Kit not configured"})
             
             # Add CORS headers

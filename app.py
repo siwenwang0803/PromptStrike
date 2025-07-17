@@ -37,9 +37,10 @@ try:
         # Handle CORS preflight
         if request.method == 'OPTIONS':
             response = jsonify({'status': 'ok'})
-            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Access-Control-Allow-Origin'] = 'https://redforge.solvas.ai'
             response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-            response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Accept'
+            response.headers['Access-Control-Max-Age'] = '86400'
             return response
         
         try:
@@ -76,12 +77,14 @@ try:
                 response = jsonify({"status": "success", "message": "Kit not configured"})
             
             # Add CORS headers
-            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Access-Control-Allow-Origin'] = 'https://redforge.solvas.ai'
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
             return response
             
         except Exception as e:
             response = jsonify({"error": str(e)})
-            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Access-Control-Allow-Origin'] = 'https://redforge.solvas.ai'
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
             return response, 500
     
     @app.route('/webhook', methods=['POST'])

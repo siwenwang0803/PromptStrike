@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Cancelled - RedForge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0a0f1e 0%, #1a233a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .cancel-container {
+            background: rgba(26, 35, 58, 0.8);
+            border: 2px solid #ff6b35;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+        }
+        .warning {
+            font-size: 64px;
+            color: #ff6b35;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+        .message {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .button {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        .button-primary {
+            background: linear-gradient(135deg, #00ffff, #007acc);
+            color: #0a0f1e;
+        }
+        .button-secondary {
+            background: transparent;
+            border: 2px solid rgba(224, 224, 224, 0.3);
+            color: #e0e0e0;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        .features {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(224, 224, 224, 0.2);
+            text-align: left;
+        }
+        .feature {
+            margin: 10px 0;
+            color: rgba(224, 224, 224, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="cancel-container">
+        <div class="warning">⚠️</div>
+        <h1>Payment Cancelled</h1>
+        <p class="message">
+            No worries! Your payment was cancelled and you haven't been charged.
+        </p>
+        
+        <div class="features">
+            <p><strong>Remember, RedForge Pro includes:</strong></p>
+            <p class="feature">✅ Unlimited security scans</p>
+            <p class="feature">✅ All OWASP LLM Top 10 tests</p>
+            <p class="feature">✅ Professional reports (no watermarks)</p>
+            <p class="feature">✅ Priority support</p>
+            <p class="feature">✅ Custom attack patterns</p>
+        </div>
+        
+        <div class="buttons">
+            <a href="/" class="button button-primary">
+                Try Again
+            </a>
+            <a href="https://github.com/siwenwang0803/RedForge" class="button button-secondary">
+                Use Free Version
+            </a>
+        </div>
+    </div>
+</body>
+</html>

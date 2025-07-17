@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - RedForge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0a0f1e 0%, #1a233a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .success-container {
+            background: rgba(26, 35, 58, 0.8);
+            border: 2px solid #00ff88;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+        }
+        .checkmark {
+            font-size: 64px;
+            color: #00ff88;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+        .message {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #00ffff, #007acc);
+            color: #0a0f1e;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        .details {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(224, 224, 224, 0.2);
+            font-size: 14px;
+            color: rgba(224, 224, 224, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="checkmark">✅</div>
+        <h1>Payment Successful!</h1>
+        <p class="message">
+            Welcome to RedForge Pro! 🔥<br><br>
+            Your subscription is now active and you have unlimited access to all security scanning features.
+        </p>
+        
+        <div class="details">
+            <p><strong>What happens next?</strong></p>
+            <p>📧 Check your email for setup instructions</p>
+            <p>🔑 Your API access will be activated within minutes</p>
+            <p>📖 Visit our docs to get started</p>
+        </div>
+        
+        <a href="https://github.com/siwenwang0803/RedForge" class="button">
+            Get Started with RedForge
+        </a>
+    </div>
+    
+    <script>
+        // Get session ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        
+        if (sessionId) {
+            console.log('Payment session:', sessionId);
+            // You could fetch session details here if needed
+        }
+    </script>
+</body>
+</html>

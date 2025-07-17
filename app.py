@@ -14,9 +14,9 @@ from pathlib import Path
 stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
 
-# Configure ConvertKit
-CONVERTKIT_API_KEY = os.getenv('CONVERTKIT_API_KEY')
-CONVERTKIT_API_SECRET = os.getenv('CONVERTKIT_API_SECRET')
+# Configure Kit (formerly ConvertKit)
+CONVERTKIT_API_KEY = os.getenv('KIT_API_KEY')
+CONVERTKIT_API_SECRET = os.getenv('KIT_API_SECRET')
 
 # Simple Flask app (more compatible with Render)
 try:

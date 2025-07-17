@@ -21,7 +21,13 @@ KIT_API_SECRET = os.getenv('KIT_API_SECRET')
 # Simple Flask app (more compatible with Render)
 try:
     from flask import Flask, request, jsonify
+    from flask_cors import CORS
     app = Flask(__name__)
+    
+    # Configure CORS for all routes
+    CORS(app, origins=['https://redforge.solvas.ai'], 
+         allow_headers=['Content-Type', 'Accept'],
+         methods=['GET', 'POST', 'OPTIONS'])
     
     @app.route('/')
     def health():

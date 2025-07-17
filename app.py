@@ -29,7 +29,7 @@ try:
             "service": "RedForge Payment API v2",
             "status": "healthy",
             "timestamp": datetime.now().isoformat(),
-            "kit_configured": bool(CONVERTKIT_API_KEY and CONVERTKIT_API_SECRET)
+            "kit_configured": bool(CONVERTKIT_API_KEY)
         })
     
     @app.route('/webhook/email-capture', methods=['POST', 'OPTIONS'])
@@ -51,8 +51,8 @@ try:
             if not email:
                 return jsonify({"error": "Email required"}), 400
             
-            # Add to Kit (formerly ConvertKit)
-            if CONVERTKIT_API_KEY and CONVERTKIT_API_SECRET:
+            # Add to Kit (formerly ConvertKit) - only need API key for form submissions
+            if CONVERTKIT_API_KEY:
                 print(f"Attempting to add {email} to Kit...")
                 # Use form subscription endpoint (form ID: 8320300 - Oxford landing page)
                 ck_response = requests.post(
@@ -72,7 +72,7 @@ try:
                     response = jsonify({"status": "success", "message": f"Kit error: {ck_response.status_code}"})
             else:
                 # Save locally as fallback
-                print(f"Kit not configured - API_KEY: {bool(CONVERTKIT_API_KEY)}, API_SECRET: {bool(CONVERTKIT_API_SECRET)}")
+                print(f"Kit not configured - API_KEY: {bool(CONVERTKIT_API_KEY)}")
                 response = jsonify({"status": "success", "message": "Kit not configured"})
             
             # Add CORS headers

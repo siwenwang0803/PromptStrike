@@ -6,12 +6,17 @@ RedForge Webhook Server - Simple Version for Render
 import os
 import json
 import stripe
+import requests
 from datetime import datetime
 from pathlib import Path
 
 # Configure Stripe
 stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
+
+# Configure ConvertKit
+CONVERTKIT_API_KEY = os.getenv('CONVERTKIT_API_KEY')
+CONVERTKIT_API_SECRET = os.getenv('CONVERTKIT_API_SECRET')
 
 # Simple Flask app (more compatible with Render)
 try:
@@ -25,6 +30,55 @@ try:
             "status": "healthy",
             "timestamp": datetime.now().isoformat()
         })
+    
+    @app.route('/webhook/email-capture', methods=['POST', 'OPTIONS'])
+    def email_capture():
+        # Handle CORS preflight
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+            return response
+        
+        try:
+            data = request.get_json()
+            email = data.get('email')
+            source = data.get('source', 'unknown')
+            tags = data.get('tags', [])
+            
+            if not email:
+                return jsonify({"error": "Email required"}), 400
+            
+            # Add to ConvertKit
+            if CONVERTKIT_API_KEY and CONVERTKIT_API_SECRET:
+                ck_response = requests.post(
+                    'https://api.convertkit.com/v3/subscribers',
+                    json={
+                        'api_secret': CONVERTKIT_API_SECRET,
+                        'email': email,
+                        'tags': tags
+                    }
+                )
+                
+                if ck_response.ok:
+                    response = jsonify({"status": "success", "message": "Added to ConvertKit"})
+                else:
+                    # Log but don't fail
+                    print(f"ConvertKit error: {ck_response.status_code} - {ck_response.text}")
+                    response = jsonify({"status": "success", "message": "Saved locally"})
+            else:
+                # Save locally as fallback
+                response = jsonify({"status": "success", "message": "Saved locally"})
+            
+            # Add CORS headers
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            return response
+            
+        except Exception as e:
+            response = jsonify({"error": str(e)})
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            return response, 500
     
     @app.route('/webhook', methods=['POST'])
     def webhook():

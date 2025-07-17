@@ -1088,9 +1088,8 @@
         
         // ConvertKit Configuration
         const CONVERTKIT_CONFIG = {
-            // You'll need to replace these with your actual ConvertKit form IDs
-            formId: 'YOUR_CONVERTKIT_FORM_ID', // Replace with your form ID
-            apiKey: 'YOUR_CONVERTKIT_PUBLIC_API_KEY' // Replace with your public API key
+            formId: '7451455', // RedForge Main Signup Form
+            apiKey: 'C1FqQhtdxLgI3L1k3BEa2Q' // Your ConvertKit API key
         };
 
         // Email capture handling
@@ -1118,15 +1117,15 @@
                     });
                 }
                 
-                // Submit to ConvertKit (using public API)
-                const response = await fetch(`https://api.convertkit.com/v3/forms/${CONVERTKIT_CONFIG.formId}/subscribe`, {
+                // Submit to backend webhook which will handle ConvertKit
+                const response = await fetch('https://redforge.onrender.com/webhook/email-capture', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        api_key: CONVERTKIT_CONFIG.apiKey,
                         email: email,
+                        source: 'landing_page',
                         tags: ['redforge-landing', 'product-hunt-2025']
                     })
                 });

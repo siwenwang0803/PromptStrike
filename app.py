@@ -28,7 +28,8 @@ try:
         return jsonify({
             "service": "RedForge Payment API",
             "status": "healthy",
-            "timestamp": datetime.now().isoformat()
+            "timestamp": datetime.now().isoformat(),
+            "kit_configured": bool(CONVERTKIT_API_KEY and CONVERTKIT_API_SECRET)
         })
     
     @app.route('/webhook/email-capture', methods=['POST', 'OPTIONS'])
@@ -50,8 +51,9 @@ try:
             if not email:
                 return jsonify({"error": "Email required"}), 400
             
-            # Add to ConvertKit
+            # Add to Kit (formerly ConvertKit)
             if CONVERTKIT_API_KEY and CONVERTKIT_API_SECRET:
+                print(f"Attempting to add {email} to Kit...")
                 ck_response = requests.post(
                     'https://api.convertkit.com/v3/subscribers',
                     json={
@@ -62,14 +64,16 @@ try:
                 )
                 
                 if ck_response.ok:
-                    response = jsonify({"status": "success", "message": "Added to ConvertKit"})
+                    response = jsonify({"status": "success", "message": "Added to Kit"})
+                    print(f"✅ Successfully added {email} to Kit")
                 else:
                     # Log but don't fail
-                    print(f"ConvertKit error: {ck_response.status_code} - {ck_response.text}")
-                    response = jsonify({"status": "success", "message": "Saved locally"})
+                    print(f"Kit API error: {ck_response.status_code} - {ck_response.text}")
+                    response = jsonify({"status": "success", "message": f"Kit error: {ck_response.status_code}"})
             else:
                 # Save locally as fallback
-                response = jsonify({"status": "success", "message": "Saved locally"})
+                print(f"Kit not configured - API_KEY: {bool(CONVERTKIT_API_KEY)}, API_SECRET: {bool(CONVERTKIT_API_SECRET)}")
+                response = jsonify({"status": "success", "message": "Kit not configured"})
             
             # Add CORS headers
             response.headers['Access-Control-Allow-Origin'] = '*'

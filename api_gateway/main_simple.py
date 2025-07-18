@@ -54,10 +54,20 @@ class APIKeyResponse(BaseModel):
     revoked: bool
 
 # Initialize Supabase
-supabase: Client = create_client(
-    os.getenv("SUPABASE_URL", ""),
-    os.getenv("SUPABASE_SERVICE_KEY", "")
-)
+try:
+    supabase_url = os.getenv("SUPABASE_URL", "")
+    supabase_key = os.getenv("SUPABASE_SERVICE_KEY", "")
+    
+    if not supabase_url or not supabase_key:
+        raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables are required")
+    
+    supabase: Client = create_client(supabase_url, supabase_key)
+    logging.info(f"Supabase initialized with URL: {supabase_url}")
+    
+except Exception as e:
+    logging.error(f"Failed to initialize Supabase: {e}")
+    # Create a mock client for now
+    supabase = None
 
 # Initialize FastAPI
 app = FastAPI(
@@ -107,6 +117,13 @@ async def verify_api_key(request: Request, x_api_key: str = Header(..., alias="X
         raise HTTPException(
             status_code=429,
             detail="Rate limit exceeded. Please try again later."
+        )
+    
+    # Check if Supabase is available
+    if supabase is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Database service unavailable. Please try again later."
         )
     
     try:
@@ -168,12 +185,16 @@ async def health_check():
 @app.get("/healthz")
 async def health_check_detailed():
     """Detailed health check for monitoring"""
+    database_status = "connected" if supabase is not None else "disconnected"
+    overall_status = "ok" if supabase is not None else "degraded"
+    
     return {
         "service": "RedForge API Gateway",
         "version": "0.2.0",
-        "status": "ok",
+        "status": overall_status,
         "timestamp": datetime.utcnow().isoformat(),
-        "database": "connected"
+        "database": database_status,
+        "supabase_url": os.getenv("SUPABASE_URL", "not_set")[:50] + "..." if os.getenv("SUPABASE_URL") else "not_set"
     }
 
 @app.post("/scan", response_model=ScanResponse)

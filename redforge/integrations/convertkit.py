@@ -44,9 +44,9 @@ class ConvertKitClient:
             data.update(custom_fields)
         
         try:
-            # Add to main subscribers list
+            # Add to main subscribers list (using form ID 8320684)
             response = requests.post(
-                f"{self.base_url}/forms/subscribe",
+                f"{self.base_url}/forms/8320684/subscribe",
                 data=data,
                 timeout=30
             )

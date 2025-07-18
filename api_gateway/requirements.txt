@@ -9,3 +9,4 @@ redis==6.2.0
 sentry-sdk==2.33.0
 pydantic==2.11.7
 python-multipart==0.0.6
+tenacity==8.2.3

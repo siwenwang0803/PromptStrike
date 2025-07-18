@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
 import asyncio
 import logging
+from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
 
 # Models
 class ScanRequest(BaseModel):
@@ -68,6 +69,52 @@ except Exception as e:
     logging.error(f"Failed to initialize Supabase: {e}")
     # Create a mock client for now
     supabase = None
+
+# Retry wrapper for Supabase queries
+@retry(
+    retry=retry_if_exception_type(Exception),
+    stop=stop_after_attempt(3),          # Max 3 attempts
+    wait=wait_fixed(0.5)                 # 0.5s between attempts
+)
+def fetch_api_key(key: str):
+    """Fetch API key with retry logic"""
+    if supabase is None:
+        raise Exception("Supabase client not initialized")
+    
+    result = supabase.table("api_keys").select(
+        "key, user_id, tier, usage_count, revoked, rate_limit_per_hour, users(tier, free_scans_used)"
+    ).eq("key", key).eq("revoked", False).execute()
+    
+    return result
+
+@retry(
+    retry=retry_if_exception_type(Exception),
+    stop=stop_after_attempt(3),
+    wait=wait_fixed(0.5)
+)
+def update_api_key_usage(key: str, usage_count: int):
+    """Update API key usage with retry logic"""
+    if supabase is None:
+        raise Exception("Supabase client not initialized")
+    
+    return supabase.table("api_keys").update({
+        "usage_count": usage_count,
+        "last_used_at": datetime.utcnow().isoformat()
+    }).eq("key", key).execute()
+
+@retry(
+    retry=retry_if_exception_type(Exception),
+    stop=stop_after_attempt(3),
+    wait=wait_fixed(0.5)
+)
+def update_user_scans(user_id: str, free_scans_used: int):
+    """Update user scan count with retry logic"""
+    if supabase is None:
+        raise Exception("Supabase client not initialized")
+    
+    return supabase.table("users").update({
+        "free_scans_used": free_scans_used
+    }).eq("id", user_id).execute()
 
 # Initialize FastAPI
 app = FastAPI(
@@ -127,10 +174,8 @@ async def verify_api_key(request: Request, x_api_key: str = Header(..., alias="X
         )
     
     try:
-        # Check if key exists and is active
-        result = supabase.table("api_keys").select(
-            "key, user_id, tier, usage_count, revoked, rate_limit_per_hour, users(tier, free_scans_used)"
-        ).eq("key", x_api_key).eq("revoked", False).execute()
+        # Check if key exists and is active (with retry)
+        result = fetch_api_key(x_api_key)
         
         if not result.data:
             raise HTTPException(
@@ -148,7 +193,10 @@ async def verify_api_key(request: Request, x_api_key: str = Header(..., alias="X
                 logging.warning(f"Potential key sharing detected for free tier: {x_api_key[:8]}...")
                 # Auto-revoke after threshold
                 if key_data["usage_count"] > 10:
-                    supabase.table("api_keys").update({"revoked": True}).eq("key", x_api_key).execute()
+                    try:
+                        supabase.table("api_keys").update({"revoked": True}).eq("key", x_api_key).execute()
+                    except Exception as e:
+                        logging.warning(f"Failed to revoke API key: {e}")
                     raise HTTPException(status_code=429, detail="API key revoked due to excessive usage. Generate a new key.")
             
             if user_data["free_scans_used"] >= 1:
@@ -169,6 +217,9 @@ async def verify_api_key(request: Request, x_api_key: str = Header(..., alias="X
         raise  # Re-raise HTTP exceptions as-is
     except Exception as e:
         logging.error(f"API key verification error: {e}")
+        # Return 503 for database connectivity issues
+        if "Name or service not known" in str(e) or "timeout" in str(e).lower():
+            raise HTTPException(status_code=503, detail="Database service temporarily unavailable. Please retry in a few seconds.")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 # Routes
@@ -254,16 +305,17 @@ async def create_scan(
         "metadata": json.dumps(scan_data)
     }).execute()
     
-    # Increment usage counter
+    # Increment usage counter (with retry)
     if tier == "free":
-        supabase.table("users").update({
-            "free_scans_used": auth_data["free_scans_used"] + 1
-        }).eq("id", auth_data["user_id"]).execute()
+        try:
+            update_user_scans(auth_data["user_id"], auth_data["free_scans_used"] + 1)
+        except Exception as e:
+            logging.warning(f"Failed to update user scan count: {e}")
     
-    supabase.table("api_keys").update({
-        "usage_count": auth_data["usage_count"] + 1,
-        "last_used_at": datetime.utcnow().isoformat()
-    }).eq("key", auth_data["key"]).execute()
+    try:
+        update_api_key_usage(auth_data["key"], auth_data["usage_count"] + 1)
+    except Exception as e:
+        logging.warning(f"Failed to update API key usage: {e}")
     
     # Start background scan
     background_tasks.add_task(process_scan, scan_id, scan_data)

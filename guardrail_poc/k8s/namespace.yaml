@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: redforge-guardrail
-  labels:
-    name: redforge-guardrail
-    app.kubernetes.io/name: redforge-guardrail
-    app.kubernetes.io/component: security-monitoring
-    app.kubernetes.io/part-of: redforge

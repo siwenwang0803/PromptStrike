@@ -1,3 +1,0 @@
-# This file ensures the ai-chunks directory is tracked
-# Even if parent .gitignore excludes it
-!*

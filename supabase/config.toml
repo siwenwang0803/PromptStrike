@@ -1,0 +1,56 @@
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[graphql]
+enabled = true
+port = 54322
+
+[inbound_email]
+enabled = false
+port = 54330
+
+[studio]
+enabled = true
+port = 54323
+
+[db]
+port = 54322
+major_version = 15
+
+[storage]
+enabled = true
+port = 54324
+file_size_limit = "50MiB"
+image_transformation = true
+
+[auth]
+enabled = true
+port = 54325
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://redforge.ai"]
+jwt_expiry = 3600
+enable_signup = true
+enable_confirmations = false
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+
+[auth.sms]
+enable_signup = false
+enable_confirmations = false
+
+[edge_functions]
+enabled = true
+port = 54326
+
+[analytics]
+enabled = false
+port = 54327
+
+# Project specific settings
+project_id = "memfjxlbjjjtdsgipdlz"

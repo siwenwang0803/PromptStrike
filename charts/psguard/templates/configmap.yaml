@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "psguard.fullname" . }}-config
-  labels:
-    {{- include "psguard.labels" . | nindent 4 }}
-data:
-  {{- toYaml .Values.configMap.data | nindent 2 }}

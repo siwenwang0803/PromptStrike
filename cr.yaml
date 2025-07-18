@@ -1,9 +1,0 @@
-# Chart Releaser configuration
-owner: siwenwang0803
-git-repo: RedForge
-charts-repo: https://siwenwang0803.github.io/RedForge
-index-path: ./index.yaml
-package-path: .cr-release-packages
-pages-branch: gh-pages
-pages-index-path: index.yaml
-charts-dir: helm

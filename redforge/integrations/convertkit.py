@@ -15,16 +15,22 @@ class ConvertKitClient:
     """ConvertKit API client for email marketing"""
     
     def __init__(self, api_key: Optional[str] = None, api_secret: Optional[str] = None):
-        self.api_key = api_key or os.getenv('CONVERTKIT_API_KEY')
-        self.api_secret = api_secret or os.getenv('CONVERTKIT_API_SECRET')
+        self.api_key = api_key or os.getenv('KIT_API_KEY')
+        self.api_secret = api_secret or os.getenv('KIT_API_SECRET')
         self.base_url = "https://api.convertkit.com/v3"
         
         if not self.api_key:
-            raise ValueError("ConvertKit API key is required. Set CONVERTKIT_API_KEY environment variable.")
+            print("⚠️  Kit API key not configured. Email capture will use fallback mode.")
+            self.api_key = None
+            self.api_secret = None
     
     def add_subscriber(self, email: str, first_name: Optional[str] = None, 
                       tags: Optional[list] = None, custom_fields: Optional[Dict] = None) -> bool:
         """Add subscriber to ConvertKit"""
+        
+        if not self.api_key:
+            print("⚠️  Kit not configured, using fallback mode")
+            return False
         
         data = {
             'api_key': self.api_key,
@@ -107,7 +113,12 @@ class EmailCaptureManager:
     """Manage email capture and user journey"""
     
     def __init__(self):
-        self.convertkit = ConvertKitClient()
+        try:
+            self.convertkit = ConvertKitClient()
+        except Exception as e:
+            print(f"⚠️  ConvertKit initialization failed: {e}")
+            self.convertkit = None
+        
         self.config_dir = Path.home() / ".redforge"
         self.config_dir.mkdir(parents=True, exist_ok=True)
         self.email_file = self.config_dir / "email_data.json"
@@ -127,20 +138,26 @@ class EmailCaptureManager:
             'product_hunt_launch': 'true' if source == 'product_hunt' else 'false'
         }
         
-        # Add to ConvertKit
-        success = self.convertkit.add_subscriber(
-            email=email,
-            first_name=name,
-            tags=tags,
-            custom_fields=custom_fields
-        )
+        # Add to ConvertKit (if available)
+        success = False
+        if self.convertkit is not None:
+            success = self.convertkit.add_subscriber(
+                email=email,
+                first_name=name,
+                tags=tags,
+                custom_fields=custom_fields
+            )
+        else:
+            print("⚠️  Kit not available, storing email locally only")
+            success = True  # Consider local storage as success
         
         if success:
             # Store locally for CLI integration
             self._store_email_data(email, source, user_tier, name)
             
-            # Trigger appropriate welcome sequence
-            self._trigger_welcome_sequence(email, source, user_tier)
+            # Trigger appropriate welcome sequence (if ConvertKit available)
+            if self.convertkit is not None:
+                self._trigger_welcome_sequence(email, source, user_tier)
         
         return success
     
@@ -173,6 +190,10 @@ class EmailCaptureManager:
     
     def _trigger_welcome_sequence(self, email: str, source: str, user_tier: str):
         """Trigger appropriate welcome email sequence"""
+        
+        if self.convertkit is None:
+            print("⚠️  Kit not available, skipping welcome sequence")
+            return
         
         # Sequence IDs (you'll need to create these in ConvertKit)
         sequences = {
@@ -245,12 +266,15 @@ class EmailCaptureManager:
     def update_user_tier(self, email: str, new_tier: str):
         """Update user tier after payment"""
         
-        # Update ConvertKit
-        self.convertkit.add_subscriber(
-            email=email,
-            custom_fields={'tier': new_tier},
-            tags=self._get_tags('payment_completed', new_tier)
-        )
+        # Update ConvertKit (if available)
+        if self.convertkit is not None:
+            self.convertkit.add_subscriber(
+                email=email,
+                custom_fields={'tier': new_tier},
+                tags=self._get_tags('payment_completed', new_tier)
+            )
+        else:
+            print("⚠️  Kit not available, updating local data only")
         
         # Update local data
         if self.email_file.exists():

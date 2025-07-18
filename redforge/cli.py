@@ -131,6 +131,16 @@ def scan(
         "--api-key", 
         help="API key for target LLM (or set OPENAI_API_KEY env var)"
     ),
+    cloud_api_key: Optional[str] = typer.Option(
+        None,
+        "--cloud-api-key",
+        help="RedForge Cloud API key (or set REDFORGE_API_KEY env var)"
+    ),
+    offline: bool = typer.Option(
+        False,
+        "--offline",
+        help="Run in offline mode (limited to 1 sample attack)"
+    ),
     max_requests: int = typer.Option(
         100, 
         "--max-requests", 
@@ -172,10 +182,42 @@ def scan(
     else:
         output = Path(output).resolve()
     
+    # Handle cloud/offline mode
+    cloud_key = cloud_api_key or os.getenv("REDFORGE_API_KEY")
+    
+    if cloud_key:
+        # Cloud mode - use RedForge Cloud API
+        try:
+            from redforge.cloud_client import run_cloud_scan
+            output_file = run_cloud_scan(
+                target=target,
+                api_key=cloud_key,
+                attack_pack=attack_pack,
+                dry_run=dry_run,
+                format=format,
+                output_dir=str(output)
+            )
+            rprint(f"[green]✅ Cloud scan completed:[/green] [yellow]{output_file}[/yellow]")
+            return
+        except Exception as e:
+            rprint(f"[red]❌ Cloud scan failed: {e}[/red]")
+            raise typer.Exit(1)
+    
+    elif offline:
+        # Offline mode - limited local scan
+        try:
+            from redforge.cloud_client import run_offline_scan
+            output_file = run_offline_scan(target=target, output_dir=str(output))
+            rprint(f"[green]✅ Offline scan completed:[/green] [yellow]{output_file}[/yellow]")
+            return
+        except Exception as e:
+            rprint(f"[red]❌ Offline scan failed: {e}[/red]")
+            raise typer.Exit(1)
+    
     # Load configuration
     config = load_config(Path(config_file)) if config_file else Config()
     
-    # Check user tier and usage limits
+    # Check user tier and usage limits (for legacy local mode)
     user_manager = UserManager()
     usage_status = user_manager.get_usage_status()
     
@@ -184,6 +226,9 @@ def scan(
         rprint(f"[yellow]You have used {usage_status['free_used']}/1 free scans[/yellow]")
         rprint("[cyan]💳 Upgrade to continue scanning:[/cyan]")
         rprint("   https://redforge.solvas.ai/pricing")
+        rprint("\n[cyan]💡 Or try cloud mode:[/cyan]")
+        rprint("   1. Get API key: https://redforge.solvas.ai/dashboard")
+        rprint("   2. Run: redforge scan --cloud-api-key YOUR_KEY")
         
         # Notify ConvertKit about free limit reached
         user_manager.notify_free_limit_reached()
@@ -455,6 +500,105 @@ def scan(
         rprint(f"\n[green]✅ No vulnerabilities found ({total_tests} tests passed)[/green]")
         rprint("[green]🛡️  Your LLM appears to have good security controls[/green]")
 
+
+@app.command()
+def status():
+    """Show RedForge status and usage information"""
+    try:
+        from redforge.cloud_client import CloudClient, show_upgrade_message
+        
+        # Check API key configuration
+        cloud_key = os.getenv("REDFORGE_API_KEY")
+        if cloud_key:
+            client = CloudClient(cloud_key)
+            if client.test_connection():
+                rprint("[green]✅ Cloud API: Connected[/green]")
+            else:
+                rprint("[red]❌ Cloud API: Connection failed[/red]")
+        else:
+            rprint("[yellow]⚠️ Cloud API: Not configured[/yellow]")
+        
+        # Check local usage (legacy)
+        user_manager = UserManager()
+        usage_status = user_manager.get_usage_status()
+        
+        rprint(f"\n[cyan]📊 Local Usage:[/cyan]")
+        rprint(f"   Free scans used: {usage_status['free_used']}/1")
+        rprint(f"   Can use free: {'Yes' if usage_status['can_use_free'] else 'No'}")
+        
+        # Show upgrade options
+        if not cloud_key or not usage_status["can_use_free"]:
+            rprint("\n[cyan]💎 Available Plans:[/cyan]")
+            show_upgrade_message()
+        
+    except Exception as e:
+        rprint(f"[red]❌ Error checking status: {e}[/red]")
+        raise typer.Exit(1)
+
+@app.command()
+def signup(
+    email: str = typer.Argument(..., help="Email address"),
+    name: str = typer.Option("", "--name", "-n", help="Full name"),
+    tier: str = typer.Option("free", "--tier", help="Tier: free, starter, pro")
+):
+    """Sign up for RedForge (creates local profile)"""
+    try:
+        user_manager = UserManager()
+        success = user_manager.capture_user_email(email, tier, name)
+        
+        if success:
+            rprint(f"[green]✅ Welcome to RedForge![/green] Email: {email}")
+            rprint("[cyan]🚀 Next steps:[/cyan]")
+            rprint("   1. Get your API key: https://redforge.solvas.ai/dashboard")
+            rprint("   2. Run: redforge scan --cloud-api-key YOUR_KEY")
+        else:
+            rprint("[red]❌ Signup failed[/red]")
+            raise typer.Exit(1)
+    except Exception as e:
+        rprint(f"[red]❌ Signup error: {e}[/red]")
+        raise typer.Exit(1)
+
+@app.command()
+def activate(
+    key: str = typer.Argument(..., help="RedForge Cloud API key"),
+    save: bool = typer.Option(True, "--save/--no-save", help="Save key to environment")
+):
+    """Activate RedForge Cloud API key"""
+    try:
+        from redforge.cloud_client import CloudClient
+        
+        # Test the key
+        client = CloudClient(key)
+        if client.test_connection():
+            rprint("[green]✅ API key is valid![/green]")
+            
+            if save:
+                # Save to user config
+                config_dir = Path.home() / ".redforge"
+                config_dir.mkdir(exist_ok=True)
+                
+                config_file = config_dir / "config.json"
+                config_data = {}
+                
+                if config_file.exists():
+                    with open(config_file, 'r') as f:
+                        config_data = json.load(f)
+                
+                config_data["api_key"] = key
+                
+                with open(config_file, 'w') as f:
+                    json.dump(config_data, f, indent=2)
+                
+                rprint(f"[green]✅ API key saved to:[/green] {config_file}")
+                rprint("[cyan]💡 You can now run:[/cyan] redforge scan --cloud-api-key YOUR_KEY")
+            
+        else:
+            rprint("[red]❌ Invalid API key[/red]")
+            raise typer.Exit(1)
+            
+    except Exception as e:
+        rprint(f"[red]❌ Activation error: {e}[/red]")
+        raise typer.Exit(1)
 
 @app.command()
 def list_attacks(

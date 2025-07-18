@@ -10,7 +10,7 @@ import json
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel, Field
-from fastapi import FastAPI, HTTPException, Depends, Header, BackgroundTasks, Request
+from fastapi import FastAPI, HTTPException, Depends, Header, BackgroundTasks, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
 import asyncio
@@ -132,6 +132,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Request ID middleware for logging and debugging
+@app.middleware("http")
+async def add_request_id(request: Request, call_next):
+    """Add unique request ID to each request for logging and debugging"""
+    req_id = uuid.uuid4().hex[:8]
+    request.state.req_id = req_id
+    
+    # Log the request
+    logging.info(f"[{req_id}] {request.method} {request.url.path} - {request.client.host}")
+    
+    response = await call_next(request)
+    
+    # Add request ID to response headers
+    response.headers["X-Request-ID"] = req_id
+    
+    # Log the response
+    logging.info(f"[{req_id}] Response: {response.status_code}")
+    
+    return response
+
 # Rate limiting (simple in-memory for now)
 request_counts = {}
 
@@ -216,11 +236,12 @@ async def verify_api_key(request: Request, x_api_key: str = Header(..., alias="X
     except HTTPException:
         raise  # Re-raise HTTP exceptions as-is
     except Exception as e:
-        logging.error(f"API key verification error: {e}")
+        req_id = getattr(request.state, 'req_id', 'unknown')
+        logging.error(f"[{req_id}] API key verification error: {e}")
         # Return 503 for database connectivity issues
         if "Name or service not known" in str(e) or "timeout" in str(e).lower():
-            raise HTTPException(status_code=503, detail="Database service temporarily unavailable. Please retry in a few seconds.")
-        raise HTTPException(status_code=500, detail="Internal server error")
+            raise HTTPException(status_code=503, detail=f"Database service temporarily unavailable. Please retry in a few seconds. (Request ID: {req_id})")
+        raise HTTPException(status_code=500, detail=f"Internal server error. (Request ID: {req_id})")
 
 # Routes
 @app.get("/")
@@ -234,10 +255,11 @@ async def health_check():
     }
 
 @app.get("/healthz")
-async def health_check_detailed():
+async def health_check_detailed(request: Request):
     """Detailed health check for monitoring"""
     database_status = "connected" if supabase is not None else "disconnected"
     overall_status = "ok" if supabase is not None else "degraded"
+    req_id = getattr(request.state, 'req_id', 'unknown')
     
     return {
         "service": "RedForge API Gateway",
@@ -245,6 +267,7 @@ async def health_check_detailed():
         "status": overall_status,
         "timestamp": datetime.utcnow().isoformat(),
         "database": database_status,
+        "request_id": req_id,
         "supabase_url": os.getenv("SUPABASE_URL", "not_set")[:50] + "..." if os.getenv("SUPABASE_URL") else "not_set"
     }
 

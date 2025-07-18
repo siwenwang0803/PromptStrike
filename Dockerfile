@@ -1,26 +1,29 @@
-# RedForge Webhook Server - Docker deployment
+# RedForge CLI - Docker deployment
 FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
 
 # Copy requirements first (for better caching)
-COPY requirements-simple.txt .
+COPY requirements.txt .
 
 # Install dependencies
-RUN pip install -r requirements-simple.txt
+RUN pip install -r requirements.txt
 
 # Copy application code
-COPY app.py .
+COPY redforge/ ./redforge/
+COPY examples/ ./examples/
+COPY docs/ ./docs/
 
-# Create data directory
-RUN mkdir -p ./data
+# Create directories for reports and config
+RUN mkdir -p ./reports ./config
 
-# Expose port
+# Expose port (for future API server)
 EXPOSE 8000
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app
 
-# Run the application
-CMD ["python", "app.py"]
+# Default command: show help
+CMD ["python", "-m", "redforge.cli", "--help"]

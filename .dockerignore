@@ -1,7 +1,8 @@
+# Git
 .git
-.github
-.pytest_cache
-.mypy_cache
+.gitignore
+
+# Python
 __pycache__
 *.pyc
 *.pyo
@@ -10,18 +11,34 @@ __pycache__
 env
 pip-log.txt
 pip-delete-this-directory.txt
-.tox
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
 .venv
-.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
-reports/
-data/
-ai-chunks/
-.chroma/
+Thumbs.db
+
+# Project specific
+.env*
+*.log
+node_modules/
+tests/
+*.md
+*.txt
+supabase/
+render-monitoring-guide.md
+
+# Keep only essential files
+!requirements.txt
+!README.md
+!CLAUDE.md

@@ -25,5 +25,6 @@ EXPOSE 8000
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-# Default command: show help
-CMD ["python", "-m", "redforge.cli", "--help"]
+# Create a simple server script and run it
+RUN echo 'import http.server; import socketserver; PORT = 8000; Handler = http.server.SimpleHTTPRequestHandler; httpd = socketserver.TCPServer(("", PORT), Handler); print(f"RedForge serving on port {PORT}"); httpd.serve_forever()' > server.py
+CMD ["python", "server.py"]

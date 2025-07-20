@@ -267,10 +267,12 @@ def run_offline_scan(target: str, output_dir: str = "./reports") -> str:
     
     # Load limited attacks
     attack_loader = AttackPackLoader()
-    attacks = attack_loader.load_attacks()[:1]  # Only 1 attack
+    attacks = attack_loader.load_pack("owasp-llm-top10")[:1]  # Only 1 attack
     
     # Run scan
-    scanner = LLMScanner()
+    from redforge.utils.config import Config
+    config = Config(target_endpoint=target, max_requests=1, timeout_seconds=30)
+    scanner = LLMScanner(target=target, config=config)
     results = []
     
     console.print(f"[cyan]🧪 Running sample attack...[/cyan]")

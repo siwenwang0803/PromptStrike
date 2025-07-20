@@ -271,6 +271,81 @@ async def health_check_detailed(request: Request):
         "supabase_url": os.getenv("SUPABASE_URL", "not_set")[:50] + "..." if os.getenv("SUPABASE_URL") else "not_set"
     }
 
+@app.post("/signup")
+async def signup(request: Request):
+    """User signup and API key generation"""
+    try:
+        body = await request.json()
+        email = body.get("email")
+        
+        if not email:
+            raise HTTPException(status_code=400, detail="Email is required")
+        
+        # Generate API key
+        import secrets
+        api_key = f"rk_{secrets.token_urlsafe(32)}"
+        
+        # Store in Supabase (with retry logic)
+        @retry(
+            retry=retry_if_exception_type(Exception),
+            stop=stop_after_attempt(3),
+            wait=wait_fixed(0.5)
+        )
+        def create_user_account():
+            if supabase is None:
+                raise Exception("Supabase client not initialized")
+                
+            # Create user record
+            user_result = supabase.table("users").insert({
+                "email": email,
+                "tier": "free",
+                "created_at": datetime.now().isoformat()
+            }).execute()
+            
+            # Create API key record
+            api_key_result = supabase.table("api_keys").insert({
+                "key": api_key,
+                "user_id": user_result.data[0]["id"],
+                "tier": "free",
+                "usage_count": 0,
+                "created_at": datetime.now().isoformat()
+            }).execute()
+            
+            return user_result.data[0]
+        
+        user_data = create_user_account()
+        
+        # Add to ConvertKit if configured
+        try:
+            kit_api_key = os.getenv("KIT_API_KEY")
+            if kit_api_key:
+                import requests
+                kit_response = requests.post(
+                    f"https://api.convertkit.com/v3/forms/8320684/subscribe",
+                    data={
+                        "api_key": kit_api_key,
+                        "email": email,
+                        "tags": ["redforge-signup", "free-tier"]
+                    },
+                    timeout=10
+                )
+                logging.info(f"ConvertKit signup: {kit_response.status_code}")
+        except Exception as e:
+            logging.warning(f"ConvertKit signup failed: {e}")
+        
+        return {
+            "message": "Account created successfully",
+            "api_key": api_key,
+            "tier": "free",
+            "user_id": user_data["id"]
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Signup error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 @app.post("/scan", response_model=ScanResponse)
 async def create_scan(
     request_obj: Request,

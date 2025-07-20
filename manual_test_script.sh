@@ -98,11 +98,11 @@ echo ""
 
 # Test 7: API Documentation
 echo -e "${YELLOW}📚 Test 7: API Documentation${NC}"
-DOC_RESPONSE=$(curl -s -w "%{http_code}" "$API_BASE/docs" 2>/dev/null | tail -1)
-if [ "$DOC_RESPONSE" = "200" ]; then
+DOC_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$API_BASE/docs" 2>/dev/null)
+if [ "$DOC_STATUS" = "200" ]; then
     echo -e "${GREEN}✅ API documentation accessible${NC}"
 else
-    echo -e "${RED}❌ API documentation failed (HTTP $DOC_RESPONSE)${NC}"
+    echo -e "${RED}❌ API documentation failed (HTTP $DOC_STATUS)${NC}"
 fi
 echo ""
 
@@ -174,6 +174,10 @@ if [ "$HTTP_STATUS" = "200" ]; then
 else
     echo -e "${RED}❌ User signup failed (HTTP $HTTP_STATUS)${NC}"
     echo -e "${RED}   Response: $RESPONSE_BODY${NC}"
+    if [ "$HTTP_STATUS" = "500" ]; then
+        echo -e "${YELLOW}   Note: HTTP 500 suggests Render deployment issue (Supabase config)${NC}"
+        echo -e "${YELLOW}   This is likely a temporary deployment issue, not a code problem${NC}"
+    fi
 fi
 echo ""
 

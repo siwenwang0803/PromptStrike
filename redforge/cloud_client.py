@@ -7,6 +7,7 @@ Handles cloud-based scanning with API keys and usage tracking
 import os
 import time
 import json
+import asyncio
 import httpx
 from pathlib import Path
 from typing import Optional, Dict, Any
@@ -279,16 +280,15 @@ def run_offline_scan(target: str, output_dir: str = "./reports") -> str:
     
     for attack in attacks:
         try:
-            result = scanner.run_attack(attack, target)
+            result = asyncio.run(scanner.run_attack(attack))
             results.append(result)
-            console.print(f"[green]✅ {attack.name}[/green]")
+            console.print(f"[green]✅ {attack.id}[/green]")
         except Exception as e:
-            console.print(f"[red]❌ {attack.name}: {e}[/red]")
+            console.print(f"[red]❌ {attack.id}: {e}[/red]")
     
     # Generate report with watermark
-    report_generator = ReportGenerator(user_tier="free")
-    
     Path(output_dir).mkdir(parents=True, exist_ok=True)
+    report_generator = ReportGenerator(output_dir=output_dir, user_tier="free")
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     output_file = f"{output_dir}/redforge_scan_{timestamp}.json"
     
@@ -296,13 +296,13 @@ def run_offline_scan(target: str, output_dir: str = "./reports") -> str:
     scan_result = {
         "scan_id": f"offline_{timestamp}",
         "target": target,
-        "results": results,
+        "results": [result.__dict__ if hasattr(result, '__dict__') else result for result in results],
         "tier": "free",
         "watermark": "⚠️ This is a limited offline scan. For full scanning, visit https://redforge.solvas.ai"
     }
     
     with open(output_file, 'w') as f:
-        json.dump(scan_result, f, indent=2)
+        json.dump(scan_result, f, indent=2, default=str)
     
     console.print(f"[green]✅ Offline scan completed:[/green] [yellow]{output_file}[/yellow]")
     

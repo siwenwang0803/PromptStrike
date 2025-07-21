@@ -47,7 +47,7 @@ jobs:
       run: poetry install --no-interaction --no-root --all-extras
       
     - name: Install RedForge
-      run: poetry install --no-interaction
+      run: poetry install --no-interaction --all-extras
       
     - name: Verify RedForge CLI
       run: |
@@ -71,6 +71,8 @@ jobs:
         chmod +x ./manual_test_script_core.sh
         # Set CI flag so script uses poetry run
         export CI=true
+        # Ensure OPENAI_API_KEY is set for offline scan bypass
+        export OPENAI_API_KEY=${OPENAI_API_KEY:-sk-ci-dummy-key}
         ./manual_test_script_core.sh
         
     - name: Upload test reports

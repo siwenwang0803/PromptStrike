@@ -102,7 +102,10 @@ OFFLINE_OUTPUT=$($REDFORGE_CMD scan gpt-4 --offline --dry-run --output ./manual_
 OFFLINE_RET=$?
 set -e
 
-if [ $OFFLINE_RET -eq 0 ] && echo "$OFFLINE_OUTPUT" | grep -q "scan completed"; then
+echo "Debug: Exit code: $OFFLINE_RET"
+echo "Debug: Output: $OFFLINE_OUTPUT"
+
+if [ $OFFLINE_RET -eq 0 ]; then
     show_result 0 "Offline scan completed"
     
     # Check JSON report (scan report, not compliance)

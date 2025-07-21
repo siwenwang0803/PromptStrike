@@ -10,6 +10,7 @@ supabase==2.17.0
 redis==6.2.0
 sentry-sdk==2.33.0
 stripe>=10.4.0,<11.0.0
+packaging>=21.0
 
 # HTTP and networking
 httpx==0.26.0

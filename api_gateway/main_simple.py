@@ -20,7 +20,7 @@ import asyncio
 import logging
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
 import stripe
-import pkg_resources
+from packaging import version
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -522,7 +522,7 @@ async def stripe_webhook(request: Request, background_tasks: BackgroundTasks):
     """Handle Stripe webhook events"""
     try:
         # Check Stripe SDK version
-        if pkg_resources.parse_version(stripe.__version__) < pkg_resources.parse_version("10.0.0"):
+        if version.parse(stripe.__version__) < version.parse("10.0.0"):
             logging.error(f"Stripe SDK too old: {stripe.__version__}")
             raise HTTPException(status_code=500, detail=f"Out-of-date Stripe SDK: {stripe.__version__}")
         

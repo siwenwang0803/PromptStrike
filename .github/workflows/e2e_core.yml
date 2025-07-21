@@ -25,7 +25,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.11'
         
     - name: Install Poetry
       uses: snok/install-poetry@v1
@@ -50,6 +50,13 @@ jobs:
       
     - name: Verify RedForge CLI
       run: |
+        echo "Python version:"
+        python --version
+        echo "Poetry version:"
+        poetry --version
+        echo "Poetry environment info:"
+        poetry env info
+        echo "Testing RedForge CLI:"
         poetry run redforge version
         poetry run redforge doctor
         
@@ -61,8 +68,8 @@ jobs:
     - name: Run Core E2E Tests
       run: |
         chmod +x ./manual_test_script_core.sh
-        # Activate poetry environment and run tests
-        source .venv/bin/activate
+        # Set CI flag so script uses poetry run
+        export CI=true
         ./manual_test_script_core.sh
         
     - name: Upload test reports

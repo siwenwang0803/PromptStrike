@@ -2,11 +2,11 @@
 
 **Developer-first automated LLM red-team platform**
 
-[![Version](https://img.shields.io/badge/version-0.2.0--alpha-blue.svg)](https://github.com/siwenwang0803/RedForge/releases)
+[![PyPI](https://img.shields.io/pypi/v/redforge)](https://pypi.org/project/redforge)
+[![Build](https://github.com/siwenwang0803/RedForge/actions/workflows/e2e_core.yml/badge.svg)](https://github.com/siwenwang0803/RedForge/actions/workflows/e2e_core.yml)
+[![License](https://img.shields.io/github/license/siwenwang0803/RedForge)](LICENSE)
+[![Product Hunt](https://img.shields.io/badge/PH-Coming%20Jul%2023-da552f)](https://www.producthunt.com/posts/redforge)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://python.org)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/r/siwenwang0803/redforge)
-[![PyPI](https://img.shields.io/pypi/v/redforge.svg)](https://pypi.org/project/redforge/)
 [![OWASP](https://img.shields.io/badge/OWASP-LLM%20Top%2010-red.svg)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 
 > **🚀 Status:** ✅ Sprint S-3 Preparation (July 2025) - S-2/Pilot-0 Complete, Enterprise Ready  
@@ -30,22 +30,31 @@ Large-language-model (LLM) apps ship to production with **invisible jailbreak, d
 
 ## Quick Start
 
-### 🐳 Docker (Recommended)
-
 ```bash
-# Pull from Docker Hub and run
-docker run --rm -e OPENAI_API_KEY=$OPENAI_API_KEY -v $(pwd)/reports:/app/reports siwenwang0803/redforge:v0.2.0-alpha scan gpt-4
-
-# Or use latest tag
-docker run --rm -e OPENAI_API_KEY=$OPENAI_API_KEY -v $(pwd)/reports:/app/reports siwenwang0803/redforge:latest scan gpt-4
-
-# Local build (optional)
-git clone https://github.com/siwenwang0803/RedForge.git
-cd RedForge
-docker build -t redforge/cli .
+pip install redforge
+redforge doctor              # Environment self-check
+redforge scan gpt-4 --offline --dry-run
 ```
 
-### 📦 PyPI
+**🚀 [Try Cloud Scan - $29/mo](https://siwenwang0803.github.io/RedForge/) | 📖 [Full Documentation](docs/) | 📊 [Threat Model](docs/RedForge/Security/Guardrail_Threat_Model.md)**
+
+### 🐳 Docker Alternative
+
+```bash
+docker run --rm siwenwang0803/redforge:latest scan gpt-4 --dry-run
+```
+
+### ☁️ Cloud Starter ($29/month)
+
+1. Click **[Get Starter Key](https://siwenwang0803.github.io/RedForge/)** →
+2. In CLI:
+   ```bash
+   redforge signup --email you@example.com
+   redforge scan gpt-4 --cloud-api-key <your_key>
+   ```
+3. Access advanced features: unlimited scans, team collaboration, compliance reports
+
+### 📦 Advanced Installation
 
 ```bash
 pip install redforge
@@ -167,11 +176,19 @@ make test     # Run tests
 
 CI/CD examples: [CI/CD Guide](docs/cicd.md).
 
+## Documentation & Links
+
+- **📖 [Full Documentation](docs/)** - Complete setup and usage guides
+- **🛡️ [Threat Model](docs/RedForge/Security/Guardrail_Threat_Model.md)** - Security architecture and risk analysis  
+- **⚓ [Helm Charts](https://siwenwang0803.github.io/RedForge/helm/)** - Kubernetes deployment
+- **📋 [CLI Reference](docs/cli-spec.md)** - Complete command documentation
+- **🔧 [Configuration Guide](docs/config.md)** - Advanced configuration options
+
 ## Support & Community
 
-- **Issues**: [GitHub](https://github.com/siwenwang0803/RedForge/issues)
-- **Docs**: [CLI Spec](docs/cli-spec.md), API (Soon)
-- **Community**: Discord/Slack (Soon)
+- **Issues**: [GitHub Issues](https://github.com/siwenwang0803/RedForge/issues)
+- **Cloud Support**: dev@solvas.ai  
+- **Enterprise**: Schedule demo via [landing page](https://siwenwang0803.github.io/RedForge/)
 
 ## Security & License
 

@@ -57,8 +57,10 @@ safe_exec() {
 # Check if we're in CI environment and use poetry run
 if [ -n "${CI:-}" ] || [ -d ".venv" ]; then
     REDFORGE_CMD="poetry run redforge"
+    PYTHON_CMD="poetry run python"
 else
     REDFORGE_CMD="redforge"
+    PYTHON_CMD="python3"
 fi
 
 # Test 1: CLI Help
@@ -92,12 +94,15 @@ echo ""
 echo -e "${YELLOW}📄 Test 5: Offline Scan & Multi-Format Reports${NC}"
 echo "Running offline scan..."
 
+# Ensure output directory exists
+mkdir -p ./manual_test_reports
+
 set +e
 OFFLINE_OUTPUT=$($REDFORGE_CMD scan gpt-4 --offline --output ./manual_test_reports 2>&1)
 OFFLINE_RET=$?
 set -e
 
-if echo "$OFFLINE_OUTPUT" | grep -q "✅ Offline scan completed"; then
+if [ $OFFLINE_RET -eq 0 ] && echo "$OFFLINE_OUTPUT" | grep -q "scan completed"; then
     show_result 0 "Offline scan completed"
     
     # Check JSON report (scan report, not compliance)
@@ -317,21 +322,21 @@ echo -e "${YELLOW}🛡️  Test 11: Security Components${NC}"
 
 # Test Guardrail SDK
 set +e
-python3 -c "from guardrail.sdk import GuardrailClient; print('OK')" 2>/dev/null
+$PYTHON_CMD -c "from guardrail.sdk import GuardrailClient; print('OK')" 2>/dev/null
 GUARDRAIL_RET=$?
 set -e
 show_result $GUARDRAIL_RET "Guardrail SDK import"
 
 # Test Cost Guard
 set +e
-python3 -c "from guardrail.cost_guard import CostGuard; cg = CostGuard(); print('OK')" 2>/dev/null
+$PYTHON_CMD -c "from guardrail.cost_guard import CostGuard; cg = CostGuard(); print('OK')" 2>/dev/null
 COSTGUARD_RET=$?
 set -e
 show_result $COSTGUARD_RET "Cost Guard functional"
 
 # Test Compliance Framework
 set +e
-python3 -c "from redforge.compliance.pci_dss_framework import PCIDSSFramework; print('OK')" 2>/dev/null
+$PYTHON_CMD -c "from redforge.compliance.pci_dss_framework import PCIDSSFramework; print('OK')" 2>/dev/null
 COMPLIANCE_RET=$?
 set -e
 show_result $COMPLIANCE_RET "PCI DSS compliance framework"

@@ -565,7 +565,9 @@ async def handle_successful_payment(checkout_session):
         amount_total = checkout_session["amount_total"]  # In cents
         
         # Determine tier based on amount
-        if amount_total == 2900:  # $29.00
+        if amount_total == 100:  # $1.00 test
+            tier = "starter"
+        elif amount_total == 2900:  # $29.00 production
             tier = "starter"
         elif amount_total == 9900:  # $99.00
             tier = "pro"

@@ -88,22 +88,21 @@ class APIKeyResponse(BaseModel):
     usage_count: int
     revoked: bool
 
-# Initialize Supabase
+# Initialize Supabase with service role key
+SUP_URL = os.getenv("SUPABASE_URL")
+SUP_SERVICE = os.getenv("SUPABASE_SERVICE_ROLE")
+
 try:
-    supabase_url = os.getenv("SUPABASE_URL", "")
-    supabase_key = os.getenv("SUPABASE_SERVICE_ROLE", "")
-    
-    if not supabase_url or not supabase_key:
+    if not SUP_URL or not SUP_SERVICE:
         raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_ROLE environment variables are required")
     
-    supabase: Client = create_client(supabase_url, supabase_key)
-    # Disable RLS for service role operations
-    supabase.postgrest.auth(supabase_key)
-    logging.info(f"Supabase initialized with URL: {supabase_url}")
+    # Create client with service role key (bypasses RLS)
+    supabase: Client = create_client(SUP_URL, SUP_SERVICE)
+    logging.info(f"Supabase initialized with service key: {SUP_SERVICE[:20]}...")
+    logging.info(f"Supabase URL: {SUP_URL}")
     
 except Exception as e:
     logging.error(f"Failed to initialize Supabase: {e}")
-    # Create a mock client for now
     supabase = None
 
 # Retry wrapper for Supabase queries

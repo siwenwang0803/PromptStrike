@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedForge - Payment Testing</title>
+    <style>
+        :root {
+            --primary-cyan: #00ffff;
+            --dark-bg: #0a0f1e;
+            --medium-bg: #1a233a;
+            --light-text: #e0e0e0;
+            --success-green: #00ff88;
+            --warning-orange: #ff6b35;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-bg) 100%);
+            color: var(--light-text);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: var(--primary-cyan);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px var(--primary-cyan);
+        }
+        
+        .test-warning {
+            background: rgba(255, 107, 53, 0.2);
+            border: 2px solid var(--warning-orange);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .test-warning h2 {
+            color: var(--warning-orange);
+            margin-bottom: 15px;
+        }
+        
+        .test-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .test-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .test-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-cyan);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+        }
+        
+        .test-card h3 {
+            color: var(--primary-cyan);
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        
+        .price {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 20px 0;
+            color: var(--success-green);
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, var(--primary-cyan), #007acc);
+            color: var(--dark-bg);
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+        }
+        
+        .test-info {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .test-info h3 {
+            color: var(--primary-cyan);
+            margin-bottom: 15px;
+        }
+        
+        .test-info ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .test-info li {
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-info code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--success-green);
+            font-family: monospace;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-cyan);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            text-shadow: 0 0 8px var(--primary-cyan);
+            transform: translateX(-5px);
+        }
+        
+        @media (max-width: 768px) {
+            .test-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">
+            ← Back to RedForge
+        </a>
+        
+        <div class="header">
+            <h1>🧪 Payment Testing</h1>
+            <p>Test RedForge Stripe payments safely</p>
+        </div>
+        
+        <div class="test-warning">
+            <h2>⚠️ Test Mode Only</h2>
+            <p>These are Stripe test payment links. No real money will be charged.</p>
+            <p>Use the test card details below to complete test payments.</p>
+        </div>
+        
+        <div class="test-cards">
+            <div class="test-card">
+                <h3>Starter Plan (TEST)</h3>
+                <div class="price">$29/mo</div>
+                <p>Test the starter plan payment flow</p>
+                <a href="https://buy.stripe.com/test_3cs9Co8eN7iQ1zyeUU" class="btn" target="_blank">
+                    Test Starter Payment
+                </a>
+            </div>
+            
+            <div class="test-card">
+                <h3>Pro Plan (TEST)</h3>
+                <div class="price">$99/mo</div>
+                <p>Test the pro plan payment flow</p>
+                <a href="https://buy.stripe.com/test_5kAbKs4YBdD0cSkcMO" class="btn" target="_blank">
+                    Test Pro Payment
+                </a>
+            </div>
+        </div>
+        
+        <div class="test-info">
+            <h3>🃏 Test Card Details</h3>
+            <ul>
+                <li><strong>Card Number:</strong> <code>4242 4242 4242 4242</code> (Visa)</li>
+                <li><strong>Alternative:</strong> <code>5555 5555 5555 4444</code> (Mastercard)</li>
+                <li><strong>Expiry:</strong> Any future date (e.g., <code>12/25</code>)</li>
+                <li><strong>CVC:</strong> Any 3 digits (e.g., <code>123</code>)</li>
+                <li><strong>ZIP:</strong> Any 5 digits (e.g., <code>12345</code>)</li>
+            </ul>
+        </div>
+        
+        <div class="test-info">
+            <h3>🔍 What to Test</h3>
+            <ul>
+                <li>✅ Payment form loads correctly</li>
+                <li>✅ Test card is accepted</li>
+                <li>✅ Success/confirmation page works</li>
+                <li>✅ Email notifications are sent (if configured)</li>
+                <li>✅ Webhook integration works</li>
+                <li>✅ Customer is created in Stripe dashboard</li>
+            </ul>
+        </div>
+        
+        <div class="test-info">
+            <h3>🛠️ Alternative Testing Methods</h3>
+            <p><strong>URL Parameter Testing:</strong></p>
+            <p>Add <code>?test=true</code> to the main landing page URL to force test mode:</p>
+            <p><code>https://redforge.solvas.ai/?test=true</code></p>
+            
+            <p><strong>Localhost Testing:</strong></p>
+            <p>Test payments automatically activate when viewing from localhost or 127.0.0.1</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; opacity: 0.7;">
+            <p>🔗 <strong>Direct Test Links:</strong></p>
+            <p>Starter: <a href="https://buy.stripe.com/test_3cs9Co8eN7iQ1zyeUU" style="color: var(--primary-cyan);">buy.stripe.com/test_3cs9Co8eN7iQ1zyeUU</a></p>
+            <p>Pro: <a href="https://buy.stripe.com/test_5kAbKs4YBdD0cSkcMO" style="color: var(--primary-cyan);">buy.stripe.com/test_5kAbKs4YBdD0cSkcMO</a></p>
+        </div>
+    </div>
+</body>
+</html>

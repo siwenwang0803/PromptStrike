@@ -1304,11 +1304,26 @@ redforge scan gpt-4 --dry-run</div>
     </div>
 
     <script>
-        // Payment handling - Complete Stripe payment link
+        // Payment handling - Stripe payment links
         const PAYMENT_LINKS = {
-            starter: 'https://buy.stripe.com/8x2aEY7472EtgTobtYgA800', // $29/month Starter Plan - COMPLETE LINK
-            pro: 'mailto:dev@solvas.ai?subject=Pro%20Plan%20Inquiry' // Pro plan via contact
+            // Production links
+            production: {
+                starter: 'https://buy.stripe.com/8x2aEY7472EtgTobtYgA800', // $29/month Starter Plan - LIVE LINK
+                pro: 'mailto:dev@solvas.ai?subject=Pro%20Plan%20Inquiry' // Pro plan via contact
+            },
+            // Test mode links (use test card: 4242 4242 4242 4242)
+            test: {
+                starter: 'https://buy.stripe.com/test_3cs9Co8eN7iQ1zyeUU', // TEST MODE - $29/month Starter
+                pro: 'https://buy.stripe.com/test_5kAbKs4YBdD0cSkcMO' // TEST MODE - $99/month Pro
+            }
         };
+        
+        // Environment detection - set to 'test' for testing, 'production' for live
+        const STRIPE_MODE = window.location.hostname.includes('localhost') || 
+                           window.location.hostname.includes('127.0.0.1') || 
+                           window.location.search.includes('test=true') ? 'test' : 'production';
+        
+        console.log(`Stripe mode: ${STRIPE_MODE}`);
         
         // Kit Configuration
         const KIT_CONFIG = {
@@ -1540,12 +1555,29 @@ redforge scan gpt-4 --dry-run</div>
                 });
             }
             
-            // Get payment URL
-            const paymentUrl = PAYMENT_LINKS[plan];
+            // Get payment URL based on current mode
+            const paymentUrl = PAYMENT_LINKS[STRIPE_MODE][plan];
             
             if (paymentUrl) {
+                // Show test mode warning if in test mode
+                if (STRIPE_MODE === 'test') {
+                    const testWarning = confirm(
+                        '🧪 TEST MODE PAYMENT\n\n' +
+                        'You are about to use a Stripe test payment link.\n' +
+                        'Use test card: 4242 4242 4242 4242\n' +
+                        'Any CVC, future expiry date\n\n' +
+                        'Continue to test payment?'
+                    );
+                    
+                    if (!testWarning) {
+                        button.innerHTML = originalContent;
+                        button.disabled = false;
+                        return;
+                    }
+                }
+                
                 // Redirect to payment
-                console.log(`Redirecting to payment for ${plan}: ${paymentUrl}`);
+                console.log(`Redirecting to ${STRIPE_MODE} payment for ${plan}: ${paymentUrl}`);
                 window.location.href = paymentUrl;
             } else {
                 // Restore button state on error

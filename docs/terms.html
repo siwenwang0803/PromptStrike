@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - RedForge</title>
+    <meta name="description" content="RedForge Terms of Service - Legal terms and conditions for using RedForge">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-cyan: #00ffff;
+            --dark-bg: #0a0f1e;
+            --medium-bg: #1a233a;
+            --light-text: #e0e0e0;
+            --accent-blue: #007acc;
+            --warning-orange: #ff6b35;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-bg) 100%);
+            color: var(--light-text);
+            line-height: 1.7;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+            border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+        }
+        
+        .header h1 {
+            color: var(--primary-cyan);
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px var(--primary-cyan);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: var(--primary-cyan);
+            font-size: 1.8em;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        h2:first-child {
+            margin-top: 0;
+        }
+        
+        h3 {
+            color: var(--primary-cyan);
+            font-size: 1.3em;
+            margin: 25px 0 15px 0;
+        }
+        
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+        
+        .highlight {
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 4px solid var(--primary-cyan);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .warning {
+            background: rgba(255, 107, 53, 0.1);
+            border-left: 4px solid var(--warning-orange);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .warning strong {
+            color: var(--warning-orange);
+        }
+        
+        .contact-info {
+            background: rgba(0, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .contact-info h3 {
+            margin-bottom: 15px;
+        }
+        
+        .contact-info a {
+            color: var(--primary-cyan);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .contact-info a:hover {
+            text-shadow: 0 0 8px var(--primary-cyan);
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-cyan);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            text-shadow: 0 0 8px var(--primary-cyan);
+            transform: translateX(-5px);
+        }
+        
+        .last-updated {
+            text-align: center;
+            opacity: 0.7;
+            font-style: italic;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--primary-cyan);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 10px;
+            }
+            
+            .content {
+                padding: 25px;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">
+            ← Back to RedForge
+        </a>
+        
+        <div class="header">
+            <h1>⚖️ Terms of Service</h1>
+            <p>Legal terms and conditions for using RedForge</p>
+        </div>
+        
+        <div class="content">
+            <div class="highlight">
+                <strong>TL;DR:</strong> Use RedForge responsibly for security testing your own systems. Don't attack others. Respect intellectual property. We provide the tool "as-is" for defensive security purposes only.
+            </div>
+            
+            <h2>1. Acceptance of Terms</h2>
+            <p>By accessing and using RedForge ("Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
+            
+            <h2>2. Description of Service</h2>
+            <p>RedForge is an automated red-teaming platform designed for security testing of Large Language Model (LLM) applications. The Service includes:</p>
+            <ul>
+                <li>CLI tool for OWASP LLM Top 10 security testing</li>
+                <li>Docker containers and Kubernetes deployments</li>
+                <li>Security reporting and compliance mapping</li>
+                <li>Optional cloud-based scanning services</li>
+                <li>Documentation and community support</li>
+            </ul>
+            
+            <h2>3. Authorized Use Only</h2>
+            
+            <div class="warning">
+                <strong>IMPORTANT:</strong> RedForge is designed exclusively for defensive security testing of systems you own or have explicit written permission to test.
+            </div>
+            
+            <h3>3.1 Permitted Uses</h3>
+            <ul>
+                <li>Testing your own LLM applications and systems</li>
+                <li>Security assessments with proper authorization</li>
+                <li>Educational and research purposes in controlled environments</li>
+                <li>Compliance testing for regulatory frameworks</li>
+                <li>Internal security audits and penetration testing</li>
+            </ul>
+            
+            <h3>3.2 Prohibited Uses</h3>
+            <ul>
+                <li><strong>Unauthorized Testing:</strong> Testing systems without explicit permission</li>
+                <li><strong>Malicious Activities:</strong> Using RedForge to harm, disrupt, or exploit systems</li>
+                <li><strong>Illegal Activities:</strong> Any use that violates local, state, or federal laws</li>
+                <li><strong>Circumventing Security:</strong> Bypassing security measures for unauthorized access</li>
+                <li><strong>Commercial Attacks:</strong> Using RedForge to gain competitive advantages through unauthorized means</li>
+            </ul>
+            
+            <h2>4. User Responsibilities</h2>
+            
+            <h3>4.1 Authorization Requirements</h3>
+            <p>You are solely responsible for ensuring you have proper authorization before conducting any security tests. This includes:</p>
+            <ul>
+                <li>Written permission from system owners</li>
+                <li>Compliance with organizational policies</li>
+                <li>Adherence to applicable laws and regulations</li>
+                <li>Proper scope definition and limitations</li>
+            </ul>
+            
+            <h3>4.2 Data Protection</h3>
+            <ul>
+                <li>Protect API keys and sensitive credentials</li>
+                <li>Secure scan results and reports</li>
+                <li>Comply with data protection regulations (GDPR, CCPA, etc.)</li>
+                <li>Implement appropriate access controls</li>
+            </ul>
+            
+            <h3>4.3 Reporting Vulnerabilities</h3>
+            <p>If you discover vulnerabilities through legitimate testing:</p>
+            <ul>
+                <li>Report findings to appropriate stakeholders</li>
+                <li>Follow responsible disclosure practices</li>
+                <li>Do not exploit vulnerabilities for unauthorized access</li>
+                <li>Maintain confidentiality until patches are applied</li>
+            </ul>
+            
+            <h2>5. Intellectual Property</h2>
+            
+            <h3>5.1 RedForge License</h3>
+            <p>RedForge is licensed under the MIT License. You may:</p>
+            <ul>
+                <li>Use, copy, modify, and distribute the software</li>
+                <li>Use RedForge for commercial purposes</li>
+                <li>Create derivative works</li>
+                <li>Sell copies of the software</li>
+            </ul>
+            
+            <h3>5.2 Attribution Requirements</h3>
+            <p>You must include the original copyright notice and license in all copies or substantial portions of the software.</p>
+            
+            <h3>5.3 Third-Party Content</h3>
+            <p>RedForge may include third-party libraries and components. Each component is subject to its own license terms.</p>
+            
+            <h2>6. Service Availability</h2>
+            
+            <h3>6.1 Open Source Commitment</h3>
+            <p>The core RedForge CLI will always be available as open source software under the MIT License.</p>
+            
+            <h3>6.2 Cloud Services</h3>
+            <p>Optional paid cloud services are provided "as-is" with:</p>
+            <ul>
+                <li>99.9% uptime SLA for paid accounts</li>
+                <li>Scheduled maintenance windows</li>
+                <li>30-day cancellation policy</li>
+                <li>Data export capabilities</li>
+            </ul>
+            
+            <h2>7. Payment Terms (Paid Services)</h2>
+            
+            <h3>7.1 Billing</h3>
+            <ul>
+                <li><strong>Starter Plan:</strong> $29/month, billed monthly</li>
+                <li><strong>Pro Plan:</strong> $99/month, billed monthly</li>
+                <li><strong>Enterprise:</strong> Custom pricing based on requirements</li>
+            </ul>
+            
+            <h3>7.2 Payment Processing</h3>
+            <ul>
+                <li>Payments processed securely through Stripe</li>
+                <li>Automatic renewal unless cancelled</li>
+                <li>30-day money-back guarantee</li>
+                <li>Refunds processed within 5-7 business days</li>
+            </ul>
+            
+            <h3>7.3 Cancellation</h3>
+            <ul>
+                <li>Cancel anytime from account settings</li>
+                <li>Service continues until end of current billing period</li>
+                <li>No partial refunds for unused time</li>
+                <li>Data export available for 30 days after cancellation</li>
+            </ul>
+            
+            <h2>8. Disclaimers and Warranties</h2>
+            
+            <h3>8.1 "As-Is" Service</h3>
+            <p>RedForge is provided "AS-IS" without warranties of any kind, either express or implied, including but not limited to:</p>
+            <ul>
+                <li>Merchantability</li>
+                <li>Fitness for a particular purpose</li>
+                <li>Non-infringement</li>
+                <li>Accuracy or completeness of results</li>
+            </ul>
+            
+            <h3>8.2 Security Testing Limitations</h3>
+            <ul>
+                <li>No guarantee of finding all vulnerabilities</li>
+                <li>False positives and negatives may occur</li>
+                <li>Results should be validated by security professionals</li>
+                <li>Regular updates needed for new attack patterns</li>
+            </ul>
+            
+            <h2>9. Limitation of Liability</h2>
+            
+            <h3>9.1 Maximum Liability</h3>
+            <p>In no event shall RedForge or its developers be liable for any damages exceeding the amount paid by you for the Service in the 12 months preceding the claim.</p>
+            
+            <h3>9.2 Excluded Damages</h3>
+            <p>We shall not be liable for:</p>
+            <ul>
+                <li>Indirect, incidental, or consequential damages</li>
+                <li>Loss of profits, data, or business opportunities</li>
+                <li>Damages resulting from unauthorized use</li>
+                <li>Third-party claims or actions</li>
+            </ul>
+            
+            <h2>10. Indemnification</h2>
+            <p>You agree to indemnify and hold harmless RedForge and its developers from any claims, damages, or expenses arising from:</p>
+            <ul>
+                <li>Your use of the Service</li>
+                <li>Violation of these Terms</li>
+                <li>Unauthorized security testing</li>
+                <li>Infringement of third-party rights</li>
+            </ul>
+            
+            <h2>11. Termination</h2>
+            
+            <h3>11.1 Termination Rights</h3>
+            <p>We reserve the right to terminate or suspend access to the Service for:</p>
+            <ul>
+                <li>Violation of these Terms</li>
+                <li>Illegal or unauthorized use</li>
+                <li>Non-payment of fees</li>
+                <li>Abuse of the Service</li>
+            </ul>
+            
+            <h3>11.2 Effect of Termination</h3>
+            <ul>
+                <li>Immediate cessation of Service access</li>
+                <li>Data deletion after 30-day grace period</li>
+                <li>Survival of indemnification and liability provisions</li>
+            </ul>
+            
+            <h2>12. Governing Law</h2>
+            <p>These Terms shall be governed by and construed in accordance with the laws of the State of Delaware, United States, without regard to its conflict of law provisions.</p>
+            
+            <h2>13. Changes to Terms</h2>
+            <p>We reserve the right to modify these Terms at any time. Material changes will be communicated via:</p>
+            <ul>
+                <li>Email notification (for paid users)</li>
+                <li>In-app notifications</li>
+                <li>GitHub repository updates</li>
+                <li>Website announcements</li>
+            </ul>
+            
+            <h2>14. Contact Information</h2>
+            
+            <div class="contact-info">
+                <h3>Legal Questions or Concerns?</h3>
+                <p>For legal matters, contact:</p>
+                <p><a href="mailto:legal@solvas.ai">legal@solvas.ai</a></p>
+                <p>For general support:</p>
+                <p><a href="mailto:dev@solvas.ai">dev@solvas.ai</a></p>
+                <p>
+                    Solvas AI Inc.<br>
+                    Legal Department<br>
+                    [Address to be updated]
+                </p>
+            </div>
+            
+            <div class="last-updated">
+                <p>Last updated: January 21, 2025</p>
+                <p>Effective date: January 21, 2025</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

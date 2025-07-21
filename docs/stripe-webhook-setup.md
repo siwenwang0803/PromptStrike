@@ -48,7 +48,7 @@ FROM_EMAIL=dev@solvas.ai                  # From address
 
 # Supabase (should already be configured)
 SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_KEY=your-service-key
+SUPABASE_SERVICE_ROLE=your-service-key
 ```
 
 ### 2.1 Gmail App Password Setup

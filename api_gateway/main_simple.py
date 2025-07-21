@@ -81,10 +81,10 @@ class APIKeyResponse(BaseModel):
 # Initialize Supabase
 try:
     supabase_url = os.getenv("SUPABASE_URL", "")
-    supabase_key = os.getenv("SUPABASE_SERVICE_KEY", "")
+    supabase_key = os.getenv("SUPABASE_SERVICE_ROLE", "")
     
     if not supabase_url or not supabase_key:
-        raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables are required")
+        raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_ROLE environment variables are required")
     
     supabase: Client = create_client(supabase_url, supabase_key)
     logging.info(f"Supabase initialized with URL: {supabase_url}")
@@ -280,7 +280,7 @@ redforge scan claude-3 --cloud
 app = FastAPI(
     title="RedForge API Gateway",
     description="Cloud-based LLM Security Scanning Platform",
-    version="0.2.0"
+    version="0.3.1"
 )
 
 # CORS middleware
@@ -409,7 +409,7 @@ async def health_check():
     """Health check endpoint"""
     return {
         "service": "RedForge API Gateway",
-        "version": "0.2.0",
+        "version": "0.3.1",
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat()
     }
@@ -423,7 +423,7 @@ async def health_check_detailed(request: Request):
     
     return {
         "service": "RedForge API Gateway",
-        "version": "0.2.0",
+        "version": "0.3.1",
         "status": overall_status,
         "timestamp": datetime.utcnow().isoformat(),
         "database": database_status,

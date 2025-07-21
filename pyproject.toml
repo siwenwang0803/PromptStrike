@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "redforge"
-version = "0.3.0a0"
+version = "0.3.1"
 description = "Developer-first automated LLM red-team platform"
 authors = ["RedForge Team <dev@redforge.com>"]
 readme = "README.md"

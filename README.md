@@ -2,7 +2,7 @@
 
 **Developer-first automated LLM red-team platform**
 
-[![Version](https://img.shields.io/badge/version-0.3.0--alpha-blue)](https://github.com/siwenwang0803/RedForge/releases)
+[![Version](https://img.shields.io/badge/version-0.3.1-blue)](https://github.com/siwenwang0803/RedForge/releases)
 [![Build](https://github.com/siwenwang0803/RedForge/actions/workflows/e2e_core.yml/badge.svg)](https://github.com/siwenwang0803/RedForge/actions/workflows/e2e_core.yml)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Product Hunt](https://img.shields.io/badge/Product%20Hunt-Launching%20Soon-da552f)](https://www.producthunt.com/posts/redforge)
@@ -79,8 +79,15 @@ helm install my-sidecar redforge/redforge-sidecar \
 
 ## Core Features
 
-**New in v0.2.0**: Guardrail side-car for K8s, enhanced chaos testing (resilience scoring), community feedback system.
+**✨ New in v0.3.1 – Product Hunt Preview**:
+- 🔥 **Open-core tiering**: Free offline mode, Starter ($29/mo), Pro ($99/mo)
+- 📊 **Enhanced reporting**: PDF/HTML/JSON with compliance mapping
+- 💳 **Stripe integration**: Seamless checkout + webhook automation
+- 🔧 **Improved offline mode**: No OPENAI_API_KEY required for dry runs
+- 🐛 **Bug fixes**: Typer 0.9 compatibility, CI/CD stability
+- ✅ **Production ready**: Full E2E workflow validation
 
+### 🚀 Key Capabilities
 - **Automated Testing**: OWASP LLM Top 10 (47 attacks), prompt injection/leakage detection, risk scoring (0-10 CVSS-like).
 - **Reporting**: JSON/PDF/HTML/CSV with compliance (NIST, EU AI Act, SOC2, PCI DSS).
 - **Compliance & Audit**: NIST AI-RMF/EU Act mappings, cryptographic trails.
@@ -158,11 +165,12 @@ scan:
 
 ## Roadmap & Status
 
-- **S-1** (Shipped): CLI, OWASP coverage, reports.
-- **S-2/Pilot-0** (Complete): K8s sidecar, chaos enhancements, PCI DSS. Target: Enterprise deployment.
-- **Upcoming**: S-3 (pilots/Stripe, $15k revenue), S-4 (SaaS dashboard).
+- **S-1** (✅ Complete): CLI foundation, OWASP Top 10 coverage, report generation
+- **S-2/Pilot-0** (✅ Complete): K8s sidecar, chaos testing, PCI DSS compliance  
+- **S-3** (✅ Complete - v0.3.1): Open-core model, Stripe payments, Product Hunt launch ready
+- **S-4** (🚀 Next - Aug 2025): SaaS dashboard, team collaboration, advanced analytics
 
-Full: [12M Roadmap](01-12M-Roadmap.md).
+Full: [12M Roadmap](docs/RedForge/01-12M-Roadmap.md)
 
 ## Development & CI/CD
 

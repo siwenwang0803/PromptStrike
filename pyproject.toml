@@ -37,7 +37,7 @@ python-dotenv = "^1.0.0"
 tenacity = "^8.2.3"
 reportlab = "^4.0.0"
 backoff = "^2.2.1"
-pdfminer = "^20221105"
+pdfminer-six = "^20221105"
 
 [tool.poetry.extras]
 ai-chunks = ["chromadb"]

@@ -692,6 +692,10 @@ async def handle_payment_failed(invoice):
     """Handle failed payment"""
     try:
         customer_id = invoice["customer"]
+        invoice_id = invoice.get("id", "unknown")
+        amount_due = invoice.get("amount_due", 0)
+        
+        logging.warning(f"Payment failed: customer={customer_id}, invoice={invoice_id}, amount=${amount_due/100}")
         
         # Find user and send notification
         if supabase:
@@ -700,10 +704,94 @@ async def handle_payment_failed(invoice):
             if result.data:
                 email = result.data[0]["email"]
                 logging.warning(f"Payment failed for user: {email}")
-                # TODO: Send payment failed notification email
+                
+                # Send payment failed notification email
+                try:
+                    send_payment_failed_email(email, amount_due/100)
+                    logging.info(f"Payment failure notification sent to {email}")
+                except Exception as e:
+                    logging.error(f"Failed to send payment failure email to {email}: {e}")
+                
+                # Log payment failure for monitoring
+                try:
+                    if supabase:
+                        supabase.table("payment_history").insert({
+                            "user_id": result.data[0]["id"],
+                            "stripe_customer_id": customer_id,
+                            "stripe_session_id": invoice_id,
+                            "amount_cents": amount_due,
+                            "tier": "payment_failed",
+                            "email_sent": True,
+                            "created_at": datetime.utcnow().isoformat()
+                        }).execute()
+                except Exception as e:
+                    logging.warning(f"Failed to log payment failure: {e}")
                 
     except Exception as e:
         logging.error(f"Failed to handle payment failure: {e}")
+
+def send_payment_failed_email(email: str, amount: float):
+    """Send payment failed notification email"""
+    if not SMTP_USERNAME or not SMTP_PASSWORD:
+        logging.warning("Email not configured, skipping payment failed email")
+        return False
+    
+    try:
+        # Create message
+        msg = MIMEMultipart()
+        msg['From'] = FROM_EMAIL
+        msg['To'] = email
+        msg['Subject'] = "⚠️ RedForge Payment Failed - Action Required"
+        
+        # Email body
+        body = f"""
+        <html>
+        <body style="font-family: 'Roboto', Arial, sans-serif; line-height: 1.6; color: #e0e0e0; background: #0a0f1e; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: #1a233a; border-radius: 10px; padding: 30px; border: 1px solid #ff6b6b;">
+                <h1 style="color: #ff6b6b; text-align: center;">⚠️ Payment Failed</h1>
+                
+                <p>We were unable to process your payment of <strong>${amount:.2f}</strong> for your RedForge subscription.</p>
+                
+                <div style="background: rgba(255,107,107,0.1); padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ff6b6b;">
+                    <h3 style="color: #ff6b6b; margin-top: 0;">What happens next:</h3>
+                    <ul>
+                        <li>Your RedForge account remains active for now</li>
+                        <li>We'll retry the payment automatically</li>
+                        <li>Please update your payment method to avoid service interruption</li>
+                    </ul>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://billing.stripe.com/p/login/test_your_customer_portal_link" 
+                       style="background: linear-gradient(45deg, #ff6b6b, #ee5a52); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                        Update Payment Method
+                    </a>
+                </div>
+                
+                <p style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); opacity: 0.7;">
+                    Questions? Reply to this email or contact <a href="mailto:dev@solvas.ai" style="color: #ff6b6b;">dev@solvas.ai</a>
+                </p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        msg.attach(MIMEText(body, 'html'))
+        
+        # Send email
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(SMTP_USERNAME, SMTP_PASSWORD)
+        text = msg.as_string()
+        server.sendmail(FROM_EMAIL, email, text)
+        server.quit()
+        
+        logging.info(f"Payment failed email sent to {email}")
+        return True
+        
+    except Exception as e:
+        logging.error(f"Failed to send payment failed email to {email}: {e}")
+        return False
 
 @app.post("/scan", response_model=ScanResponse)
 async def create_scan(

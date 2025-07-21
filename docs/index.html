@@ -1080,10 +1080,10 @@
     </footer>
 
     <script>
-        // Payment handling
+        // Payment handling - Live Stripe payment links
         const PAYMENT_LINKS = {
-            starter: 'https://checkout.stripe.com/c/pay/cs_live_b1TnUcNAlE848XM2OwrWZK4NG6eYsJvgKR9MUAlqizQw7lJJcYOBC8jWBQ#fidkdWxOYHwnPyd1blppbHNgWjA0V0lTZFJES1xkbHQ2R1VAUExucnFqNjxATGcxNU1xaHVGalFWfzBBSXdvdmN1Sm5yRn1rVkFdUncyQWhQd09hZEFyYFRrdm9dZldtZlRwSzZMVHx8fXFrNTU8b1AwYVd%2FYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPydocGlxbFpscWBoJyknYGtkZ2lgVWlkZmJtamlhYHd2Jz9xd3BgeCUl',
-            pro: 'https://checkout.stripe.com/c/pay/cs_live_b1Xe4VSxiEXqflHBMIKgqSEp7tRtIrMNLsHQmq0Xv1OTGATAgjERx3ui5B#fidkdWxOYHwnPyd1blppbHNnWjA0V0lTZFJES1xkbHQ2R1VAUExucnFqNjxATGcxNU1xaHVGalFWfzBBSXdvdmN1Sm5yRn1rVkFdUncyQWhQd09hZEFyYFRrdm9dZldtZlRwSzZMVHx8fXFrNTU8b1AwYVd%2FYCcpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPydocGlxbFpscWBoJyknYGtkZ2lgVWlkZmBtamlhYHd2Jz9xd3BgeCUl'
+            starter: 'https://buy.stripe.com/8x2aEY7472EtgTobtY', // $29/month Starter Plan - LIVE
+            pro: 'mailto:dev@solvas.ai?subject=Pro%20Plan%20Inquiry' // Pro plan via contact
         };
         
         // Kit Configuration
@@ -1241,12 +1241,13 @@
             
             if (paymentUrl) {
                 // Redirect to payment
+                console.log(`Redirecting to payment for ${plan}: ${paymentUrl}`);
                 window.location.href = paymentUrl;
             } else {
                 // Restore button state on error
                 button.innerHTML = originalContent;
                 button.disabled = false;
-                alert('Payment link temporarily unavailable. Please try again or contact support.');
+                alert('Payment link temporarily unavailable. Please contact dev@solvas.ai for assistance.');
             }
         }
 

@@ -171,7 +171,40 @@
             justify-content: center;
             flex-wrap: wrap;
             margin-top: 40px;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
+        }
+        
+        .hero-explanation {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1em;
+            margin: 20px auto;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+        
+        .cloud-cta {
+            margin: 30px 0;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-cyan);
+            color: var(--primary-cyan);
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary-cyan);
+            color: var(--dark-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 255, 255, 0.3);
         }
         
         /* Hero Email Capture */
@@ -569,6 +602,94 @@
             margin-right: 8px;
         }
 
+        /* Quick Start Modal */
+        .quickstart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .quickstart-modal.show {
+            display: flex;
+            opacity: 1;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quickstart-content {
+            background: linear-gradient(135deg, var(--medium-bg), var(--dark-bg));
+            border: 2px solid var(--primary-cyan);
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 255, 255, 0.2);
+        }
+
+        .quickstart-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--light-text);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .quickstart-close:hover {
+            color: var(--primary-cyan);
+        }
+
+        .quickstart-title {
+            color: var(--primary-cyan);
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .quickstart-code {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--primary-cyan);
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-cyan);
+            color: var(--dark-bg);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--light-text);
+        }
+
         @media (max-width: 768px) {
             .pricing-cards {
                 grid-template-columns: 1fr;
@@ -827,13 +948,25 @@
                 Detect jailbreaks, data leaks, and cost explosions with OWASP Top 10 precision. 
                 Built for developers who demand security without compromising innovation.
             </p>
+            
             <div class="cta-buttons">
-                <button class="btn btn-primary" data-payment="starter" onclick="handlePaymentClick('starter')">
-                    <i class="fas fa-rocket"></i> Start Paid Plan - $29/mo
+                <button class="btn btn-primary" onclick="showQuickStart()">
+                    <i class="fas fa-fire"></i> Try CLI Free
                 </button>
                 <a href="https://github.com/siwenwang0803/RedForge" class="btn btn-secondary" target="_blank">
-                    <i class="fab fa-github"></i> Try Free (1 scan)
+                    <i class="fab fa-github"></i> View on GitHub
                 </a>
+            </div>
+            
+            <p class="hero-explanation">
+                RedForge is open source with core code on GitHub. You can install directly with pip 
+                or use our cloud scanning service for enterprise features.
+            </p>
+            
+            <div class="cloud-cta">
+                <button class="btn btn-outline" data-payment="starter" onclick="handlePaymentClick('starter')">
+                    <i class="fas fa-cloud"></i> Sign Up for Cloud Scan - $29/mo
+                </button>
             </div>
             
             <div class="hero-email-capture">
@@ -1079,6 +1212,69 @@
         </div>
     </footer>
 
+    <!-- Quick Start Modal -->
+    <div id="quickstartModal" class="quickstart-modal">
+        <div class="quickstart-content">
+            <button class="quickstart-close" onclick="hideQuickStart()">&times;</button>
+            <h2 class="quickstart-title">🔥 Quick Start - Try RedForge Now</h2>
+            
+            <p style="color: rgba(255,255,255,0.9); margin-bottom: 25px;">
+                Get started with RedForge in 30 seconds. Choose your preferred method:
+            </p>
+
+            <h3 style="color: var(--primary-cyan); margin-bottom: 15px;">
+                <i class="fas fa-terminal"></i> Option 1: Install via pip
+            </h3>
+            <div class="quickstart-code">
+                <button class="copy-btn" onclick="copyToClipboard('pip-install')">Copy</button>
+                <div id="pip-install"># Install RedForge CLI
+pip install redforge
+
+# Run your first security scan (offline mode)
+export OPENAI_API_KEY="your-openai-key"
+redforge scan gpt-4 --offline
+
+# Generate PDF report
+redforge report ./reports/scan_*.json --format pdf</div>
+            </div>
+
+            <h3 style="color: var(--primary-cyan); margin-bottom: 15px;">
+                <i class="fab fa-docker"></i> Option 2: Docker (Recommended)
+            </h3>
+            <div class="quickstart-code">
+                <button class="copy-btn" onclick="copyToClipboard('docker-cmd')">Copy</button>
+                <div id="docker-cmd"># Pull and run with Docker
+docker run --rm \
+  -e OPENAI_API_KEY=$OPENAI_API_KEY \
+  -v $(pwd)/reports:/app/reports \
+  siwenwang0803/redforge:latest \
+  scan gpt-4 --offline</div>
+            </div>
+
+            <h3 style="color: var(--primary-cyan); margin-bottom: 15px;">
+                <i class="fas fa-play-circle"></i> Option 3: Quick Test (No API Key)
+            </h3>
+            <div class="quickstart-code">
+                <button class="copy-btn" onclick="copyToClipboard('dry-run')">Copy</button>
+                <div id="dry-run"># Test without API key (dry run)
+pip install redforge
+redforge scan gpt-4 --dry-run
+redforge list-attacks  # See available tests</div>
+            </div>
+
+            <div style="margin-top: 30px; padding: 20px; background: rgba(0,255,255,0.1); border-radius: 8px;">
+                <p style="color: var(--primary-cyan); font-weight: bold; margin-bottom: 10px;">
+                    <i class="fas fa-info-circle"></i> Need Help?
+                </p>
+                <p style="color: rgba(255,255,255,0.9); margin: 0;">
+                    Check our <a href="https://github.com/siwenwang0803/RedForge" target="_blank" style="color: var(--primary-cyan);">GitHub README</a> 
+                    for detailed setup instructions, or contact 
+                    <a href="mailto:dev@solvas.ai" style="color: var(--primary-cyan);">dev@solvas.ai</a> for support.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Payment handling - Complete Stripe payment link
         const PAYMENT_LINKS = {
@@ -1182,6 +1378,86 @@
             }
         }
         
+        // Quick Start Modal Functions
+        function showQuickStart() {
+            const modal = document.getElementById('quickstartModal');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            
+            // Track analytics if available
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'quickstart_opened', {
+                    'event_category': 'engagement',
+                    'event_label': 'try_cli_free'
+                });
+            }
+        }
+        
+        function hideQuickStart() {
+            const modal = document.getElementById('quickstartModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+        
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Show temporary success feedback
+                const btn = element.parentNode.querySelector('.copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = 'var(--success-green)';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'var(--primary-cyan)';
+                }, 2000);
+                
+                // Track analytics if available
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'code_copied', {
+                        'event_category': 'engagement',
+                        'event_label': elementId
+                    });
+                }
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const btn = element.parentNode.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('quickstartModal');
+            if (event.target === modal) {
+                hideQuickStart();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                hideQuickStart();
+            }
+        });
+
         function showEmailSuccessMessage() {
             // Create and show a temporary success message
             const message = document.createElement('div');

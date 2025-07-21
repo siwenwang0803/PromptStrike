@@ -160,16 +160,22 @@ def create_or_update_user_from_stripe(email: str, stripe_customer_id: str, tier:
     if supabase is None:
         raise Exception("Supabase client not initialized")
     
+    logging.info(f"Checking if user exists: {email}")
     # Check if user exists
-    existing_user = supabase.table("users").select("*").eq("email", email).execute()
+    try:
+        existing_user = supabase.table("users").select("*").eq("email", email).execute()
+        logging.info(f"User query result: {existing_user.data}")
+    except Exception as e:
+        logging.error(f"Supabase user query failed: {e}")
+        logging.error(f"Query: users table, email={email}")
+        raise
     
     if existing_user.data:
         # Update existing user
         user_id = existing_user.data[0]["id"]
         supabase.table("users").update({
             "tier": tier,
-            "stripe_customer_id": stripe_customer_id,
-            "upgraded_at": datetime.utcnow().isoformat()
+            "stripe_customer_id": stripe_customer_id
         }).eq("id", user_id).execute()
         return user_id
     else:
@@ -178,8 +184,7 @@ def create_or_update_user_from_stripe(email: str, stripe_customer_id: str, tier:
             "email": email,
             "tier": tier,
             "stripe_customer_id": stripe_customer_id,
-            "created_at": datetime.utcnow().isoformat(),
-            "upgraded_at": datetime.utcnow().isoformat()
+            "created_at": datetime.utcnow().isoformat()
         }).execute()
         return user_result.data[0]["id"]
 
@@ -664,8 +669,7 @@ async def handle_subscription_cancelled(subscription):
                 
                 # Downgrade to free tier
                 supabase.table("users").update({
-                    "tier": "free",
-                    "downgraded_at": datetime.utcnow().isoformat()
+                    "tier": "free"
                 }).eq("id", user_id).execute()
                 
                 # Revoke existing API keys

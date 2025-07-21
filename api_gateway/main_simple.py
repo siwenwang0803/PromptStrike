@@ -577,8 +577,12 @@ async def handle_successful_payment(checkout_session):
         customer_email = checkout_session["customer_details"]["email"]
         amount_total = checkout_session["amount_total"]  # In cents
         
+        logging.info(f"Starting payment processing for {customer_email}")
+        
         # Determine tier based on amount
-        if amount_total == 100:  # $1.00 test
+        if amount_total == 50:  # $0.50 test
+            tier = "starter"
+        elif amount_total == 100:  # $1.00 test
             tier = "starter"
         elif amount_total == 2900:  # $29.00 production
             tier = "starter"
@@ -640,7 +644,10 @@ async def handle_successful_payment(checkout_session):
                 logging.warning(f"Failed to log payment history: {e}")
         
     except Exception as e:
+        import traceback
         logging.error(f"Failed to process successful payment: {e}")
+        logging.error(f"Payment processing traceback: {traceback.format_exc()}")
+        logging.error(f"Customer email: {customer_email if 'customer_email' in locals() else 'Unknown'}")
 
 async def handle_subscription_cancelled(subscription):
     """Handle subscription cancellation"""

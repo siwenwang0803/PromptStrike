@@ -54,20 +54,27 @@ safe_exec() {
     return $ret
 }
 
+# Check if we're in CI environment and use poetry run
+if [ -n "${CI:-}" ] || [ -d ".venv" ]; then
+    REDFORGE_CMD="poetry run redforge"
+else
+    REDFORGE_CMD="redforge"
+fi
+
 # Test 1: CLI Help
 echo -e "${YELLOW}📋 Test 1: CLI Help${NC}"
-safe_exec "CLI help command" redforge --help
+safe_exec "CLI help command" $REDFORGE_CMD --help
 echo ""
 
 # Test 2: CLI Doctor
 echo -e "${YELLOW}🩺 Test 2: CLI Diagnostics${NC}"
-safe_exec "CLI doctor diagnostics" redforge doctor
+safe_exec "CLI doctor diagnostics" $REDFORGE_CMD doctor
 echo ""
 
 # Test 3: List Attacks
 echo -e "${YELLOW}⚔️  Test 3: Attack Packs${NC}"
 set +e
-ATTACK_COUNT=$(redforge list-attacks 2>/dev/null | grep -c "LLM" || echo "0")
+ATTACK_COUNT=$($REDFORGE_CMD list-attacks 2>/dev/null | grep -c "LLM" || echo "0")
 set -e
 if [ "$ATTACK_COUNT" -gt 10 ]; then
     show_result 0 "Attack packs loaded ($ATTACK_COUNT attacks)"
@@ -78,7 +85,7 @@ echo ""
 
 # Test 4: Dry Run Scan
 echo -e "${YELLOW}🧪 Test 4: Dry Run Scan${NC}"
-safe_exec "Dry run scan" redforge scan gpt-4 --dry-run --output ./manual_test_reports
+safe_exec "Dry run scan" $REDFORGE_CMD scan gpt-4 --dry-run --output ./manual_test_reports
 echo ""
 
 # Test 5: Offline Scan & Multi-Format Reports
@@ -86,7 +93,7 @@ echo -e "${YELLOW}📄 Test 5: Offline Scan & Multi-Format Reports${NC}"
 echo "Running offline scan..."
 
 set +e
-OFFLINE_OUTPUT=$(redforge scan gpt-4 --offline --output ./manual_test_reports 2>&1)
+OFFLINE_OUTPUT=$($REDFORGE_CMD scan gpt-4 --offline --output ./manual_test_reports 2>&1)
 OFFLINE_RET=$?
 set -e
 
@@ -108,7 +115,7 @@ if echo "$OFFLINE_OUTPUT" | grep -q "✅ Offline scan completed"; then
         # Test PDF report generation
         echo "  Testing PDF report generation..."
         set +e
-        PDF_OUTPUT=$(redforge report "$REPORT_FILE" --format pdf --output ./manual_test_reports 2>&1)
+        PDF_OUTPUT=$($REDFORGE_CMD report "$REPORT_FILE" --format pdf --output ./manual_test_reports 2>&1)
         PDF_RET=$?
         set -e
         
@@ -121,7 +128,7 @@ if echo "$OFFLINE_OUTPUT" | grep -q "✅ Offline scan completed"; then
         # Test HTML report generation
         echo "  Testing HTML report generation..."
         set +e
-        HTML_OUTPUT=$(redforge report "$REPORT_FILE" --format html --output ./manual_test_reports 2>&1)
+        HTML_OUTPUT=$($REDFORGE_CMD report "$REPORT_FILE" --format html --output ./manual_test_reports 2>&1)
         HTML_RET=$?
         set -e
         
@@ -134,7 +141,7 @@ if echo "$OFFLINE_OUTPUT" | grep -q "✅ Offline scan completed"; then
         # Test compliance report generation (with proper schema)
         echo "  Testing compliance report generation..."
         set +e
-        COMPLIANCE_OUTPUT=$(redforge report "$REPORT_FILE" -o ./manual_test_reports/compliance.json 2>&1)
+        COMPLIANCE_OUTPUT=$($REDFORGE_CMD report "$REPORT_FILE" -o ./manual_test_reports/compliance.json 2>&1)
         COMPLIANCE_RET=$?
         set -e
         

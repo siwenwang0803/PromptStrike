@@ -324,7 +324,7 @@ show_result $GUARDRAIL_RET "Guardrail SDK import"
 
 # Test Cost Guard
 set +e
-python3 -c "from redforge.sidecar import CostGuard; cg = CostGuard(); print('OK')" 2>/dev/null
+python3 -c "from guardrail.cost_guard import CostGuard; cg = CostGuard(); print('OK')" 2>/dev/null
 COSTGUARD_RET=$?
 set -e
 show_result $COSTGUARD_RET "Cost Guard functional"

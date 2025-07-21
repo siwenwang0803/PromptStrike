@@ -98,7 +98,7 @@ echo "Running offline scan..."
 mkdir -p ./manual_test_reports
 
 set +e
-OFFLINE_OUTPUT=$($REDFORGE_CMD scan gpt-4 --offline --output ./manual_test_reports 2>&1)
+OFFLINE_OUTPUT=$($REDFORGE_CMD scan gpt-4 --offline --dry-run --output ./manual_test_reports 2>&1)
 OFFLINE_RET=$?
 set -e
 

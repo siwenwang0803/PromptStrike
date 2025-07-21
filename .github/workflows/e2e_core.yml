@@ -15,7 +15,7 @@ jobs:
     env:
       API_BASE: https://api-gateway-uenk.onrender.com
       EMAIL_PREFIX: ci-test
-      OPENAI_API_KEY: sk-test-dummy-for-ci
+      OPENAI_API_KEY: sk-test-dummy
       # Set longer timeouts for CI environment
       CURL_TIMEOUT: 30
       

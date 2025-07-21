@@ -217,5 +217,4 @@ CI/CD examples: [CI/CD Guide](docs/cicd.md).
 
 **Ready to secure your LLM?** `pip install redforge && redforge scan gpt-4 --dry-run`
 
-**Questions**: dev@redforge.com  
-**SaaS Waitlist**: [redforge.com](https://redforge.com)
+**Questions**: dev@solvas.com  

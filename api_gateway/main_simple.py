@@ -585,16 +585,20 @@ async def handle_successful_payment(checkout_session):
         logging.info(f"Starting payment processing for {customer_email}")
         
         # Determine tier based on amount
-        if amount_total == 50:  # $0.50 test
+        if amount_total == 50:  # $0.50 test (with PH50)
             tier = "starter"
         elif amount_total == 100:  # $1.00 test
             tier = "starter"
-        elif amount_total == 2900:  # $29.00 production
+        elif amount_total == 1450:  # $14.50 ($29 with PH50 50% off)
             tier = "starter"
-        elif amount_total == 9900:  # $99.00
+        elif amount_total == 2900:  # $29.00 production (full price)
+            tier = "starter"
+        elif amount_total == 4950:  # $49.50 ($99 with PH50 50% off)
+            tier = "pro"
+        elif amount_total == 9900:  # $99.00 pro (full price)
             tier = "pro"
         else:
-            logging.warning(f"Unknown payment amount: {amount_total}")
+            logging.warning(f"Unknown payment amount: {amount_total} (${amount_total/100})")
             tier = "starter"  # Default to starter
         
         logging.info(f"Processing payment: {customer_email} -> {tier} tier (${amount_total/100})")

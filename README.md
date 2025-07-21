@@ -2,15 +2,15 @@
 
 **Developer-first automated LLM red-team platform**
 
-[![PyPI](https://img.shields.io/pypi/v/redforge)](https://pypi.org/project/redforge)
+[![Version](https://img.shields.io/badge/version-0.3.0--alpha-blue)](https://github.com/siwenwang0803/RedForge/releases)
 [![Build](https://github.com/siwenwang0803/RedForge/actions/workflows/e2e_core.yml/badge.svg)](https://github.com/siwenwang0803/RedForge/actions/workflows/e2e_core.yml)
-[![License](https://img.shields.io/github/license/siwenwang0803/RedForge)](LICENSE)
-[![Product Hunt](https://img.shields.io/badge/PH-Coming%20Jul%2023-da552f)](https://www.producthunt.com/posts/redforge)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Product Hunt](https://img.shields.io/badge/Product%20Hunt-Launching%20Soon-da552f)](https://www.producthunt.com/posts/redforge)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://python.org)
 [![OWASP](https://img.shields.io/badge/OWASP-LLM%20Top%2010-red.svg)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 
-> **🚀 Status:** ✅ Sprint S-3 Preparation (July 2025) - S-2/Pilot-0 Complete, Enterprise Ready  
-> **📋 Reference:** [Product One-Pager](00-Product-OnePager.md) | [12M Roadmap](01-12M-Roadmap.md) | [Changelog](CHANGELOG-v0.1.0-alpha.md) | [DOD Summary](DOD_COMPLETION_SUMMARY.md)
+> **🚀 Status:** ✅ Sprint S-3 Complete (July 2025) - Product Hunt Ready, Enterprise Deployments Active  
+> **📋 Reference:** [Product One-Pager](docs/RedForge/00-Product-OnePager.md) | [12M Roadmap](docs/RedForge/01-12M-Roadmap.md) | [Landing Page](https://siwenwang0803.github.io/RedForge/)
 
 ## Problem We Solve
 

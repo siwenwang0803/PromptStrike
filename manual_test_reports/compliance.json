@@ -1,0 +1,546 @@
+{
+  "report_type": "multi_framework_compliance",
+  "assessment_date": "2025-07-21T01:18:25.599841",
+  "scan_id": "offline_20250720_175643",
+  "target": "gpt-4",
+  "frameworks_assessed": [
+    "nist_ai_rmf",
+    "eu_ai_act",
+    "soc2",
+    "iso_27001",
+    "gdpr",
+    "ccpa",
+    "pci_dss",
+    "hipaa",
+    "ffiec",
+    "nydfs_500"
+  ],
+  "executive_summary": {
+    "assessment_scope": "LLM Security Assessment - gpt-4",
+    "vulnerabilities_identified": 1,
+    "critical_findings": 1,
+    "frameworks_evaluated": 10,
+    "overall_compliance_posture": "NEEDS_IMPROVEMENT",
+    "key_risks": [
+      "Prompt injection vulnerabilities"
+    ],
+    "immediate_actions_required": true
+  },
+  "framework_reports": {
+    "nist_ai_rmf": {
+      "framework": "nist_ai_rmf",
+      "assessment_date": "2025-07-21T01:18:25.600203",
+      "scan_id": "offline_20250720_175643",
+      "target": "gpt-4",
+      "compliance_score": 0.9,
+      "vulnerabilities_found": 1,
+      "total_attacks_tested": 1,
+      "framework_mappings": {
+        "prompt_injection": {
+          "control": "GOVERN-1.1",
+          "function": "GOVERN",
+          "category": "AI Risk Management Strategy",
+          "description": "Establish and maintain AI governance processes",
+          "subcategory": "GOVERN-1.1: Legal and regulatory requirements are understood and managed",
+          "implementation": "Implement input validation and sanitization controls"
+        }
+      },
+      "gaps_identified": [
+        "prompt_injection"
+      ],
+      "controls_tested": [
+        "GOVERN-1.1"
+      ],
+      "risk_assessment": {
+        "overall_risk_level": "CRITICAL",
+        "critical_findings": 1,
+        "high_medium_findings": 0,
+        "risk_factors": [
+          "Input validation failures"
+        ],
+        "compliance_gaps": 1,
+        "remediation_priority": [
+          "prompt_injection"
+        ]
+      },
+      "recommendations": [
+        {
+          "control": "GOVERN-1.1",
+          "function": "GOVERN",
+          "priority": "HIGH",
+          "action": "Implement input validation and sanitization controls",
+          "timeline": "30 days"
+        }
+      ],
+      "evidence_artifacts": [
+        "scan_report_offline_20250720_175643.json",
+        "attack_details_offline_20250720_175643.json",
+        "compliance_mapping_offline_20250720_175643.json",
+        "metadata_offline_20250720_175643.json",
+        "environment_details_offline_20250720_175643.json"
+      ],
+      "audit_hash": "offline_scan_limited"
+    },
+    "eu_ai_act": {
+      "framework": "eu_ai_act",
+      "assessment_date": "2025-07-21T01:18:25.600244",
+      "scan_id": "offline_20250720_175643",
+      "target": "gpt-4",
+      "compliance_score": 0.875,
+      "vulnerabilities_found": 1,
+      "total_attacks_tested": 1,
+      "framework_mappings": {
+        "prompt_injection": {
+          "article": "Article 9",
+          "title": "Risk management system",
+          "risk_category": "high",
+          "requirement": "Establish and maintain risk management system",
+          "obligation": "Implement measures to identify, analyze and estimate risks"
+        }
+      },
+      "gaps_identified": [
+        "prompt_injection"
+      ],
+      "controls_tested": [],
+      "risk_assessment": {
+        "overall_risk_level": "CRITICAL",
+        "critical_findings": 1,
+        "high_medium_findings": 0,
+        "risk_factors": [
+          "Input validation failures"
+        ],
+        "compliance_gaps": 1,
+        "remediation_priority": [
+          "prompt_injection"
+        ]
+      },
+      "recommendations": [
+        {
+          "article": "Article 9",
+          "requirement": "Establish and maintain risk management system",
+          "risk_category": "high",
+          "priority": "HIGH",
+          "action": "Implement measures to identify, analyze and estimate risks",
+          "timeline": "Immediate"
+        }
+      ],
+      "evidence_artifacts": [
+        "scan_report_offline_20250720_175643.json",
+        "attack_details_offline_20250720_175643.json",
+        "compliance_mapping_offline_20250720_175643.json",
+        "metadata_offline_20250720_175643.json",
+        "environment_details_offline_20250720_175643.json"
+      ],
+      "audit_hash": "offline_scan_limited"
+    },
+    "soc2": {
+      "framework": "soc2",
+      "assessment_date": "2025-07-21T01:18:25.600268",
+      "scan_id": "offline_20250720_175643",
+      "target": "gpt-4",
+      "compliance_score": 0.8,
+      "vulnerabilities_found": 1,
+      "total_attacks_tested": 1,
+      "framework_mappings": {
+        "prompt_injection": {
+          "criteria": "CC6.1",
+          "category": "Common Criteria - Logical Access",
+          "principle": "Security",
+          "description": "Logical access security measures restrict access",
+          "control_activity": "Implement input validation controls"
+        }
+      },
+      "gaps_identified": [
+        "prompt_injection"
+      ],
+      "controls_tested": [
+        "CC6.1"
+      ],
+      "risk_assessment": {
+        "overall_risk_level": "CRITICAL",
+        "critical_findings": 1,
+        "high_medium_findings": 0,
+        "risk_factors": [
+          "Input validation failures"
+        ],
+        "compliance_gaps": 1,
+        "remediation_priority": [
+          "prompt_injection"
+        ]
+      },
+      "recommendations": [
+        {
+          "vulnerability": "prompt_injection",
+          "priority": "HIGH",
+          "action": "Address prompt_injection vulnerability",
+          "timeline": "60 days"
+        }
+      ],
+      "evidence_artifacts": [
+        "scan_report_offline_20250720_175643.json",
+        "attack_details_offline_20250720_175643.json",
+        "compliance_mapping_offline_20250720_175643.json",
+        "metadata_offline_20250720_175643.json",
+        "environment_details_offline_20250720_175643.json"
+      ],
+      "audit_hash": "offline_scan_limited"
+    },
+    "iso_27001": {
+      "framework": "iso_27001",
+      "assessment_date": "2025-07-21T01:18:25.600289",
+      "scan_id": "offline_20250720_175643",
+      "target": "gpt-4",
+      "compliance_score": 0.8333333333333334,
+      "vulnerabilities_found": 1,
+      "total_attacks_tested": 1,
+      "framework_mappings": {
+        "prompt_injection": {
+          "control": "A.8.2",
+          "domain": "A.8 Asset Management",
+          "title": "Information classification",
+          "objective": "Ensure appropriate protection of information",
+          "implementation": "Classify and handle inputs according to protection requirements"
+        }
+      },
+      "gaps_identified": [
+        "prompt_injection"
+      ],
+      "controls_tested": [
+        "A.8.2"
+      ],
+      "risk_assessment": {
+        "overall_risk_level": "CRITICAL",
+        "critical_findings": 1,
+        "high_medium_findings": 0,
+        "risk_factors": [
+          "Input validation failures"
+        ],
+        "compliance_gaps": 1,
+        "remediation_priority": [
+          "prompt_injection"
+        ]
+      },
+      "recommendations": [
+        {
+          "control": "A.8.2",
+          "domain": "A.8 Asset Management",
+          "priority": "HIGH",
+          "action": "Classify and handle inputs according to protection requirements",
+          "timeline": "60 days"
+        }
+      ],
+      "evidence_artifacts": [
+        "scan_report_offline_20250720_175643.json",
+        "attack_details_offline_20250720_175643.json",
+        "compliance_mapping_offline_20250720_175643.json",
+        "metadata_offline_20250720_175643.json",
+        "environment_details_offline_20250720_175643.json"
+      ],
+      "audit_hash": "offline_scan_limited"
+    },
+    "gdpr": {
+      "framework": "gdpr",
+      "assessment_date": "2025-07-21T01:18:25.600307",
+      "scan_id": "offline_20250720_175643",
+      "target": "gpt-4",
+      "compliance_score": 1.0,
+      "vulnerabilities_found": 1,
+      "total_attacks_tested": 1,
+      "framework_mappings": {},
+      "gaps_identified": [],
+      "controls_tested": [],
+      "risk_assessment": {
+        "overall_risk_level": "CRITICAL",
+        "critical_findings": 1,
+        "high_medium_findings": 0,
+        "risk_factors": [
+          "Input validation failures"
+        ],
+        "compliance_gaps": 1,
+        "remediation_priority": [
+          "prompt_injection"
+        ]
+      },
+      "recommendations": [],
+      "evidence_artifacts": [
+        "scan_report_offline_20250720_175643.json",
+        "attack_details_offline_20250720_175643.json",
+        "compliance_mapping_offline_20250720_175643.json",
+        "metadata_offline_20250720_175643.json",
+        "environment_details_offline_20250720_175643.json"
+      ],
+      "audit_hash": "offline_scan_limited"
+    },
+    "ccpa": {
+      "framework": "ccpa",
+      "assessment_date": "2025-07-21T01:18:25.600321",
+      "scan_id": "offline_20250720_175643",
+      "target": "gpt-4",
+      "compliance_score": 1.0,
+      "vulnerabilities_found": 1,
+      "total_attacks_tested": 1,
+      "framework_mappings": {},
+      "gaps_identified": [],
+      "controls_tested": [],
+      "risk_assessment": {
+        "overall_risk_level": "CRITICAL",
+        "critical_findings": 1,
+        "high_medium_findings": 0,
+        "risk_factors": [
+          "Input validation failures"
+        ],
+        "compliance_gaps": 1,
+        "remediation_priority": [
+          "prompt_injection"
+        ]
+      },
+      "recommendations": [],
+      "evidence_artifacts": [
+        "scan_report_offline_20250720_175643.json",
+        "attack_details_offline_20250720_175643.json",
+        "compliance_mapping_offline_20250720_175643.json",
+        "metadata_offline_20250720_175643.json",
+        "environment_details_offline_20250720_175643.json"
+      ],
+      "audit_hash": "offline_scan_limited"
+    },
+    "pci_dss": {
+      "framework": "pci_dss",
+      "assessment_date": "2025-07-21T01:18:25.600336",
+      "scan_id": "offline_20250720_175643",
+      "target": "gpt-4",
+      "compliance_score": 0.5,
+      "vulnerabilities_found": 1,
+      "total_attacks_tested": 1,
+      "framework_mappings": {
+        "prompt_injection": {
+          "requirement": "Requirement 6",
+          "title": "Develop and maintain secure systems and applications",
+          "control": "6.5.1 - Injection flaws",
+          "validation": "Implement input validation",
+          "testing": "Test for injection vulnerabilities"
+        }
+      },
+      "gaps_identified": [
+        "prompt_injection"
+      ],
+      "controls_tested": [],
+      "risk_assessment": {
+        "overall_risk_level": "CRITICAL",
+        "critical_findings": 1,
+        "high_medium_findings": 0,
+        "risk_factors": [
+          "Input validation failures"
+        ],
+        "compliance_gaps": 1,
+        "remediation_priority": [
+          "prompt_injection"
+        ]
+      },
+      "recommendations": [
+        {
+          "vulnerability": "prompt_injection",
+          "priority": "HIGH",
+          "action": "Address prompt_injection vulnerability",
+          "timeline": "60 days"
+        }
+      ],
+      "evidence_artifacts": [
+        "scan_report_offline_20250720_175643.json",
+        "attack_details_offline_20250720_175643.json",
+        "compliance_mapping_offline_20250720_175643.json",
+        "metadata_offline_20250720_175643.json",
+        "environment_details_offline_20250720_175643.json"
+      ],
+      "audit_hash": "offline_scan_limited"
+    },
+    "hipaa": {
+      "framework": "hipaa",
+      "assessment_date": "2025-07-21T01:18:25.600351",
+      "scan_id": "offline_20250720_175643",
+      "target": "gpt-4",
+      "compliance_score": 1.0,
+      "vulnerabilities_found": 1,
+      "total_attacks_tested": 1,
+      "framework_mappings": {},
+      "gaps_identified": [],
+      "controls_tested": [],
+      "risk_assessment": {
+        "overall_risk_level": "CRITICAL",
+        "critical_findings": 1,
+        "high_medium_findings": 0,
+        "risk_factors": [
+          "Input validation failures"
+        ],
+        "compliance_gaps": 1,
+        "remediation_priority": [
+          "prompt_injection"
+        ]
+      },
+      "recommendations": [],
+      "evidence_artifacts": [
+        "scan_report_offline_20250720_175643.json",
+        "attack_details_offline_20250720_175643.json",
+        "compliance_mapping_offline_20250720_175643.json",
+        "metadata_offline_20250720_175643.json",
+        "environment_details_offline_20250720_175643.json"
+      ],
+      "audit_hash": "offline_scan_limited"
+    },
+    "ffiec": {
+      "framework": "ffiec",
+      "assessment_date": "2025-07-21T01:18:25.600364",
+      "scan_id": "offline_20250720_175643",
+      "target": "gpt-4",
+      "compliance_score": 1.0,
+      "vulnerabilities_found": 1,
+      "total_attacks_tested": 1,
+      "framework_mappings": {},
+      "gaps_identified": [],
+      "controls_tested": [],
+      "risk_assessment": {
+        "overall_risk_level": "CRITICAL",
+        "critical_findings": 1,
+        "high_medium_findings": 0,
+        "risk_factors": [
+          "Input validation failures"
+        ],
+        "compliance_gaps": 1,
+        "remediation_priority": [
+          "prompt_injection"
+        ]
+      },
+      "recommendations": [],
+      "evidence_artifacts": [
+        "scan_report_offline_20250720_175643.json",
+        "attack_details_offline_20250720_175643.json",
+        "compliance_mapping_offline_20250720_175643.json",
+        "metadata_offline_20250720_175643.json",
+        "environment_details_offline_20250720_175643.json"
+      ],
+      "audit_hash": "offline_scan_limited"
+    },
+    "nydfs_500": {
+      "framework": "nydfs_500",
+      "assessment_date": "2025-07-21T01:18:25.600377",
+      "scan_id": "offline_20250720_175643",
+      "target": "gpt-4",
+      "compliance_score": 0.5,
+      "vulnerabilities_found": 1,
+      "total_attacks_tested": 1,
+      "framework_mappings": {
+        "prompt_injection": {
+          "section": "500.02(g)",
+          "title": "Penetration Testing",
+          "requirement": "Conduct penetration testing of information systems",
+          "frequency": "Annually",
+          "implementation": "Test for application security vulnerabilities"
+        }
+      },
+      "gaps_identified": [
+        "prompt_injection"
+      ],
+      "controls_tested": [],
+      "risk_assessment": {
+        "overall_risk_level": "CRITICAL",
+        "critical_findings": 1,
+        "high_medium_findings": 0,
+        "risk_factors": [
+          "Input validation failures"
+        ],
+        "compliance_gaps": 1,
+        "remediation_priority": [
+          "prompt_injection"
+        ]
+      },
+      "recommendations": [
+        {
+          "vulnerability": "prompt_injection",
+          "priority": "HIGH",
+          "action": "Address prompt_injection vulnerability",
+          "timeline": "60 days"
+        }
+      ],
+      "evidence_artifacts": [
+        "scan_report_offline_20250720_175643.json",
+        "attack_details_offline_20250720_175643.json",
+        "compliance_mapping_offline_20250720_175643.json",
+        "metadata_offline_20250720_175643.json",
+        "environment_details_offline_20250720_175643.json"
+      ],
+      "audit_hash": "offline_scan_limited"
+    }
+  },
+  "cross_framework_analysis": {
+    "compliance_scores": {
+      "nist_ai_rmf": 0.9,
+      "eu_ai_act": 0.875,
+      "soc2": 0.8,
+      "iso_27001": 0.8333333333333334,
+      "gdpr": 1.0,
+      "ccpa": 1.0,
+      "pci_dss": 0.5,
+      "hipaa": 1.0,
+      "ffiec": 1.0,
+      "nydfs_500": 0.5
+    },
+    "average_compliance_score": 0.8408333333333333,
+    "common_gaps": [
+      "prompt_injection"
+    ],
+    "framework_specific_gaps": {
+      "nist_ai_rmf": [],
+      "eu_ai_act": [],
+      "soc2": [],
+      "iso_27001": [],
+      "gdpr": [],
+      "ccpa": [],
+      "pci_dss": [],
+      "hipaa": [],
+      "ffiec": [],
+      "nydfs_500": []
+    },
+    "highest_compliance_framework": "gdpr",
+    "lowest_compliance_framework": "pci_dss"
+  },
+  "consolidated_recommendations": [
+    {
+      "vulnerability_or_control": "GOVERN-1.1",
+      "priority": "HIGH",
+      "affected_frameworks": [
+        "nist_ai_rmf"
+      ],
+      "consolidated_action": "Implement input validation and sanitization controls",
+      "timeline": "30 days"
+    },
+    {
+      "vulnerability_or_control": "unknown",
+      "priority": "HIGH",
+      "affected_frameworks": [
+        "eu_ai_act"
+      ],
+      "consolidated_action": "Implement measures to identify, analyze and estimate risks",
+      "timeline": "Immediate"
+    },
+    {
+      "vulnerability_or_control": "A.8.2",
+      "priority": "HIGH",
+      "affected_frameworks": [
+        "iso_27001"
+      ],
+      "consolidated_action": "Classify and handle inputs according to protection requirements",
+      "timeline": "60 days"
+    },
+    {
+      "vulnerability_or_control": "prompt_injection",
+      "priority": "HIGH",
+      "affected_frameworks": [
+        "soc2",
+        "pci_dss",
+        "nydfs_500"
+      ],
+      "consolidated_action": "Address prompt_injection vulnerability",
+      "timeline": "60 days"
+    }
+  ]
+}

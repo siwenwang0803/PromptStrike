@@ -360,15 +360,22 @@ async def process_scan(scan_id: str, scan_data: Dict):
         from redforge.core.scanner import LLMScanner
         from redforge.core.attacks import AttackPackLoader
         
-        # Initialize scanner
-        scanner = LLMScanner()
+        # Initialize scanner with dummy config for API Gateway
+        from redforge.models.scan_result import ScanConfig
+        config = ScanConfig(
+            target="api-gateway",
+            max_requests=100,
+            timeout=30,
+            verbose=False
+        )
+        scanner = LLMScanner(target=scan_data["target"], config=config)
         attack_loader = AttackPackLoader()
         
         # Load attacks based on tier
         if scan_data["tier"] == "free":
-            attacks = attack_loader.load_attacks()[:5]  # Limited attacks
+            attacks = attack_loader.load_pack("owasp-llm-top10")[:5]  # Limited attacks
         else:
-            attacks = attack_loader.load_attacks()  # Full attacks
+            attacks = attack_loader.load_pack("owasp-llm-top10")  # Full attacks
         
         # Run scan with progress updates
         results = []

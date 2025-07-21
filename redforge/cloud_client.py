@@ -272,7 +272,7 @@ def run_offline_scan(target: str, output_dir: str = "./reports") -> str:
     
     # Run scan
     from redforge.utils.config import Config
-    config = Config(target_endpoint=target, max_requests=1, timeout_seconds=30)
+    config = Config(target_endpoint=target, max_requests=1, timeout_seconds=30, api_key=None)
     scanner = LLMScanner(target=target, config=config)
     results = []
     

@@ -1311,10 +1311,10 @@ redforge scan gpt-4 --dry-run</div>
                 starter: 'https://buy.stripe.com/8x2aEY7472EtgTobtYgA800', // $29/month Starter Plan - LIVE LINK
                 pro: 'mailto:dev@solvas.ai?subject=Pro%20Plan%20Inquiry' // Pro plan via contact
             },
-            // Test mode links (use test card: 4242 4242 4242 4242)
+            // Test mode links (create these in your Stripe Dashboard test mode)
             test: {
-                starter: 'https://buy.stripe.com/test_3cs9Co8eN7iQ1zyeUU', // TEST MODE - $29/month Starter
-                pro: 'https://buy.stripe.com/test_5kAbKs4YBdD0cSkcMO' // TEST MODE - $99/month Pro
+                starter: 'https://dashboard.stripe.com/', // TODO: Replace with your test payment link
+                pro: 'https://dashboard.stripe.com/' // TODO: Replace with your test payment link
             }
         };
         
@@ -1563,10 +1563,11 @@ redforge scan gpt-4 --dry-run</div>
                 if (STRIPE_MODE === 'test') {
                     const testWarning = confirm(
                         '🧪 TEST MODE PAYMENT\n\n' +
-                        'You are about to use a Stripe test payment link.\n' +
+                        'Note: You need to create test payment links in Stripe Dashboard first.\n' +
+                        'Visit: https://dashboard.stripe.com/ → Test Mode → Payment Links\n\n' +
                         'Use test card: 4242 4242 4242 4242\n' +
                         'Any CVC, future expiry date\n\n' +
-                        'Continue to test payment?'
+                        'Continue to Stripe Dashboard?'
                     );
                     
                     if (!testWarning) {

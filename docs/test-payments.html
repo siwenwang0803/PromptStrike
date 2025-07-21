@@ -185,9 +185,9 @@
         </div>
         
         <div class="test-warning">
-            <h2>⚠️ Test Mode Only</h2>
-            <p>These are Stripe test payment links. No real money will be charged.</p>
-            <p>Use the test card details below to complete test payments.</p>
+            <h2>⚠️ Test Mode Setup Required</h2>
+            <p>To test payments, you need to create test mode payment links in your Stripe Dashboard.</p>
+            <p>Follow the instructions below to set up test payment links.</p>
         </div>
         
         <div class="test-cards">
@@ -231,6 +231,23 @@
                 <li>✅ Webhook integration works</li>
                 <li>✅ Customer is created in Stripe dashboard</li>
             </ul>
+        </div>
+        
+        <div class="test-info">
+            <h3>🔧 How to Create Test Payment Links</h3>
+            <ol style="text-align: left; line-height: 1.8;">
+                <li><strong>Login to Stripe Dashboard:</strong> <a href="https://dashboard.stripe.com/" target="_blank" style="color: var(--primary-cyan);">dashboard.stripe.com</a></li>
+                <li><strong>Switch to TEST MODE:</strong> Toggle in top-right corner</li>
+                <li><strong>Go to:</strong> Products → Payment Links → Create new</li>
+                <li><strong>Create Products:</strong>
+                    <ul>
+                        <li><strong>Starter:</strong> $29/month - "RedForge Starter Plan"</li>
+                        <li><strong>Pro:</strong> $99/month - "RedForge Pro Plan"</li>
+                    </ul>
+                </li>
+                <li><strong>Copy the test URLs</strong> (they start with <code>https://buy.stripe.com/test_</code>)</li>
+                <li><strong>Update the links below</strong> with your new test URLs</li>
+            </ol>
         </div>
         
         <div class="test-info">

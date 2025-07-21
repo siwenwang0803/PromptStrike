@@ -182,29 +182,60 @@
             line-height: 1.5;
         }
         
-        .cloud-cta {
-            margin: 30px 0;
+        .cloud-cta-primary {
+            margin: 40px 0 30px 0;
         }
         
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary-cyan);
-            color: var(--primary-cyan);
-            padding: 12px 30px;
+        .btn-primary-large {
+            background: linear-gradient(135deg, var(--primary-cyan), #007acc);
+            color: var(--dark-bg);
+            padding: 18px 40px;
             border-radius: 50px;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.2em;
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.4);
         }
         
-        .btn-outline:hover {
-            background: var(--primary-cyan);
-            color: var(--dark-bg);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 255, 255, 0.3);
+        .btn-primary-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 255, 255, 0.6);
+            background: linear-gradient(135deg, #00ffff, var(--primary-cyan));
+        }
+        
+        .secondary-options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .btn-secondary-small {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-secondary-small:hover {
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+            transform: translateY(-1px);
         }
         
         /* Hero Email Capture */
@@ -703,6 +734,31 @@
             .pricing h2 {
                 font-size: 2em;
             }
+            
+            .hero h1 {
+                font-size: 2.2em;
+            }
+            
+            .btn-primary-large {
+                padding: 16px 30px;
+                font-size: 1.1em;
+            }
+            
+            .secondary-options {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .btn-secondary-small {
+                padding: 8px 16px;
+                font-size: 0.85em;
+            }
+            
+            .quickstart-content {
+                padding: 25px;
+                margin: 20px;
+            }
         }
 
         /* CTA Section */
@@ -943,30 +999,24 @@
     <section class="hero">
         <div class="hero-content">
             <h1>Fortify Your AI Against Invisible Threats</h1>
-            <p class="hero-subtitle">The Developer-First LLM Red-Teaming Fortress</p>
+            <p class="hero-subtitle">AI Red-Teaming Fortress</p>
             <p class="hero-description">
-                Detect jailbreaks, data leaks, and cost explosions with OWASP Top 10 precision. 
-                Built for developers who demand security without compromising innovation.
+                Detect jailbreaks, data leaks, and cost explosions with OWASP Top 10 precision.
             </p>
             
-            <div class="cta-buttons">
-                <button class="btn btn-primary" onclick="showQuickStart()">
-                    <i class="fas fa-fire"></i> Try CLI Free
+            <div class="cloud-cta-primary">
+                <button class="btn btn-primary-large" data-payment="starter" onclick="handlePaymentClick('starter')">
+                    <i class="fas fa-rocket"></i> Start Cloud Scan - $29/mo
                 </button>
-                <a href="https://github.com/siwenwang0803/RedForge" class="btn btn-secondary" target="_blank">
-                    <i class="fab fa-github"></i> View on GitHub
-                </a>
             </div>
             
-            <p class="hero-explanation">
-                RedForge is open source with core code on GitHub. You can install directly with pip 
-                or use our cloud scanning service for enterprise features.
-            </p>
-            
-            <div class="cloud-cta">
-                <button class="btn btn-outline" data-payment="starter" onclick="handlePaymentClick('starter')">
-                    <i class="fas fa-cloud"></i> Sign Up for Cloud Scan - $29/mo
+            <div class="secondary-options">
+                <button class="btn btn-secondary-small" onclick="showQuickStart()">
+                    <i class="fas fa-terminal"></i> Try CLI Free
                 </button>
+                <a href="https://github.com/siwenwang0803/RedForge" class="btn btn-secondary-small" target="_blank">
+                    <i class="fab fa-github"></i> View Source
+                </a>
             </div>
             
             <div class="hero-email-capture">
@@ -1216,61 +1266,30 @@
     <div id="quickstartModal" class="quickstart-modal">
         <div class="quickstart-content">
             <button class="quickstart-close" onclick="hideQuickStart()">&times;</button>
-            <h2 class="quickstart-title">🔥 Quick Start - Try RedForge Now</h2>
+            <h2 class="quickstart-title">🔥 Try RedForge CLI</h2>
             
-            <p style="color: rgba(255,255,255,0.9); margin-bottom: 25px;">
-                Get started with RedForge in 30 seconds. Choose your preferred method:
-            </p>
-
             <h3 style="color: var(--primary-cyan); margin-bottom: 15px;">
-                <i class="fas fa-terminal"></i> Option 1: Install via pip
+                <i class="fas fa-terminal"></i> Install & Run
             </h3>
             <div class="quickstart-code">
                 <button class="copy-btn" onclick="copyToClipboard('pip-install')">Copy</button>
-                <div id="pip-install"># Install RedForge CLI
-pip install redforge
-
-# Run your first security scan (offline mode)
-export OPENAI_API_KEY="your-openai-key"
-redforge scan gpt-4 --offline
-
-# Generate PDF report
-redforge report ./reports/scan_*.json --format pdf</div>
+                <div id="pip-install">pip install redforge
+redforge scan gpt-4 --dry-run</div>
             </div>
 
             <h3 style="color: var(--primary-cyan); margin-bottom: 15px;">
-                <i class="fab fa-docker"></i> Option 2: Docker (Recommended)
+                <i class="fab fa-docker"></i> Docker
             </h3>
             <div class="quickstart-code">
                 <button class="copy-btn" onclick="copyToClipboard('docker-cmd')">Copy</button>
-                <div id="docker-cmd"># Pull and run with Docker
-docker run --rm \
-  -e OPENAI_API_KEY=$OPENAI_API_KEY \
-  -v $(pwd)/reports:/app/reports \
-  siwenwang0803/redforge:latest \
-  scan gpt-4 --offline</div>
+                <div id="docker-cmd">docker run --rm siwenwang0803/redforge:latest scan gpt-4 --dry-run</div>
             </div>
 
-            <h3 style="color: var(--primary-cyan); margin-bottom: 15px;">
-                <i class="fas fa-play-circle"></i> Option 3: Quick Test (No API Key)
-            </h3>
-            <div class="quickstart-code">
-                <button class="copy-btn" onclick="copyToClipboard('dry-run')">Copy</button>
-                <div id="dry-run"># Test without API key (dry run)
-pip install redforge
-redforge scan gpt-4 --dry-run
-redforge list-attacks  # See available tests</div>
-            </div>
-
-            <div style="margin-top: 30px; padding: 20px; background: rgba(0,255,255,0.1); border-radius: 8px;">
-                <p style="color: var(--primary-cyan); font-weight: bold; margin-bottom: 10px;">
-                    <i class="fas fa-info-circle"></i> Need Help?
-                </p>
-                <p style="color: rgba(255,255,255,0.9); margin: 0;">
-                    Check our <a href="https://github.com/siwenwang0803/RedForge" target="_blank" style="color: var(--primary-cyan);">GitHub README</a> 
-                    for detailed setup instructions, or contact 
-                    <a href="mailto:dev@solvas.ai" style="color: var(--primary-cyan);">dev@solvas.ai</a> for support.
-                </p>
+            <div style="margin-top: 25px; text-align: center;">
+                <a href="https://github.com/siwenwang0803/RedForge" target="_blank" 
+                   style="color: var(--primary-cyan); text-decoration: none;">
+                    📖 Full Documentation on GitHub
+                </a>
             </div>
         </div>
     </div>

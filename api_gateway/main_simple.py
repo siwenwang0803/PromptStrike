@@ -28,6 +28,8 @@ from email.mime.multipart import MIMEMultipart
 stripe_secret = os.getenv("STRIPE_SECRET")
 if not stripe_secret:
     logging.error("STRIPE_SECRET environment variable is required")
+    logging.error("Available env vars: " + ", ".join([k for k in os.environ.keys() if "STRIPE" in k]))
+    raise ValueError("STRIPE_SECRET is required")
 else:
     stripe.api_key = stripe_secret
     logging.info(f"Stripe API key configured: {stripe_secret[:8]}...")

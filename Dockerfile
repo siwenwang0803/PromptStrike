@@ -33,6 +33,12 @@ EXPOSE 8000
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-# Create a simple server script and run it
-RUN echo 'import http.server; import socketserver; PORT = 8000; Handler = http.server.SimpleHTTPRequestHandler; httpd = socketserver.TCPServer(("", PORT), Handler); print(f"RedForge serving on port {PORT}"); httpd.serve_forever()' > server.py
-CMD ["python", "server.py"]
+# Copy API Gateway code and requirements
+COPY api_gateway/ ./api_gateway/
+RUN pip install -r api_gateway/requirements.txt
+
+# Set working directory to API Gateway
+WORKDIR /app/api_gateway
+
+# Run the API Gateway
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "main_simple:app"]

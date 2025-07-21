@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedForge - $1 Production Test</title>
+    <style>
+        :root {
+            --primary-cyan: #00ffff;
+            --dark-bg: #0a0f1e;
+            --medium-bg: #1a233a;
+            --light-text: #e0e0e0;
+            --success-green: #00ff88;
+            --warning-orange: #ff6b35;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-bg) 100%);
+            color: var(--light-text);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: var(--primary-cyan);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px var(--primary-cyan);
+        }
+        
+        .warning {
+            background: rgba(255, 107, 53, 0.2);
+            border: 2px solid var(--warning-orange);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        
+        .warning h2 {
+            color: var(--warning-orange);
+            margin-bottom: 15px;
+        }
+        
+        .test-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 30px 0;
+        }
+        
+        .price {
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--success-green);
+            margin: 20px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, var(--primary-cyan), #007acc);
+            color: var(--dark-bg);
+            padding: 20px 40px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin: 20px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.4);
+        }
+        
+        .info {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-cyan);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            text-shadow: 0 0 8px var(--primary-cyan);
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">
+            ← Back to RedForge
+        </a>
+        
+        <div class="header">
+            <h1>💰 $1 Production Test</h1>
+            <p>Test real payment processing with minimal cost</p>
+        </div>
+        
+        <div class="warning">
+            <h2>⚠️ Real Money Transaction</h2>
+            <p>This is a LIVE payment using real credit cards.</p>
+            <p>You will be charged $1.00 to test production setup.</p>
+        </div>
+        
+        <div class="test-card">
+            <h3>Production Test Payment</h3>
+            <div class="price">$1.00</div>
+            <p>One-time payment to verify production integration</p>
+            
+            <!-- Replace this URL with your $1 Stripe payment link -->
+            <a href="REPLACE_WITH_YOUR_1_DOLLAR_STRIPE_LINK" class="btn" target="_blank">
+                Pay $1 - Test Production
+            </a>
+            
+            <p style="margin-top: 20px; opacity: 0.8; font-size: 0.9em;">
+                After payment, verify that:
+                <br>• Supabase user account is created
+                <br>• Confirmation email is sent
+                <br>• Account permissions are set correctly
+            </p>
+        </div>
+        
+        <div class="info">
+            <h3>🔧 How to Create $1 Test Payment Link</h3>
+            <ol style="line-height: 1.8;">
+                <li><strong>Go to Stripe Dashboard:</strong> <a href="https://dashboard.stripe.com/" target="_blank" style="color: var(--primary-cyan);">dashboard.stripe.com</a></li>
+                <li><strong>Ensure LIVE MODE</strong> (not test mode)</li>
+                <li><strong>Products → Add Product</strong></li>
+                <li><strong>Create product:</strong>
+                    <ul>
+                        <li>Name: "RedForge Production Test"</li>
+                        <li>Price: $1.00</li>
+                        <li>Type: One-time payment (not recurring)</li>
+                    </ul>
+                </li>
+                <li><strong>Create Payment Link</strong> and copy URL</li>
+                <li><strong>Replace the button URL above</strong></li>
+            </ol>
+        </div>
+        
+        <div class="info">
+            <h3>✅ After Payment Success</h3>
+            <p><strong>Check these systems:</strong></p>
+            <ul style="line-height: 1.8;">
+                <li>📧 <strong>Email:</strong> Did you receive confirmation email?</li>
+                <li>🗄️ <strong>Supabase:</strong> Was user account created?</li>
+                <li>🔑 <strong>Permissions:</strong> Are account permissions correct?</li>
+                <li>📊 <strong>Stripe Dashboard:</strong> Payment shows as successful?</li>
+                <li>🪝 <strong>Webhooks:</strong> Did webhooks trigger correctly?</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; opacity: 0.7;">
+            <p><strong>💡 Pro Tip:</strong> After successful test, you can delete the $1 test product from Stripe Dashboard</p>
+        </div>
+    </div>
+</body>
+</html>

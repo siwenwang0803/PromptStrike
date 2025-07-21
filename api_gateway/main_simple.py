@@ -7,6 +7,9 @@ Handles authentication, rate limiting, and scan orchestration
 import os
 import uuid
 import json
+import hmac
+import hashlib
+import secrets
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel, Field
@@ -16,8 +19,29 @@ from supabase import create_client, Client
 import asyncio
 import logging
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
+import stripe
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+# Stripe Configuration
+stripe.api_key = os.getenv("STRIPE_SECRET")  # Set your Stripe secret key
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")  # Set your webhook secret
+
+# Email Configuration
+SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+SMTP_USERNAME = os.getenv("SMTP_USERNAME")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+FROM_EMAIL = os.getenv("FROM_EMAIL", "dev@solvas.ai")
 
 # Models
+class StripeWebhookPayload(BaseModel):
+    id: str
+    object: str
+    type: str
+    data: Dict[str, Any]
+
 class ScanRequest(BaseModel):
     target: str = Field(..., description="LLM target (e.g., 'gpt-4', 'claude-3')")
     attack_pack: str = Field(default="owasp-top-10", description="Attack pack to use")
@@ -115,6 +139,142 @@ def update_user_scans(user_id: str, free_scans_used: int):
     return supabase.table("users").update({
         "free_scans_used": free_scans_used
     }).eq("id", user_id).execute()
+
+@retry(
+    retry=retry_if_exception_type(Exception),
+    stop=stop_after_attempt(3),
+    wait=wait_fixed(0.5)
+)
+def create_or_update_user_from_stripe(email: str, stripe_customer_id: str, tier: str):
+    """Create or update user from Stripe payment"""
+    if supabase is None:
+        raise Exception("Supabase client not initialized")
+    
+    # Check if user exists
+    existing_user = supabase.table("users").select("*").eq("email", email).execute()
+    
+    if existing_user.data:
+        # Update existing user
+        user_id = existing_user.data[0]["id"]
+        supabase.table("users").update({
+            "tier": tier,
+            "stripe_customer_id": stripe_customer_id,
+            "upgraded_at": datetime.utcnow().isoformat()
+        }).eq("id", user_id).execute()
+        return user_id
+    else:
+        # Create new user
+        user_result = supabase.table("users").insert({
+            "email": email,
+            "tier": tier,
+            "stripe_customer_id": stripe_customer_id,
+            "created_at": datetime.utcnow().isoformat(),
+            "upgraded_at": datetime.utcnow().isoformat()
+        }).execute()
+        return user_result.data[0]["id"]
+
+@retry(
+    retry=retry_if_exception_type(Exception),
+    stop=stop_after_attempt(3),
+    wait=wait_fixed(0.5)
+)
+def create_api_key_for_user(user_id: str, tier: str, name: str = "Stripe Auto-Generated"):
+    """Create API key for new paid user"""
+    if supabase is None:
+        raise Exception("Supabase client not initialized")
+    
+    # Generate API key
+    api_key = f"rk_{secrets.token_urlsafe(32)}"
+    
+    # Create API key record
+    supabase.table("api_keys").insert({
+        "key": api_key,
+        "name": name,
+        "user_id": user_id,
+        "tier": tier,
+        "usage_count": 0,
+        "created_at": datetime.utcnow().isoformat()
+    }).execute()
+    
+    return api_key
+
+def send_welcome_email(email: str, api_key: str, tier: str):
+    """Send welcome email with API key to new paid user"""
+    if not SMTP_USERNAME or not SMTP_PASSWORD:
+        logging.warning("Email not configured, skipping welcome email")
+        return False
+    
+    try:
+        # Create message
+        msg = MIMEMultipart()
+        msg['From'] = FROM_EMAIL
+        msg['To'] = email
+        msg['Subject'] = f"🔥 Welcome to RedForge {tier.title()} Plan - Your API Key Inside!"
+        
+        # Email body
+        body = f"""
+        <html>
+        <body style="font-family: 'Roboto', Arial, sans-serif; line-height: 1.6; color: #e0e0e0; background: #0a0f1e; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background: #1a233a; border-radius: 10px; padding: 30px; border: 1px solid #00ffff;">
+                <h1 style="color: #00ffff; text-align: center; text-shadow: 0 0 10px #00ffff;">🔥 Welcome to RedForge!</h1>
+                
+                <p>Thank you for upgrading to the <strong>{tier.title()} Plan</strong>! Your payment has been processed successfully.</p>
+                
+                <div style="background: rgba(0,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #00ffff;">
+                    <h3 style="color: #00ffff; margin-top: 0;">Your API Key:</h3>
+                    <code style="background: rgba(0,0,0,0.4); padding: 10px; border-radius: 4px; display: block; font-size: 14px; word-break: break-all; color: #00ff88;">{api_key}</code>
+                    <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.8;">⚠️ Keep this key secure and don't share it publicly</p>
+                </div>
+                
+                <h3 style="color: #00ffff;">Quick Start:</h3>
+                <pre style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; overflow-x: auto; color: #00ffff;">
+# Install RedForge CLI
+pip install redforge
+
+# Set your API key
+export REDFORGE_API_KEY="{api_key}"
+
+# Run unlimited scans
+redforge scan gpt-4 --cloud
+redforge scan claude-3 --cloud
+                </pre>
+                
+                <h3 style="color: #00ffff;">What's Next?</h3>
+                <ul>
+                    <li>✅ <strong>Unlimited scans</strong> - No more 1-scan limit</li>
+                    <li>✅ <strong>Clean reports</strong> - No watermarks</li>
+                    <li>✅ <strong>All formats</strong> - JSON, HTML, PDF exports</li>
+                    <li>✅ <strong>Priority support</strong> - Fast response times</li>
+                </ul>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://github.com/siwenwang0803/RedForge" style="background: linear-gradient(45deg, #00ffff, #007acc); color: #0a0f1e; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">View Documentation</a>
+                </div>
+                
+                <p style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); opacity: 0.7;">
+                    Questions? Reply to this email or contact <a href="mailto:dev@solvas.ai" style="color: #00ffff;">dev@solvas.ai</a>
+                </p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        msg.attach(MIMEText(body, 'html'))
+        
+        # Send email
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(SMTP_USERNAME, SMTP_PASSWORD)
+        text = msg.as_string()
+        server.sendmail(FROM_EMAIL, email, text)
+        server.quit()
+        
+        logging.info(f"Welcome email sent to {email}")
+        return True
+        
+    except Exception as e:
+        logging.error(f"Failed to send welcome email to {email}: {e}")
+        return False
 
 # Initialize FastAPI
 app = FastAPI(
@@ -345,6 +505,174 @@ async def signup(request: Request):
     except Exception as e:
         logging.error(f"Signup error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/stripe/webhook")
+async def stripe_webhook(request: Request, background_tasks: BackgroundTasks):
+    """Handle Stripe webhook events"""
+    try:
+        # Get raw request body
+        payload = await request.body()
+        sig_header = request.headers.get("stripe-signature")
+        
+        if not sig_header or not STRIPE_WEBHOOK_SECRET:
+            logging.warning("Missing Stripe signature or webhook secret")
+            raise HTTPException(status_code=400, detail="Missing signature")
+        
+        # Verify webhook signature
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, STRIPE_WEBHOOK_SECRET
+            )
+        except ValueError as e:
+            logging.error(f"Invalid Stripe payload: {e}")
+            raise HTTPException(status_code=400, detail="Invalid payload")
+        except stripe.error.SignatureVerificationError as e:
+            logging.error(f"Invalid Stripe signature: {e}")
+            raise HTTPException(status_code=400, detail="Invalid signature")
+        
+        # Process the event
+        event_type = event["type"]
+        logging.info(f"Processing Stripe event: {event_type}")
+        
+        if event_type == "checkout.session.completed":
+            # Payment successful - upgrade user
+            background_tasks.add_task(handle_successful_payment, event["data"]["object"])
+            
+        elif event_type == "customer.subscription.deleted":
+            # Subscription cancelled - downgrade user
+            background_tasks.add_task(handle_subscription_cancelled, event["data"]["object"])
+            
+        elif event_type == "invoice.payment_failed":
+            # Payment failed - notify user
+            background_tasks.add_task(handle_payment_failed, event["data"]["object"])
+        
+        else:
+            logging.info(f"Unhandled Stripe event type: {event_type}")
+        
+        return {"received": True}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Stripe webhook error: {e}")
+        raise HTTPException(status_code=500, detail="Webhook processing failed")
+
+async def handle_successful_payment(checkout_session):
+    """Process successful payment and upgrade user"""
+    try:
+        customer_id = checkout_session["customer"]
+        customer_email = checkout_session["customer_details"]["email"]
+        amount_total = checkout_session["amount_total"]  # In cents
+        
+        # Determine tier based on amount
+        if amount_total == 2900:  # $29.00
+            tier = "starter"
+        elif amount_total == 9900:  # $99.00
+            tier = "pro"
+        else:
+            logging.warning(f"Unknown payment amount: {amount_total}")
+            tier = "starter"  # Default to starter
+        
+        logging.info(f"Processing payment: {customer_email} -> {tier} tier (${amount_total/100})")
+        
+        # Create or update user in Supabase
+        user_id = create_or_update_user_from_stripe(
+            email=customer_email,
+            stripe_customer_id=customer_id,
+            tier=tier
+        )
+        
+        # Generate API key for the user
+        api_key = create_api_key_for_user(user_id, tier, f"{tier.title()} Plan")
+        
+        # Send welcome email with API key
+        email_sent = send_welcome_email(customer_email, api_key, tier)
+        
+        # Update ConvertKit if available
+        try:
+            kit_api_key = os.getenv("KIT_API_KEY")
+            if kit_api_key:
+                import requests
+                kit_response = requests.post(
+                    f"https://api.convertkit.com/v3/forms/8320684/subscribe",
+                    data={
+                        "api_key": kit_api_key,
+                        "email": customer_email,
+                        "tags": [f"redforge-{tier}", "paid-user", "stripe-customer"]
+                    },
+                    timeout=10
+                )
+                logging.info(f"ConvertKit update: {kit_response.status_code}")
+        except Exception as e:
+            logging.warning(f"ConvertKit update failed: {e}")
+        
+        # Log success
+        logging.info(f"User upgrade completed: {customer_email} -> {tier} | API key: {api_key[:8]}... | Email: {'✅' if email_sent else '❌'}")
+        
+        # Store payment record for audit
+        if supabase:
+            try:
+                supabase.table("payment_history").insert({
+                    "user_id": user_id,
+                    "stripe_customer_id": customer_id,
+                    "stripe_session_id": checkout_session["id"],
+                    "amount_cents": amount_total,
+                    "tier": tier,
+                    "email_sent": email_sent,
+                    "created_at": datetime.utcnow().isoformat()
+                }).execute()
+            except Exception as e:
+                logging.warning(f"Failed to log payment history: {e}")
+        
+    except Exception as e:
+        logging.error(f"Failed to process successful payment: {e}")
+
+async def handle_subscription_cancelled(subscription):
+    """Handle subscription cancellation"""
+    try:
+        customer_id = subscription["customer"]
+        
+        # Find user by Stripe customer ID and downgrade
+        if supabase:
+            result = supabase.table("users").select("*").eq("stripe_customer_id", customer_id).execute()
+            
+            if result.data:
+                user_id = result.data[0]["id"]
+                email = result.data[0]["email"]
+                
+                # Downgrade to free tier
+                supabase.table("users").update({
+                    "tier": "free",
+                    "downgraded_at": datetime.utcnow().isoformat()
+                }).eq("id", user_id).execute()
+                
+                # Revoke existing API keys
+                supabase.table("api_keys").update({
+                    "revoked": True,
+                    "revoked_at": datetime.utcnow().isoformat()
+                }).eq("user_id", user_id).execute()
+                
+                logging.info(f"User downgraded to free tier: {email}")
+                
+    except Exception as e:
+        logging.error(f"Failed to handle subscription cancellation: {e}")
+
+async def handle_payment_failed(invoice):
+    """Handle failed payment"""
+    try:
+        customer_id = invoice["customer"]
+        
+        # Find user and send notification
+        if supabase:
+            result = supabase.table("users").select("email").eq("stripe_customer_id", customer_id).execute()
+            
+            if result.data:
+                email = result.data[0]["email"]
+                logging.warning(f"Payment failed for user: {email}")
+                # TODO: Send payment failed notification email
+                
+    except Exception as e:
+        logging.error(f"Failed to handle payment failure: {e}")
 
 @app.post("/scan", response_model=ScanResponse)
 async def create_scan(

@@ -24,21 +24,19 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# Stripe Configuration
+# Stripe Configuration (optional - only for webhook service)
 stripe_secret = os.getenv("STRIPE_SECRET")
-if not stripe_secret:
-    logging.error("STRIPE_SECRET environment variable is required")
-    logging.error("Available env vars: " + ", ".join([k for k in os.environ.keys() if "STRIPE" in k]))
-    raise ValueError("STRIPE_SECRET is required")
-else:
+if stripe_secret:
     stripe.api_key = stripe_secret
     logging.info(f"Stripe API key configured: {stripe_secret[:8]}...")
+else:
+    logging.warning("STRIPE_SECRET not configured - webhook endpoints will not work")
 
 STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
-if not STRIPE_WEBHOOK_SECRET:
-    logging.error("STRIPE_WEBHOOK_SECRET environment variable is required")
-else:
+if STRIPE_WEBHOOK_SECRET:
     logging.info(f"Stripe webhook secret configured: {STRIPE_WEBHOOK_SECRET[:8]}...")
+else:
+    logging.warning("STRIPE_WEBHOOK_SECRET not configured - webhook endpoints will not work")
 
 # Email Configuration
 SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")

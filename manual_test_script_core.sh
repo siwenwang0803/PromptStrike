@@ -407,11 +407,19 @@ echo -e "${BLUE}   Stripe testing can be added later with updated Command Line T
 
 echo ""
 echo -e "${YELLOW}🧹 Cleanup${NC}"
-read -p "Clean up test files? (y/N): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+
+# Skip interactive cleanup in CI
+if [ -n "${CI:-}" ]; then
+    echo "Skipping interactive cleanup in CI"
     rm -rf ./manual_test_reports 2>/dev/null || true
-    echo -e "${GREEN}✅ Test files cleaned up${NC}"
+    echo -e "${GREEN}✅ Test files cleaned up automatically${NC}"
+else
+    read -p "Clean up test files? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm -rf ./manual_test_reports 2>/dev/null || true
+        echo -e "${GREEN}✅ Test files cleaned up${NC}"
+    fi
 fi
 
 echo ""

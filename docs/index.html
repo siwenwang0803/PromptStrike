@@ -218,24 +218,32 @@
         }
         
         .btn-secondary-small {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: rgba(255, 255, 255, 0.8);
-            padding: 10px 20px;
-            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 12px 24px;
+            border-radius: 30px;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             font-size: 0.9em;
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
         
         .btn-secondary-small:hover {
+            background: rgba(0, 255, 255, 0.15);
             border-color: var(--primary-cyan);
             color: var(--primary-cyan);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.3);
+        }
+        
+        .btn-secondary-small i {
+            font-size: 1.1em;
         }
         
         /* Hero Email Capture */
@@ -751,7 +759,7 @@
             }
             
             .btn-secondary-small {
-                padding: 8px 16px;
+                padding: 10px 20px;
                 font-size: 0.85em;
             }
             
@@ -1012,10 +1020,10 @@
             
             <div class="secondary-options">
                 <button class="btn btn-secondary-small" onclick="showQuickStart()">
-                    <i class="fas fa-terminal"></i> Try CLI Free
+                    <i class="fas fa-code"></i> Try Free
                 </button>
                 <a href="https://github.com/siwenwang0803/RedForge" class="btn btn-secondary-small" target="_blank">
-                    <i class="fab fa-github"></i> View Source
+                    <i class="fab fa-github"></i> GitHub
                 </a>
             </div>
             

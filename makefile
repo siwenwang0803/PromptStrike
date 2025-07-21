@@ -81,6 +81,22 @@ format: ## Format code
 
 check: lint test ## Run all checks (lint + test)
 
+# E2E Testing
+test-core: ## Run core E2E tests (Product Hunt ready)
+	./manual_test_script_core.sh
+
+test-paid-flow: ## Run paid flow tests (requires Stripe setup)
+	@echo "🔧 Checking Stripe environment..."
+	@if [ -z "$(STRIPE_API_KEY)" ] || [ -z "$(PRICE_STARTER)" ]; then \
+		echo "❌ Set STRIPE_API_KEY and PRICE_STARTER first"; \
+		echo "💡 Run: ./setup_stripe_env.sh"; \
+		exit 1; \
+	fi
+	@echo "✅ Environment ready, running paid flow tests..."
+	./paid_flow_test.sh
+
+test-e2e: test-core ## Alias for core E2E tests
+
 # CLI testing shortcuts
 cli-help: ## Test CLI help command
 	poetry run python -m redforge.cli --help

@@ -663,18 +663,18 @@ def list_attacks(
 @app.command()
 def report(
     scan_result_path: str = typer.Argument(..., help="Path to scan result JSON file"),
-    format: str = typer.Option("comprehensive", "--format", "-f", help="Report format/template to use"),
+    format: str = typer.Option("json", "--format", "-f", help="Report format: json, pdf, html, or compliance template"),
     framework: str = typer.Option("multi", "--framework", help="Compliance framework (nist_ai_rmf, eu_ai_act, iso_27001, soc2, gdpr, ccpa, pci_dss, hipaa, ffiec, nydfs_500, or 'multi' for all)"),
     output: str = typer.Option("", "--output", "-o", help="Output file path (optional)"),
     export_format: str = typer.Option("json", "--export", "-e", help="Export format (json, yaml, csv)")
 ) -> None:
-    """🔍 Generate compliance reports from scan results"""
+    """🔍 Generate reports from scan results (PDF, HTML, compliance)"""
     
     try:
-        from .compliance import ComplianceReportGenerator
-        from .models.scan_result import ScanResult
         import json
         from pathlib import Path
+        from .models.scan_result import ScanResult
+        from .core.report import ReportGenerator
         
         # Load scan result
         try:
@@ -685,7 +685,36 @@ def report(
             rprint(f"[red]❌ Error loading scan result: {e}[/red]")
             raise typer.Exit(1)
         
-        # Create report generator
+        # Determine output directory
+        if output:
+            output_path = Path(output)
+            if output_path.is_dir():
+                output_dir = output_path
+            else:
+                output_dir = output_path.parent
+                output_dir.mkdir(parents=True, exist_ok=True)
+        else:
+            output_dir = Path("./reports")
+            output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Handle PDF/HTML generation
+        if format.lower() in ["pdf", "html"]:
+            rprint(f"[blue]📄 Generating {format.upper()} report...[/blue]")
+            
+            # Create report generator
+            generator = ReportGenerator(output_dir, user_tier="free")  # Default to free tier
+            
+            if format.lower() == "pdf":
+                report_path = generator.generate_pdf(scan_result)
+                rprint(f"[green]✅ PDF report generated: {report_path}[/green]")
+            elif format.lower() == "html":
+                report_path = generator.generate_html(scan_result)
+                rprint(f"[green]✅ HTML report generated: {report_path}[/green]")
+            
+            return
+        
+        # Handle compliance reports
+        from .compliance import ComplianceReportGenerator
         generator = ComplianceReportGenerator(scan_result)
         
         rprint(f"[blue]📊 Generating compliance report...[/blue]")

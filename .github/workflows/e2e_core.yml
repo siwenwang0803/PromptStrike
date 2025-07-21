@@ -1,0 +1,79 @@
+name: E2E Core Tests (Product Hunt Ready)
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  e2e-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    env:
+      API_BASE: https://api-gateway-uenk.onrender.com
+      EMAIL_PREFIX: ci-test
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+        
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: 1.7.1
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v4
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+        
+    - name: Install dependencies
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      run: poetry install --no-interaction --no-root
+      
+    - name: Install RedForge
+      run: poetry install --no-interaction
+      
+    - name: Verify RedForge CLI
+      run: |
+        poetry run redforge --version
+        poetry run redforge doctor
+        
+    - name: Install system dependencies for PDF generation
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wkhtmltopdf xvfb
+        
+    - name: Run Core E2E Tests
+      run: |
+        chmod +x ./manual_test_script_core.sh
+        ./manual_test_script_core.sh
+        
+    - name: Upload test reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-test-reports
+        path: ./manual_test_reports/
+        retention-days: 7
+        
+    - name: Check test results
+      run: |
+        if [ $? -eq 0 ]; then
+          echo "✅ All core tests passed! Ready for Product Hunt launch!"
+        else
+          echo "❌ Core tests failed. Check logs above."
+          exit 1
+        fi

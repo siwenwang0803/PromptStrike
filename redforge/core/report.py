@@ -61,6 +61,7 @@ class ReportGenerator:
                 "platform": scan_result.metadata.platform
             },
             "compliance": {
+                "nist_controls_tested": scan_result.compliance.nist_rmf_controls_tested,
                 "nist_rmf_controls_tested": scan_result.compliance.nist_rmf_controls_tested,
                 "nist_rmf_gaps_identified": scan_result.compliance.nist_rmf_gaps_identified,
                 "eu_ai_act_risk_category": scan_result.compliance.eu_ai_act_risk_category,

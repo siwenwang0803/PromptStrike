@@ -15,6 +15,8 @@ jobs:
     env:
       API_BASE: https://api-gateway-uenk.onrender.com
       EMAIL_PREFIX: ci-test
+      # Set longer timeouts for CI environment
+      CURL_TIMEOUT: 30
       
     steps:
     - name: Checkout code
@@ -59,6 +61,8 @@ jobs:
     - name: Run Core E2E Tests
       run: |
         chmod +x ./manual_test_script_core.sh
+        # Activate poetry environment and run tests
+        source .venv/bin/activate
         ./manual_test_script_core.sh
         
     - name: Upload test reports

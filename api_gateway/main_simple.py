@@ -97,6 +97,8 @@ try:
         raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_ROLE environment variables are required")
     
     supabase: Client = create_client(supabase_url, supabase_key)
+    # Disable RLS for service role operations
+    supabase.postgrest.auth(supabase_key)
     logging.info(f"Supabase initialized with URL: {supabase_url}")
     
 except Exception as e:

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "redforge"
-version = "0.2.0a0"
+version = "0.3.0a0"
 description = "Developer-first automated LLM red-team platform"
 authors = ["RedForge Team <dev@redforge.com>"]
 readme = "README.md"
@@ -36,6 +36,7 @@ pyyaml = "^6.0.1"
 python-dotenv = "^1.0.0"
 tenacity = "^8.2.3"
 reportlab = "^4.0.0"
+backoff = "^2.2.1"
 
 [tool.poetry.extras]
 ai-chunks = ["chromadb"]

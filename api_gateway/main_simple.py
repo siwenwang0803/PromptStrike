@@ -515,7 +515,8 @@ async def stripe_webhook(request: Request, background_tasks: BackgroundTasks):
         sig_header = request.headers.get("stripe-signature")
         
         if not sig_header or not STRIPE_WEBHOOK_SECRET:
-            logging.warning("Missing Stripe signature or webhook secret")
+            logging.warning(f"Missing Stripe signature or webhook secret. sig_header: {bool(sig_header)}, STRIPE_WEBHOOK_SECRET: {bool(STRIPE_WEBHOOK_SECRET)}")
+            logging.warning(f"STRIPE_WEBHOOK_SECRET value: {STRIPE_WEBHOOK_SECRET[:20] if STRIPE_WEBHOOK_SECRET else 'None'}...")
             raise HTTPException(status_code=400, detail="Missing signature")
         
         # Verify webhook signature

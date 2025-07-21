@@ -565,7 +565,9 @@ async def stripe_webhook(request: Request, background_tasks: BackgroundTasks):
     except HTTPException:
         raise
     except Exception as e:
+        import traceback
         logging.error(f"Stripe webhook error: {e}")
+        logging.error(f"Full traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail="Webhook processing failed")
 
 async def handle_successful_payment(checkout_session):
